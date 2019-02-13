@@ -1,0 +1,11 @@
+body {background-color: black}
+#image {width: 500px; margin: auto}
+#item {width: 500px}
+.block {display: block; width: 100%; clear: both;}
+a {color: darkgreen; text-decoration: none; font-size: 200%;}
+a:hover {color: red}
+#next {float: left;}
+#pre {float: right;}
+
+#like {width:72px; float: left;}
+#dislike {width: 45px;; float: right;}

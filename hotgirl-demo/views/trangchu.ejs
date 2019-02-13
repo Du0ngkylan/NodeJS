@@ -1,0 +1,54 @@
+<%
+  if(dangxem <= 1) {
+    pre = 1;
+  } else {
+    pre = dangxem - 1;
+  }
+
+  if (parseInt(dangxem) + 1 > parseInt(max)) {
+    next = max;
+  } else {
+    next = parseInt(dangxem) + 1;
+  }
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="http://localhost:3000/"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>hotgirls</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" media="screen" href="layout.css" />
+  <script src = "jquery-3.3.1.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      $("#like").click(function() {
+        var id = $(this).attr("hinh");
+        $.get("http://localhost:3000/like/" + id, function(data) {
+          alert(data);
+        });
+      });
+
+      $("#dislike").click(function() {
+        var id = $(this).attr("hinh");
+        $.get("http://localhost:3000/dislike/" + id, function(data) {
+          alert(data);
+        });
+      });
+  });
+  </script>
+</head>
+<body>
+  <div id = "image">
+    <a id = "next" href="./images/<%= next %>">next</a>
+    <a id = "pre" href="./images/<%= pre %>">previous</a>
+    <div class = "block"></div>
+    <img id = "item" src="images/<%= hinh %>" />
+    <div class = "block"></div>
+    <img id = "like" hinh = " <%= dangxem %>" src="images/like.png" alt="">
+    <img id = "dislike" hinh = " <%= dangxem %>" src="images/dislike.png" alt="">
+  </div>
+</body>
+</html>
