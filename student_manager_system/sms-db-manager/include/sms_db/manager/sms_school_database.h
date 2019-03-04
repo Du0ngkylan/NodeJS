@@ -77,6 +77,27 @@ class SmsSchoolDatabase : public db_manager::manager::SmsBaseDatabase {
    */
   int CreateSchoolInfo(db_manager::model::SmsSchoolInfo &school_info);
 
+  /**
+   * @fn
+   * BeginTransaction
+   * @brief begin transaction
+   */
+  void BeginTransaction() override;
+
+  /**
+   * @fn
+   * Commit
+   * @brief commit transaction
+   */
+  void Commit() override;
+
+  /**
+   * @fn
+   * Rollback
+   * @brief rollback transaction
+   */
+  void Rollback() override;
+
  private:
   /**
    * @fn

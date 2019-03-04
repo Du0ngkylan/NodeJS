@@ -86,7 +86,38 @@ SmsSchoolDatabase::~SmsSchoolDatabase() {}
  * @return db instance
  */
 SmsDatabase SmsSchoolDatabase::GetSchoolDB() {
-  return SmsDatabase(this->db_path_, READ_WRITE, true);
+  return internal_db_;
+}
+
+/**
+ * @fn
+ * BeginTransaction
+ * @brief begin transaction
+ */
+void SmsSchoolDatabase::BeginTransaction() {
+  this->GetSchoolDB().ExecSQL("BEGIN");
+}
+
+/**
+ * @fn
+ * Commit
+ * @brief commit transaction
+ */
+void SmsSchoolDatabase::Commit() {
+  this->GetSchoolDB().ExecSQL("COMMIT");
+}
+
+/**
+ * @fn
+ * Rollback
+ * @brief rollback transaction
+ */
+void SmsSchoolDatabase::Rollback() {
+  try {
+    this->GetSchoolDB().ExecSQL("ROLLBACK");
+  } catch (SmsDatabaseException) {
+    // exceptions that occurred with rollback can not be recovered
+  }
 }
 
 /**
