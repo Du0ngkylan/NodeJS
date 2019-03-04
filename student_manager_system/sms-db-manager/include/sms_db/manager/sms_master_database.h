@@ -65,6 +65,15 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
 
   /**
    * @fn
+   * GetSchoolDatabase
+   * @brief Get database SchoolDatabase
+   * @param school_id if of GoyoSchoolInfo
+   * @return object GetSchoolDatabase
+   */
+  SmsSchoolDatabase GetSchoolDatabase(const int school_id);
+
+  /**
+   * @fn
    * GetMaxItemId
    * @brief get max current id in database
    * @return int id
@@ -80,6 +89,78 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    */
   int CreateSchool(db_manager::model::SmsSchoolInfo& school_info, bool is_import = false);
 
+  /**
+   * @fn
+   * GetSchoolInfo
+   * @brief Get a SmsSchoolInfo in database
+   * @param school_id id of SmsSchoolInfo
+   * @return SmsSchoolInfo object
+   */
+  SmsSchoolInfo GetSchoolInfo(const int school_id);
+
+  /**
+   * @fn
+   * GetSchoolInfoDetail
+   * @brief Get a SmsSchoolInfo in database
+   * @param school_id id of SmsSchoolInfo
+   * @return SmsSchoolInfo object
+   */
+  SmsSchoolInfo GetSchoolInfoDetail(const int school_id);
+
+  /**
+   * @fn
+   * GetSchoolInfos
+   * @brief Get all SmsSchoolInfo in database
+   * @param out_schools receive list SmsSchoolInfo
+   * @return list SmsSchoolInfo
+   */
+  void GetSchoolInfos(std::vector<SmsSchoolInfo>& out_schools);
+
+  /**
+   * @fn
+   * UpdateSchool
+   * @brief update a SmsSchoolInfo in database
+   * @param info SmsSchoolInfo to update
+   */
+  void UpdateSchool(SmsSchoolInfo& school_info);
+
+  /**
+   * @fn
+   * DeleteSchool
+   * @brief Delete a row in database of school
+   * @param info SmsSchoolInfo to delete
+   * @param delete_dir delete directory - true : otherwise - false
+   */
+  void DeleteSchool(SmsSchoolInfo& school_info, bool delete_dir);
+
+  /**
+   * @fn
+   * BeginTransaction
+   * @brief begin transaction
+   */
+  void BeginTransaction() override;
+
+  /**
+   * @fn
+   * Commit
+   * @brief commit transaction
+   */
+  void Commit() override;
+
+  /**
+   * @fn
+   * Rollback
+   * @brief rollback transaction
+   */
+  void Rollback() override;
+
+  /**
+   * @fn
+   * UpdateDatabaseStructure
+   * @brief update database structure
+   */
+  void UpdateDatabaseStructure() override;
+
  private:
   /**
    * @fn
@@ -87,6 +168,22 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    * @brief initialize database
    */
   void InitializeDatabase();
+
+  /**
+   * @fn
+   * GetDataFolder
+   * @brief get DataFolder of School with id
+   * @param school_id
+   */
+  std::wstring GetDataFolder(int school_id);
+
+  /**
+   * @fn
+   * DeleteSchoolInfo
+   * @brief Delete a row in database of school
+   * @param info SmsSchoolInfo to delete
+   */
+  void DeleteSchoolInfo(SmsSchoolInfo& info);
 
   std::wstring parent_folder_;
   std::wstring working_folder_;
