@@ -1,0 +1,14 @@
+{
+  "name": "sms-db-manager",
+  "version": "1.0.0",
+  "description": "\"student database manager\"",
+  "main": "index.js",
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "build32": "node-gyp rebuild --arch=ia32",
+    "dbg-build": "node-gyp rebuild --debug",
+    "test": "npm install ./tests/sms-db-manager-test && node test.js"
+  },
+  "author": "DuongMX",
+  "license": "ISC"
+}
