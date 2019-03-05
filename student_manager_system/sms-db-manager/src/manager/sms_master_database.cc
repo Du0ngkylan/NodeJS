@@ -394,7 +394,7 @@ SmsSchoolInfo SmsMasterDatabase::GetSchoolInfoDetail(const int school_id) {
       try {
         if (fs::exists(w_data_folder)) {
           SmsSchoolDatabase db(w_data_folder, working_folder_);
-          //info = db.GetSchoolInfo();
+          info = db.GetSchoolInfo(school_id);
         }
       } catch (SmsDatabaseException) {
         // skip the exception, because create error response by command side
@@ -454,7 +454,7 @@ void SmsMasterDatabase::GetSchoolInfos(
         // }
         if (IsAccessiblePath(w_data_folder)) {
           SmsSchoolDatabase db(w_data_folder, working_folder_);
-          //info = db.GetSchoolInfo();
+          info = db.GetSchoolInfo(school_id);
         }
       } catch (SmsDatabaseException) {
         // skip the exception, because create error response by command side
@@ -466,7 +466,6 @@ void SmsMasterDatabase::GetSchoolInfos(
       info.SetSchoolId(school_id);
       info.SetDataFolder(w_data_folder);
       info.SetDisplayNumber(display_number);
-
       out_schools.push_back(info);
     }
     statement.Reset();

@@ -15,7 +15,15 @@ namespace model {
    * SmsSchoolInfo
    * @brief constructor
    */
-  SmsSchoolInfo::SmsSchoolInfo() {}
+  SmsSchoolInfo::SmsSchoolInfo():
+    internal_school_id_(0),
+    data_folder_(L""),
+    display_number_(0),
+    school_name_(""),
+    school_year_(0),
+    school_number_(""),
+    class_total_count_(0),
+    address_("")  {}
 
   /**
    * @fn
@@ -146,9 +154,9 @@ namespace model {
    * @fn
    * GetSchoolNumber
    * @brief get string value
-   * @return int
+   * @return string
    */
-  int SmsSchoolInfo::GetSchoolNumber() const noexcept {return school_number_;}
+  std::string SmsSchoolInfo::GetSchoolNumber() const noexcept {return school_number_;}
 
   /**
    * @fn
@@ -156,7 +164,7 @@ namespace model {
    * @brief Set Setting Data Type
    * @param school_number
    */
-  void SmsSchoolInfo::SetSchoolNumber(int school_number) {
+  void SmsSchoolInfo::SetSchoolNumber(std::string school_number) {
     school_number_ = school_number;
   }
 
@@ -178,6 +186,26 @@ namespace model {
    */
   void SmsSchoolInfo::SetClassTotalCount(int class_total_count) {
     class_total_count_ = class_total_count;
+  }
+
+  /**
+  * @fn
+  * GetAddress
+  * @brief get string value
+  * @return string
+  */
+  std::string SmsSchoolInfo::GetAddress() const noexcept {
+    return address_;
+  }
+
+  /**
+  * @fn
+  * SetAdress
+  * @brief Set Setting Data Type
+  * @param address
+  */
+  void SmsSchoolInfo::SetAdress(std::string address) {
+    address_ = address;
   }
 
 }  // namespace model

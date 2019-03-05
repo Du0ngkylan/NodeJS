@@ -129,13 +129,13 @@ class SmsSchoolInfo {
    */
   void SetSchoolYear(int school_year);
 
-    /**
+  /**
    * @fn
    * GetSchoolNumber
    * @brief get string value
-   * @return int
+   * @return string
    */
-  int GetSchoolNumber() const noexcept;
+  std::string GetSchoolNumber() const noexcept;
 
   /**
    * @fn
@@ -143,7 +143,7 @@ class SmsSchoolInfo {
    * @brief Set Setting Data Type
    * @param school_number
    */
-  void SetSchoolNumber(int school_number);
+  void SetSchoolNumber(std::string school_number);
 
     /**
    * @fn
@@ -161,14 +161,31 @@ class SmsSchoolInfo {
    */
   void SetClassTotalCount(int class_total_count);
 
+  /**
+  * @fn
+  * GetAddress
+  * @brief get string value
+  * @return string
+  */
+  std::string GetAddress() const noexcept;
+
+  /**
+  * @fn
+  * SetAdress
+  * @brief Set Setting Data Type
+  * @param address
+  */
+  void SetAdress(std::string address);
+
  private:
   int internal_school_id_;
   std::wstring data_folder_;
   int display_number_;
   std::string school_name_;
   int school_year_;
-  int school_number_;
+  std::string school_number_;
   int class_total_count_;
+  std::string address_;
 };
 
 }  // namespace model

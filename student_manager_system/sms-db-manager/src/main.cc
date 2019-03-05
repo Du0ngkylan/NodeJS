@@ -654,13 +654,24 @@ int main(int argc, char* argv[]) {
     std::wstring data_dir = L"D:\\Test";
 
     manager::SmsMasterDatabase db(data_dir, work_dir);
+    auto schoolDB = db.GetSchoolDatabase(1);
+
     SmsSchoolInfo info;
     info.SetSchoolId(1);
-    info.SetDataFolder(L"abc");
+    info.SetDataFolder(L"D:\\Test\\school1");
     info.SetDisplayNumber(1);
+    info.SetSchoolName("BachKhoa");
+    info.SetSchoolYear(1950);
+    info.SetSchoolNumber("BKAV");
+    info.SetClassTotalCount(12);
+    info.SetAdress("hanoi");
+
     
-    db.CreateSchool(info, true);
-    std::cout << "xxxx" << std::endl;
+    //db.CreateSchool(info, false);
+    //auto abc = db.GetSchoolInfoDetail(1);
+    //std::vector<SmsSchoolInfo> out_vector;
+    //db.GetSchoolInfos(out_vector);
+    std::cout << "create school info" << std::endl;
 
     // GoyoDatabase db("dummyDB.db", GoyoOpenMode::READ_WRITE);
     // GoyoDatabase mem_db(":memory:", GoyoOpenMode::READ_WRITE);

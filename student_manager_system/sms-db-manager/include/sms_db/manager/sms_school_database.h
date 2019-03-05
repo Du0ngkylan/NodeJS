@@ -81,8 +81,9 @@ class SmsSchoolDatabase : public db_manager::manager::SmsBaseDatabase {
    * @fn
    * GetSchoolInfo
    * @brief get school info
+   * @param school_id
    */
-  db_manager::model::SmsSchoolInfo GetSchoolInfo();
+  db_manager::model::SmsSchoolInfo GetSchoolInfo(const int school_id);
 
   /**
    * @fn

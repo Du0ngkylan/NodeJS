@@ -154,13 +154,14 @@ int SmsSchoolDatabase::CreateSchoolInfo(SmsSchoolInfo &info) {
   try {
     this->BeginTransaction();
     SmsStatement statement(this->GetSchoolDB(),
-        u8"INSERT INTO schoolDetail (internalSchoolId, schoolName, "
-        u8"schoolYear, schoolNumber, classTotalCount) VALUES (?,?,?,?,?);");
+        u8"INSERT INTO schoolDetail (internalSchoolId, schoolName, schoolYear, "
+        u8"schoolNumber, classTotalCount, address) VALUES (?,?,?,?,?,?);");
     statement.Bind(1, info.GetSchoolId());
     statement.Bind(2, info.GetSchoolName());
     statement.Bind(3, info.GetSchoolYear());
     statement.Bind(4, info.GetSchoolNumber());
     statement.Bind(5, info.GetClassTotalCount());
+    statement.Bind(6, info.GetAddress());
     statement.Execute();
     statement.Reset();
     this->Commit();
@@ -173,6 +174,38 @@ int SmsSchoolDatabase::CreateSchoolInfo(SmsSchoolInfo &info) {
   }
 }
 
+/**
+* @fn
+* GetSchoolInfo
+* @brief get school info
+* @param school_id
+*/
+SmsSchoolInfo SmsSchoolDatabase::GetSchoolInfo(const int school_id) {
+    try {
+    SmsSchoolInfo school_info;
+    SmsStatement statement(
+        this->GetSchoolDB(),
+        u8"SELECT internalSchoolId, schoolName, schoolYear, "
+        u8"schoolNumber, classTotalCount, address "
+        u8"FROM schoolDetail WHERE  internalSchoolId = ? ;");
+
+    statement.Bind(1, school_id);
+    if (statement.ExecuteStep()) {
+      //school_info.SetSchoolId(school_id);
+      school_info.SetSchoolName(statement.GetColumn(1).GetString());
+      school_info.SetSchoolYear(statement.GetColumn(2).GetInt());
+      school_info.SetSchoolNumber(statement.GetColumn(3).GetString());
+      school_info.SetClassTotalCount(statement.GetColumn(4).GetInt());
+      school_info.SetAdress(statement.GetColumn(5).GetString());
+    }
+    statement.Reset();
+    return school_info;
+  } catch (SmsDatabaseException& ex) {
+    throw ex;
+  } catch (exception &ex) {
+    throw SmsDatabaseException(ex.what());
+  }
+}
 
 }  // namespace manager
 }  // namespace db_manager
