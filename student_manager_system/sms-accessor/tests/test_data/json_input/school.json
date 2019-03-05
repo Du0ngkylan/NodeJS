@@ -1,0 +1,83 @@
+{
+  "constructions": {
+    "addresses": [{
+      "address": "沖縄県那覇市",
+      "addressCode": "47201"
+    }, {
+      "address": "北海道札幌市中央区",
+      "addressCode": "01101"
+    }],
+    "businessCodes": ["0111000", "0211000"],
+    "businessKeywords": ["1m深地温探査", "50年確率波"],
+    "constructionContents": "業務概要＿平成28年3月の要領に準拠｜土木設計業務等の電子納品要領｜国土交通省",
+    "constructionId": 1,
+    "constructionMethodForms": [],
+    "constructionName": "業務名称＿平成28年3月の要領に準拠｜土木設計業務等の電子納品要領｜国土交通省",
+    "constructionNumber": "1",
+    "constructionSystemNumber": "1",
+    "constructionSystemVersionNumber": "1",
+    "contractee": {
+      "contracteeCode": "1",
+      "contracteeName": "発注者機関事務所名＿平成28年3月の要領に準拠｜土木設計業務等の電子納品要領｜国土交通省"
+    },
+    "contractor": {
+      "contractorCode": "1",
+      "contractorName": "受注者名＿平成28年3月の要領に準拠｜土木設計業務等の電子納品要領｜国土交通省"
+    },
+    "createDate": "20180427",
+    "dataFolder": "D:\\GBA\\kuraemon_goyotachi\\branches\\20180701_new_backend\\Test\\goyo-bookrack-accessor\\tests\\unit_test\\AppData\\construction1",
+    "dataFolderSize": "156926",
+    "displayNumber": 6,
+    "eastLongitude": "1",
+    "endDate": "20180428",
+    "facilityNames": ["施設名称＿平成28年3月の要領に準拠｜土木設計業務等の電子納品要領｜国土交通省"],
+    "geodetic": "02",
+    "guId": "5A485AB448E74662A43D720CEFFD1AEB",
+    "isExternalFolder": false,
+    "isSharedFolder" : false,
+    "knack": {
+      "knackId": 511,
+      "knackName": "国交省 設計 H28.3",
+      "knackType": 1
+    },
+    "mainBusinessContents": "1",
+    "northLatitude": "2",
+    "sourthLatitude": "3",
+    "startDate": "20180427",
+    "waterRouteInformations": [{
+      "distanceMeters": [{
+        "distanceMeterSection": "測点",
+        "pStationEndM": 4,
+        "pStationEndN": 3,
+        "pStationStartM": 2,
+        "pStationStartN": 1
+      }],
+      "lineCodes": ["00", "01"],
+      "riverCodes": ["1", "2"],
+      "routeSection": "0",
+      "waterRouteCode": "12000",
+      "waterRouteName": "対象水系路線名＿平成28年3月の要領に準拠｜土木設計業務等の電子納品要領｜国土交通省"
+    }, {
+      "distanceMeters": [{
+        "distanceMeterSection": "測点",
+        "pStationEndM": 3,
+        "pStationEndN": 2,
+        "pStationStartM": 1,
+        "pStationStartN": 0
+      }, {
+        "distanceMeterSection": "距離標",
+        "pDistanceEndM": 3,
+        "pDistanceEndN": 2,
+        "pDistanceStartM": 1,
+        "pDistanceStartN": 0
+      }],
+      "lineCodes": ["00", "01"],
+      "riverCodes": ["0123", "01234"],
+      "routeSection": "0",
+      "waterRouteCode": "11000",
+      "waterRouteName": "対象水系路線名＿平成28年3月の要領に準拠｜土木設計業務等の電子納品要領｜国土交通省"
+    }],
+    "westLongitude": "0",
+    "year": 2018
+  }
+}
