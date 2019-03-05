@@ -5,8 +5,8 @@
  * @date 2018/11/30
  */
 
-#ifndef SMS_ACCESSOR_INCLUDE_EXCEPT_Sms_EXCEPTION_H_
-#define SMS_ACCESSOR_INCLUDE_EXCEPT_Sms_EXCEPTION_H_
+#ifndef SMS_ACCESSOR_INCLUDE_EXCEPT_SMS_EXCEPTION_H_
+#define SMS_ACCESSOR_INCLUDE_EXCEPT_SMS_EXCEPTION_H_
 
 #include <exception>
 #include <string>
@@ -118,4 +118,4 @@ class SmsException : public std::exception {
 
 }  // namespace sms_accessor
 
-#endif  // SMS_ACCESSOR_INCLUDE_EXCEPT_Sms_EXCEPTION_H_
+#endif  // SMS_ACCESSOR_INCLUDE_EXCEPT_SMS_EXCEPTION_H_
