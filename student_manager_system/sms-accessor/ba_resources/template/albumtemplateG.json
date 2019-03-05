@@ -1,0 +1,490 @@
+{
+  "albumTemplateid": 1,
+  "albumTemplateType": "standard",
+  "revision": 1,
+  "albumName": "AlbumTemplate01",
+  "paperType": "A3",
+  "defaultMargins": {
+    "top": 0,
+    "right": 0,
+    "bottom": 0,
+    "left": 0
+  },
+  "fontfamily": "",
+  "matchKokubanTypes": [],
+  "leftPageBlockCount": 3,
+  "rightPageBlockCount": 3,
+  "goyoAlbumAreaLeft": {
+    "x": 33.06691766828635,
+    "y": 28.50627137970332,
+    "width": 4973.172756076449,
+    "height": 9945.838084378564
+  },
+  "goyoAlbumAreaRight": {
+    "x": 5032.0590563500045,
+    "y": 28.50627137970332,
+    "width": 4973.172756076449,
+    "height": 9945.838084378564
+  },
+  "legacyHeaderFooterArea": {
+    "headerLeftPage": {
+      "rect": {
+        "x": 302.3583954847813,
+        "y": 171.0376282782212,
+        "width": 4434.589800443459,
+        "height": 370.58152793614596
+      },
+      "fontsize": 31.19887950152183
+    },
+    "footerLeftPage": {
+      "rect": {
+        "x": 302.3583954847813,
+        "y": 9461.231470923603,
+        "width": 4434.589800443459,
+        "height": 370.58152793614596
+      },
+      "fontsize": 31.19887950152183
+    },
+    "headerRightPage": {
+      "rect": {
+        "x": 5301.350534166499,
+        "y": 171.0376282782212,
+        "width": 4434.589800443459,
+        "height": 370.58152793614596
+      },
+      "fontsize": 31.19887950152183
+    },
+    "footerRightPage": {
+      "rect": {
+        "x": 5301.350534166499,
+        "y": 9461.231470923603,
+        "width": 4434.589800443459,
+        "height": 370.58152793614596
+      },
+      "fontsize": 31.19887950152183
+    }
+  },
+  "elements": [],
+  "blocks": [
+    {
+      "elements": [
+        {
+          "frameType": "image",
+          "rect": {
+            "x": 503.93065914130216,
+            "y": 598.6316989737742,
+            "width": 2701.0683329973795,
+            "height": 2870.581527936146
+          },
+          "image": 0,
+          "scaleType": "infit",
+          "verticalAlign": "middle",
+          "horizontalAlign": "center",
+          "actualAspect": 1.3306337252381542
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 598.6316989737742,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "",
+          "realHeight": 85.25627137970353,
+          "key": "comment",
+          "condition": "DISPLAY_T"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 598.6316989737742,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photoinfotext}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_X"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 598.6316989737742,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photofilename}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_F"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "frameType": "image",
+          "rect": {
+            "x": 503.93065914130216,
+            "y": 3586.0889395667045,
+            "width": 2701.0683329973795,
+            "height": 2870.581527936146
+          },
+          "image": 0,
+          "scaleType": "infit",
+          "verticalAlign": "middle",
+          "horizontalAlign": "center",
+          "actualAspect": 1.3306337252381542
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 3586.0889395667045,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "",
+          "realHeight": 85.25627137970353,
+          "key": "comment",
+          "condition": "DISPLAY_T"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 3586.0889395667045,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photoinfotext}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_X"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 3586.0889395667045,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photofilename}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_F"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "frameType": "image",
+          "rect": {
+            "x": 503.93065914130216,
+            "y": 6570.695553021665,
+            "width": 2701.0683329973795,
+            "height": 2870.581527936146
+          },
+          "image": 0,
+          "scaleType": "infit",
+          "verticalAlign": "middle",
+          "horizontalAlign": "center",
+          "actualAspect": 1.3306337252381542
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 6570.695553021665,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "",
+          "realHeight": 85.25627137970353,
+          "key": "comment",
+          "condition": "DISPLAY_T"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 6570.695553021665,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photoinfotext}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_X"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 3287.643620237855,
+            "y": 6570.695553021665,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photofilename}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_F"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "frameType": "image",
+          "rect": {
+            "x": 6885.708526506753,
+            "y": 598.6316989737742,
+            "width": 2701.0683329973795,
+            "height": 2870.581527936146
+          },
+          "image": 0,
+          "scaleType": "infit",
+          "verticalAlign": "middle",
+          "horizontalAlign": "center",
+          "actualAspect": 1.3306337252381542
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 598.6316989737742,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "",
+          "realHeight": 85.25627137970353,
+          "key": "comment",
+          "condition": "DISPLAY_T"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 598.6316989737742,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photoinfotext}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_X"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 598.6316989737742,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photofilename}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_F"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "frameType": "image",
+          "rect": {
+            "x": 6885.708526506753,
+            "y": 3586.0889395667045,
+            "width": 2701.0683329973795,
+            "height": 2870.581527936146
+          },
+          "image": 0,
+          "scaleType": "infit",
+          "verticalAlign": "middle",
+          "horizontalAlign": "center",
+          "actualAspect": 1.3306337252381542
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 3586.0889395667045,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "",
+          "realHeight": 85.25627137970353,
+          "key": "comment",
+          "condition": "DISPLAY_T"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 3586.0889395667045,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photoinfotext}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_X"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 3586.0889395667045,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photofilename}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_F"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "frameType": "image",
+          "rect": {
+            "x": 6885.708526506753,
+            "y": 6570.695553021665,
+            "width": 2701.0683329973795,
+            "height": 2870.581527936146
+          },
+          "image": 0,
+          "scaleType": "infit",
+          "verticalAlign": "middle",
+          "horizontalAlign": "center",
+          "actualAspect": 1.3306337252381542
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 6570.695553021665,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "",
+          "realHeight": 85.25627137970353,
+          "key": "comment",
+          "condition": "DISPLAY_T"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 6570.695553021665,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photoinfotext}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_X"
+        },
+        {
+          "frameType": "text",
+          "rect": {
+            "x": 5502.92279782302,
+            "y": 6570.695553021665,
+            "width": 1300.1411005845596,
+            "height": 2870.581527936146
+          },
+          "verticalAlign": "top",
+          "horizontalAlign": "left",
+          "fontsize": 0,
+          "multiline": true,
+          "ruleline": true,
+          "textFormat": "{{goyo.photofilename}}",
+          "realHeight": 85.25627137970353,
+          "condition": "DISPLAY_F"
+        }
+      ]
+    }
+  ]
+}
