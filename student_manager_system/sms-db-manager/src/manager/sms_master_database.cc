@@ -198,7 +198,7 @@ std::wstring SmsMasterDatabase::GetDataFolder(int school_id) {
  * @brief get master db
  * @return db instance
  */
-SmsDatabase SmsMasterDatabase::GetMasterDB() {
+SmsDatabase &SmsMasterDatabase::GetMasterDB() {
   return internal_db_;
 }
 
@@ -265,7 +265,7 @@ SmsSchoolDatabase SmsMasterDatabase::GetSchoolDatabase(const int school_id) {
     if (info.GetSchoolId() == -1 || !fs::exists(info.GetDataFolder())) {
       throw SmsDatabaseException("not found school");
     }
-    SmsSchoolDatabase db(info.GetDataFolder(), working_folder_, &info);
+    SmsSchoolDatabase db(info.GetDataFolder(), working_folder_);
     return db;
   } catch (SmsDatabaseException& ex) {
     throw ex;
@@ -382,7 +382,7 @@ SmsSchoolInfo SmsMasterDatabase::GetSchoolInfoDetail(const int school_id) {
   try {
     SmsSchoolInfo info;
     info.SetSchoolId(0);
-    SmsStatement statement(this->GetMasterDb(),
+    SmsStatement statement(this->GetMasterDB(),
         u8"SELECT dataFolder, displayNumber "
         u8"FROM schools WHERE schoolId = ?;");
     statement.Bind(1, school_id);
@@ -394,7 +394,7 @@ SmsSchoolInfo SmsMasterDatabase::GetSchoolInfoDetail(const int school_id) {
       try {
         if (fs::exists(w_data_folder)) {
           SmsSchoolDatabase db(w_data_folder, working_folder_);
-          info = db.GetSchoolInfo();
+          //info = db.GetSchoolInfo();
         }
       } catch (SmsDatabaseException) {
         // skip the exception, because create error response by command side
@@ -454,7 +454,7 @@ void SmsMasterDatabase::GetSchoolInfos(
         // }
         if (IsAccessiblePath(w_data_folder)) {
           SmsSchoolDatabase db(w_data_folder, working_folder_);
-          info = db.GetSchoolInfo();
+          //info = db.GetSchoolInfo();
         }
       } catch (SmsDatabaseException) {
         // skip the exception, because create error response by command side
@@ -486,17 +486,17 @@ void SmsMasterDatabase::GetSchoolInfos(
 void SmsMasterDatabase::UpdateSchool(SmsSchoolInfo& school_info) {
   auto dataFolder = GetDataFolder(school_info.GetSchoolId());
   if (dataFolder.empty()) {
-    CreateSchool(info);
+    CreateSchool(school_info);
   } else {
     const auto dataFolderUpdate = school_info.GetDataFolder();
     try {
       SmsStatement statement(
-          this->GetMasterDb(),
+          this->GetMasterDB(),
           u8"UPDATE schools SET dataFolder = ?, displayNumber = ? "
           u8"WHERE schoolId = ?; ");
-      statement.Bind(1, Utf16ToUtf8(info.GetDataFolder()));
-      statement.Bind(2, info.GetDisplayNumber());
-      statement.Bind(3, info.GetSchoolId());
+      statement.Bind(1, Utf16ToUtf8(school_info.GetDataFolder()));
+      statement.Bind(2, school_info.GetDisplayNumber());
+      statement.Bind(3, school_info.GetSchoolId());
       statement.Execute();
       statement.Reset();
 
@@ -530,8 +530,8 @@ void SmsMasterDatabase::UpdateSchool(SmsSchoolInfo& school_info) {
         }
         DeleteFolders(dataFolder, folders, done, total);
       }
-      SmsSchoolDatabase db(info.GetDataFolder(), working_folder_);
-      db.UpdateSchoolInfo(info);
+      SmsSchoolDatabase db(school_info.GetDataFolder(), working_folder_);
+      //db.UpdateSchoolInfo(school_info);
     } catch (SmsDatabaseException& ex) {
       auto pathUpdateRemove(dataFolderUpdate);
       if (fs::exists(pathUpdateRemove)) fs::remove_all(pathUpdateRemove);
@@ -572,7 +572,7 @@ void SmsMasterDatabase::DeleteSchool(SmsSchoolInfo& school_info,
     if (delete_dir) {
       fs::rename(data, dataDel);
       this->BeginTransaction();
-      this->DeleteConstructionInfo(info);
+      this->DeleteSchoolInfo(school_info);
       this->Commit();
       vector<fs::path> folders;
       wstring del_f = dataDel.wstring();
@@ -580,7 +580,7 @@ void SmsMasterDatabase::DeleteSchool(SmsSchoolInfo& school_info,
       DeleteFolders(del_f, folders, 0, folders.size());
     } else {
       this->BeginTransaction();
-      this->DeleteConstructionInfo(info);
+      this->DeleteSchoolInfo(school_info);
       this->Commit();
     }
   } catch (SmsDatabaseException& ex) {

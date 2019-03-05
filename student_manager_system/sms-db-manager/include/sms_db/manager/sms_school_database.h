@@ -59,7 +59,7 @@ class SmsSchoolDatabase : public db_manager::manager::SmsBaseDatabase {
    * @brief get school db
    * @return db instance
    */
-  SmsDatabase GetSchoolDB();
+  SmsDatabase &GetSchoolDB();
 
   /**
    * @fn
@@ -76,6 +76,21 @@ class SmsSchoolDatabase : public db_manager::manager::SmsBaseDatabase {
    * @param school_info school_info_
    */
   int CreateSchoolInfo(db_manager::model::SmsSchoolInfo &school_info);
+
+  /**
+   * @fn
+   * GetSchoolInfo
+   * @brief get school info
+   */
+  db_manager::model::SmsSchoolInfo GetSchoolInfo();
+
+  /**
+   * @fn
+   * UpdateSchoolInfo
+   * @brief update school info
+   * @param school_info school_info_
+   */
+  void UpdateSchoolInfo(db_manager::model::SmsSchoolInfo &school_info);
 
   /**
    * @fn

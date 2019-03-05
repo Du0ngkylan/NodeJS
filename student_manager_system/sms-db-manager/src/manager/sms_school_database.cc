@@ -85,7 +85,7 @@ SmsSchoolDatabase::~SmsSchoolDatabase() {}
  * @brief get school db
  * @return db instance
  */
-SmsDatabase SmsSchoolDatabase::GetSchoolDB() {
+SmsDatabase &SmsSchoolDatabase::GetSchoolDB() {
   return internal_db_;
 }
 

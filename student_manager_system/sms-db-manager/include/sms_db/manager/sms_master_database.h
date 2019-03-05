@@ -61,7 +61,7 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    * @brief get master db
    * @return db instance
    */
-  SmsDatabase GetMasterDB();
+  SmsDatabase &GetMasterDB();
 
   /**
    * @fn
@@ -96,7 +96,7 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    * @param school_id id of SmsSchoolInfo
    * @return SmsSchoolInfo object
    */
-  SmsSchoolInfo GetSchoolInfo(const int school_id);
+  db_manager::model::SmsSchoolInfo GetSchoolInfo(const int school_id);
 
   /**
    * @fn
@@ -105,7 +105,7 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    * @param school_id id of SmsSchoolInfo
    * @return SmsSchoolInfo object
    */
-  SmsSchoolInfo GetSchoolInfoDetail(const int school_id);
+  db_manager::model::SmsSchoolInfo GetSchoolInfoDetail(const int school_id);
 
   /**
    * @fn
@@ -114,7 +114,7 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    * @param out_schools receive list SmsSchoolInfo
    * @return list SmsSchoolInfo
    */
-  void GetSchoolInfos(std::vector<SmsSchoolInfo>& out_schools);
+  void GetSchoolInfos(std::vector<db_manager::model::SmsSchoolInfo>& out_schools);
 
   /**
    * @fn
@@ -122,7 +122,7 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    * @brief update a SmsSchoolInfo in database
    * @param info SmsSchoolInfo to update
    */
-  void UpdateSchool(SmsSchoolInfo& school_info);
+  void UpdateSchool(db_manager::model::SmsSchoolInfo& school_info);
 
   /**
    * @fn
@@ -131,7 +131,7 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    * @param info SmsSchoolInfo to delete
    * @param delete_dir delete directory - true : otherwise - false
    */
-  void DeleteSchool(SmsSchoolInfo& school_info, bool delete_dir);
+  void DeleteSchool(db_manager::model::SmsSchoolInfo& school_info, bool delete_dir);
 
   /**
    * @fn
@@ -183,7 +183,7 @@ class SmsMasterDatabase : public db_manager::manager::SmsBaseDatabase {
    * @brief Delete a row in database of school
    * @param info SmsSchoolInfo to delete
    */
-  void DeleteSchoolInfo(SmsSchoolInfo& info);
+  void DeleteSchoolInfo(db_manager::model::SmsSchoolInfo& info);
 
   std::wstring parent_folder_;
   std::wstring working_folder_;

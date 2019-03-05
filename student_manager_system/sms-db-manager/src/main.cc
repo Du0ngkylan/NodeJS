@@ -650,7 +650,7 @@ compiled (" << goyo_statement.GetColumnCount () << " columns in the result)\n";
 int main(int argc, char* argv[]) {
   // test memory db
   try {
-    std::wstring work_dir = L"D:\\Study\\Nodejs\\QLSV\\sms-db-manager";
+    std::wstring work_dir = L"D:\\Study\\Nodejs\\NodeJS\\student_manager_system\\sms-db-manager";
     std::wstring data_dir = L"D:\\Test";
 
     manager::SmsMasterDatabase db(data_dir, work_dir);
@@ -661,9 +661,6 @@ int main(int argc, char* argv[]) {
     
     db.CreateSchool(info, true);
     std::cout << "xxxx" << std::endl;
-    // manager::TrackDatabase track_db(data_dir, work_dir);
-    // auto info = track_db.GetTrackInfo(1);
-    // std::cout << info.GetTrackId() << std::endl;
 
     // GoyoDatabase db("dummyDB.db", GoyoOpenMode::READ_WRITE);
     // GoyoDatabase mem_db(":memory:", GoyoOpenMode::READ_WRITE);
