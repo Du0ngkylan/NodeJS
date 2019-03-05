@@ -1,39 +1,39 @@
 /**
- * @file copy_construction.h
- * @brief copy construction command header
- * @author duong.maixuan
- * @date 2018/07/26
+ * @file copy_school.h
+ * @brief copy school command header
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_COPY_CONSTRUCTION_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_COPY_CONSTRUCTION_H_
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_COPY_SCHOOL_H_
+#define SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_COPY_SCHOOL_H_
 
 #include "../../accessor_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 const std::wstring KOUJI = L"\\kouji.xml";
-const std::wstring CONSTRUCTION_DB = L"\\constructionDB.db";
+const std::wstring SCHOOL_DB = L"\\schoolDB.db";
 
 /**
- * @class GoyoCopyConstruction
+ * @class SmsCopyConstruction
  * @brief copy construction command
  */
-class GoyoCopyConstruction : public GoyoAccessorCommand {
+class SmsCopyConstruction : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoCopyConstruction
+   * SmsCopyConstruction
    * @brief constructor
    */
-  GoyoCopyConstruction();
+  SmsCopyConstruction();
 
   /**
    * @fn
-   * ~GoyoCopyConstruction
+   * ~SmsCopyConstruction
    * @brief destructor
    */
-  ~GoyoCopyConstruction();
+  ~SmsCopyConstruction();
 
   /**
    * @fn
@@ -100,6 +100,6 @@ class GoyoCopyConstruction : public GoyoAccessorCommand {
   std::string m_guid;
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_COPY_CONSTRUCTION_H_
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_COPY_SCHOOL_H_

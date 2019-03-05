@@ -1,36 +1,36 @@
 /**
- * @file delete_construction.h
- * @brief delete construction command header
- * @author le giap
- * @date 2018/07/25
+ * @file delete_school.h
+ * @brief delete school command header
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_DELETE_CONSTRUCTION_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_DELETE_CONSTRUCTION_H_
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_DELETE_SCHOOL_H_
+#define SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_DELETE_SCHOOL_H_
 
 #include "../../accessor_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoDeleteConstruction
+ * @class SmsDeleteSchool
  * @brief delete construction command
  */
-class GoyoDeleteConstruction : public GoyoAccessorCommand {
+class SmsDeleteSchool : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoDeleteConstruction
+   * SmsDeleteSchool
    * @brief constructor
    */
-  GoyoDeleteConstruction();
+  SmsDeleteSchool();
 
   /**
    * @fn
-   * ~GoyoDeleteConstruction
+   * ~SmsDeleteSchool
    * @brief destructor
    */
-  ~GoyoDeleteConstruction();
+  ~SmsDeleteSchool();
 
   /**
    * @fn
@@ -42,6 +42,6 @@ class GoyoDeleteConstruction : public GoyoAccessorCommand {
   json11::Json ExecuteCommand(json11::Json& request, std::string& raw);
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_DELETE_CONSTRUCTION_H_
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_DELETE_SCHOOL_H_

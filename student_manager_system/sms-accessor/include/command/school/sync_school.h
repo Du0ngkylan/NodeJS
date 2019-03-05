@@ -1,37 +1,37 @@
 /**
- * @file sync_construction.h
- * @brief sync construction command header
- * @author yonaha
- * @date 2018/11/09
+ * @file sync_school.h
+ * @brief sync school command header
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_SYNC_CONSTRUCTION_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_SYNC_CONSTRUCTION_H_
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_SYNC_SCHOOL_H_
+#define SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_SYNC_SCHOOL_H_
 
 #include "../../accessor_command.h"
-#include "goyo_db_if.h"
+#include "sms_db_if.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoSyncConstruction
+ * @class SmsSyncSchool
  * @brief get photo info tree command
  */
-class GoyoSyncConstruction : public GoyoAccessorCommand {
+class SmsSyncSchool : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoSyncConstruction
+   * SmsSyncSchool
    * @brief constructor
    */
-  GoyoSyncConstruction();
+  SmsSyncSchool();
 
   /**
    * @fn
-   * ~GoyoSyncConstruction
+   * ~SmsSyncSchool
    * @brief destructor
    */
-  ~GoyoSyncConstruction();
+  ~SmsSyncSchool();
 
   /**
    * @fn
@@ -44,6 +44,6 @@ class GoyoSyncConstruction : public GoyoAccessorCommand {
   json11::Json ExecuteCommand(json11::Json &request, std::string &raw);
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_SYNC_CONSTRUCTION_H_
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_SYNC_SCHOOL_H_

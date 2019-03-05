@@ -1,37 +1,37 @@
 /**
- * @file get_constructions.h
- * @brief get constructions command header
- * @author duong.maixuan
- * @date 2018/07/15
+ * @file get_schools.h
+ * @brief get schools command header
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_GET_CONSTRUCTIONS_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_GET_CONSTRUCTIONS_H_
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_GET_SCHOOLS_H_
+#define SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_GET_SCHOOLS_H_
 
 #include "../../accessor_command.h"
-#include "goyo_db_if.h"
+#include "sms_db_if.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoGetConstructions
+ * @class SmsGetSchools
  * @brief get constructions command
  */
-class GoyoGetConstructions : public GoyoAccessorCommand {
+class SmsGetSchools : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoGetConstructions
+   * SmsGetSchools
    * @brief constructor
    */
-  GoyoGetConstructions();
+  SmsGetSchools();
 
   /**
    * @fn
-   * ~GoyoGetConstructions
+   * ~SmsGetSchools
    * @brief destructor
    */
-  ~GoyoGetConstructions();
+  ~SmsGetSchools();
 
   /**
    * @fn
@@ -41,31 +41,6 @@ class GoyoGetConstructions : public GoyoAccessorCommand {
    * @param (raw) raw string
    */
   json11::Json ExecuteCommand(json11::Json &request, std::string &raw);
+}  // namespace sms_accessor
 
- private:
-  /**
-  * @fn
-  * CreateConstruction
-  * @param (info) goyo contruction info
-  * @param (db) contruction database
-  * @brief create construction
-  * @return construction object
-  */
-  json11::Json CreateConstruction(
-      goyo_db_manager::model::GoyoConstructionInfo &info,
-      goyo_db_manager::GoyoDatabase &db);
-
-  /**
-   * @fn
-   * CreateKnack
-   * @param (knack_info) knack info
-   * @brief create knack
-   * @return nack object
-   */
-  json11::Json CreateKnack(goyo_db_manager::model::GoyoKnackInfo &knack_info,
-    goyo_db_manager::GoyoDatabase &db);
-};
-
-}  // namespace goyo_bookrack_accessor
-
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_GET_CONSTRUCTIONS_H_
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_GET_SCHOOLS_H_

@@ -1,38 +1,37 @@
 /**
- * @file update_construction.h
- * @brief update construction order command header
- * @author Nguyen Toan
- * @date 2018/07/26
+ * @file update_school.h
+ * @brief update school order command header
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_UPDATE_CONSTRUCTION_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_UPDATE_CONSTRUCTION_H_
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_UPDATE_SCHOOL_H_
+#define SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_UPDATE_SCHOOL_H_
 
-#include <goyo_db/model/goyo_construction_info.h>
 #include "../../accessor_command.h"
-#include <goyo_db/manager/goyo_master_database.h>
+#include "sms_db_if.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoUpdateConstruction
+ * @class SmsUpdateSchool
  * @brief update construction order command
  */
-class GoyoUpdateConstruction : public GoyoAccessorCommand {
+class SmsUpdateSchool : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoUpdateConstruction
+   * SmsUpdateSchool
    * @brief constructor
    */
-  GoyoUpdateConstruction();
+  SmsUpdateSchool();
 
   /**
    * @fn
-   * ~GoyoUpdateConstruction
+   * ~SmsUpdateSchool
    * @brief destructor
    */
-  ~GoyoUpdateConstruction();
+  ~SmsUpdateSchool();
 
 	/**
    * @fn
@@ -51,8 +50,8 @@ class GoyoUpdateConstruction : public GoyoAccessorCommand {
    * @param info model of construction
    * @param construction json data input
    */
-	 int GoyoUpdateConstruction::CreateFileKouji(
-      goyo_db_manager::model::GoyoConstructionInfo &info,
+	 int SmsUpdateSchool::CreateFileKouji(
+      Sms_db_manager::model::SmsConstructionInfo &info,
       const json11::Json &construction);
 
   /**
@@ -62,7 +61,7 @@ class GoyoUpdateConstruction : public GoyoAccessorCommand {
    * @param info model of construction
    * @param construction json data input
    */
-	 void GetConstructionInfo(goyo_db_manager::model::GoyoConstructionInfo &info,
+	 void GetConstructionInfo(Sms_db_manager::model::SmsConstructionInfo &info,
                            const json11::Json &construction);
 
   /**
@@ -92,6 +91,6 @@ class GoyoUpdateConstruction : public GoyoAccessorCommand {
   std::map<std::wstring, std::string> m_key_contractor;
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_CONSTRUCTION_UPDATE_CONSTRUCTION_H_
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_UPDATE_SCHOOL_H_
