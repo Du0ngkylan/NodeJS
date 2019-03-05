@@ -1,35 +1,35 @@
 /**
- * @file delete_construction.cc
- * @brief delete construction command implementation
- * @author le giap
- * @date 2018/07/25
+ * @file delete_school.cc
+ * @brief delete school command implementation
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#include "command/construction/delete_construction.h"
+#include "command/school/delete_school.h"
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
-#include "goyo_db_if.h"
-#include "util/goyo_app_util.h"
+#include "sms_db_if.h"
+#include "util/sms_app_util.h"
 
 using namespace std;
 using namespace json11;
-using namespace goyo_db_manager;
+using namespace sms_db_manager;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
  * @fn
- * GoyoDeleteConstruction
+ * SmsDeleteSchool
  * @brief constructor
  */
-GoyoDeleteConstruction::GoyoDeleteConstruction() {}
+SmsDeleteSchool::SmsDeleteSchool() {}
 
 /**
  * @fn
- * ~GoyoDeleteConstruction
+ * ~SmsDeleteSchool
  * @brief destructor
  */
-GoyoDeleteConstruction::~GoyoDeleteConstruction() {}
+SmsDeleteSchool::~SmsDeleteSchool() {}
 
 /**
  * @fn
@@ -38,19 +38,19 @@ GoyoDeleteConstruction::~GoyoDeleteConstruction() {}
  * @param (request) request json
  * @param (raw) raw string
  */
-Json GoyoDeleteConstruction::ExecuteCommand(Json &request, string &raw) {
-  auto data_dir = this->GetGoyoAppDataDirectory();
+Json SmsDeleteSchool::ExecuteCommand(Json &request, string &raw) {
+  auto data_dir = this->GetSmsAppDataDirectory();
   if (!this->ExistsFile(data_dir)) {
-    auto message = L"not found GoyoAppDataDirectory " + data_dir;
-    GoyoErrorLog(message);
+    auto message = L"not found SmsAppDataDirectory " + data_dir;
+    SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorIOStr, message);
   }
-  auto j_construction_id = request["args"]["constructionId"];
+  auto j_school_id = request["args"]["schoolId"];
   auto j_delete_flag = request["args"]["deleteDirectory"];
   // validate arguments
-  if (j_construction_id.is_null() || !j_construction_id.is_number()) {
-    string message = "'args.constructionId' is not specified";
-    GoyoErrorLog(message);
+  if (j_school_id.is_null() || !j_school_id.is_number()) {
+    string message = "'args.schoolId' is not specified";
+    SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorInvalidCommandStr, message);
   }
 
@@ -60,23 +60,25 @@ Json GoyoDeleteConstruction::ExecuteCommand(Json &request, string &raw) {
   }
 
   // delete directory
-  auto construction_id = j_construction_id.int_value();
+  auto school_id = j_school_id.int_value();
   try {
-    auto work_dir = this->GetGoyoWorkDirectory();
-    manager::GoyoMasterDatabase master_db(data_dir, work_dir);
-    auto construction_info =  master_db.GetConstructionInfo(construction_id);
-    if (construction_info.GetConstructionId() == -1)
-      return this->CreateErrorResponse(request, kErrorIOStr, "not found construction");
-    master_db.DeleteConstruction(construction_info, delete_flag);
-  } catch (GoyoDatabaseException &ex) {
-    GoyoErrorLog(ex.What());
+    auto work_dir = this->GetSmsWorkDirectory();
+    manager::SmsMasterDatabase master_db(data_dir, work_dir);
+    auto school_info =  master_db.GetSchoolInfo(school_id);
+    if (school_info.GetSchoolId() == 0) {
+      return this->CreateErrorResponse(request,
+                                       kErrorIOStr, "not found school");
+    }
+    master_db.DeleteSchool(school_info, delete_flag);
+  } catch (SmsDatabaseException &ex) {
+    SmsErrorLog(ex.What());
     return this->CreateErrorResponse(request, kErrorIOStr, ex.What());
   } catch (std::exception) {
     return this->CreateErrorResponse(request, kErrorIOStr,
-                                     "failed to delete construction");
+                                     "failed to delete school");
   }
-  Json response = Json::object{{"constructionId", construction_id}};
+  Json response = Json::object{{"schoolId", school_id}};
   return Json::object{{"request", request}, {"response", response}};
 }
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor

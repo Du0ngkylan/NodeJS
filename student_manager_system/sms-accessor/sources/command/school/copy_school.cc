@@ -1,39 +1,39 @@
 /**
- * @file copy_construction.cc
- * @brief copy construction command implementation
- * @author duong.maixuan
- * @date 2018/07/26
+ * @file copy_school.cc
+ * @brief copy school command implementation
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#include "command/construction/copy_construction.h"
+#include "command/school/copy_school.h"
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
-#include "goyo_db_if.h"
-#include "util/goyo_app_util.h"
+#include "sms_db_if.h"
+#include "util/sms_app_util.h"
 
 using namespace std;
 using namespace json11;
-using namespace goyo_db_manager;
+using namespace sms_db_manager;
 
 namespace fs = boost::filesystem;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
  * @fn
- * GoyoCopyConstruction
+ * SmsCopyConstruction
  * @brief constructor
  */
-GoyoCopyConstruction::GoyoCopyConstruction() {
-  m_data_dir = this->GetGoyoAppDataDirectory();
+SmsCopyConstruction::SmsCopyConstruction() {
+  m_data_dir = this->GetSmsAppDataDirectory();
 }
 
 /**
  * @fn
- * ~GoyoCopyConstruction
+ * ~SmsCopyConstruction
  * @brief destructor
  */
-GoyoCopyConstruction::~GoyoCopyConstruction() {}
+SmsCopyConstruction::~SmsCopyConstruction() {}
 
 /**
  * @fn
@@ -42,10 +42,10 @@ GoyoCopyConstruction::~GoyoCopyConstruction() {}
  * @param (request) request json
  * @param (raw) raw string
  */
-Json GoyoCopyConstruction::ExecuteCommand(Json& request, string& raw) {
+Json SmsCopyConstruction::ExecuteCommand(Json& request, string& raw) {
   if (!this->ExistsFile(m_data_dir)) {
     wstring message = L"Not found " + m_data_dir;
-    GoyoErrorLog(message);
+    SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorIOStr, message);
   }
 
@@ -57,19 +57,19 @@ Json GoyoCopyConstruction::ExecuteCommand(Json& request, string& raw) {
   wstring new_data_folder = L"";
   wstring src_construction_dir = L"";
   wstring src_kouji_file = L"";
-  manager::GoyoConstructionDatabase dest_construction_db;
+  manager::SmsConstructionDatabase dest_construction_db;
   try {
     // arguments validation
     ArgurmentsValidation(request["args"], use_order_folder,
                          src_construction_id, display_number,
                          new_data_folder, use_external_folder, use_shared);
 
-    wstring work_dir = this->GetGoyoWorkDirectory();
-    manager::GoyoMasterDatabase master_db(m_data_dir, work_dir);
-    GoyoConstructionInfo info = master_db.GetConstructionInfoDetail(src_construction_id);
+    wstring work_dir = this->GetSmsWorkDirectory();
+    manager::SmsMasterDatabase master_db(m_data_dir, work_dir);
+    SmsConstructionInfo info = master_db.GetConstructionInfoDetail(src_construction_id);
     if (info.GetConstructionId() == 0) {
       string msg = "Not found constructionId : " + to_string(src_construction_id);
-      GoyoErrorLog(msg);
+      SmsErrorLog(msg);
       return this->CreateErrorResponse(request, kErrorIOStr, msg);
     }
     src_construction_dir = info.GetDataFolder();
@@ -91,7 +91,7 @@ Json GoyoCopyConstruction::ExecuteCommand(Json& request, string& raw) {
     wstring dest_dir =
         use_order_folder ? new_data_folder : dest_construction_dir;
 
-    manager::GoyoConstructionDatabase src_construction_db =
+    manager::SmsConstructionDatabase src_construction_db =
         master_db.GetConstructionDatabase(src_construction_id);
 
     info.SetDataFolder(dest_dir);
@@ -120,17 +120,17 @@ Json GoyoCopyConstruction::ExecuteCommand(Json& request, string& raw) {
     dest_construction_db = master_db.GetConstructionDatabase(new_construction_id);
 
     dest_construction_db.BeginTransaction();
-    model::GoyoConstructionPhotoInfo photo_info =
+    model::SmsConstructionPhotoInfo photo_info =
         src_construction_db.GetConstructionPhotoInfoTree();
     if (photo_info.GetItemId() != 0) {
       dest_construction_db.AddConstructionPhotoInfoTree(photo_info);
     }
 
-    model::GoyoConstructionSettings construction_settings =
+    model::SmsConstructionSettings construction_settings =
         src_construction_db.GetConstructionSettings();
     dest_construction_db.UpdateConstructionSettings(construction_settings);
 
-    model::GoyoPrintSettings print_settings =
+    model::SmsPrintSettings print_settings =
         src_construction_db.GetPrintSettings();
     dest_construction_db.UpdatePrintSettings(print_settings);
     dest_construction_db.Commit();
@@ -139,13 +139,13 @@ Json GoyoCopyConstruction::ExecuteCommand(Json& request, string& raw) {
     return Json::object{{"request", request}, {"response", response}};
   } catch (fs::filesystem_error& ex) {
     string msg = ex.what();
-    GoyoErrorLog(msg);
+    SmsErrorLog(msg);
     return this->CreateErrorResponse(request, kErrorIOStr, msg);
-  } catch (GoyoException& ex) {
-    GoyoErrorLog(ex.What());
+  } catch (SmsException& ex) {
+    SmsErrorLog(ex.What());
     return this->CreateErrorResponse(request, m_error_type, ex.What());
-  } catch (GoyoDatabaseException& ex) {
-    GoyoErrorLog(ex.What());
+  } catch (SmsDatabaseException& ex) {
+    SmsErrorLog(ex.What());
     dest_construction_db.Rollback();
     return this->CreateErrorResponse(request, kErrorInternalStr, ex.What());
   }
@@ -157,12 +157,12 @@ Json GoyoCopyConstruction::ExecuteCommand(Json& request, string& raw) {
  * @brief create new directory
  * @param path path name
  */
-void GoyoCopyConstruction::CreateNewDir(wstring path) {
+void SmsCopyConstruction::CreateNewDir(wstring path) {
   try {
     fs::create_directory(path);
   } catch (fs::filesystem_error& ex) {
     m_error_type = kErrorIOStr;
-    throw GoyoException(ex.what());
+    throw SmsException(ex.what());
   }
 }
 
@@ -174,28 +174,28 @@ void GoyoCopyConstruction::CreateNewDir(wstring path) {
  * @param src_kouji_file source kouji file
  * @param src_contruction_id source contruction id in integer
  */
-void GoyoCopyConstruction::DirectoriesValidation(wstring& src_construction_dir,
+void SmsCopyConstruction::DirectoriesValidation(wstring& src_construction_dir,
                        wstring& src_kouji_file, const int src_contruction_id) {
   if (src_construction_dir == L"") {
     m_error_type = kErrorInvalidCommandStr;
-    throw GoyoException(L"Not found constructionId : " + to_wstring(src_contruction_id));
+    throw SmsException(L"Not found constructionId : " + to_wstring(src_contruction_id));
   }
 
   if (!this->ExistsFile(src_construction_dir)) {
     m_error_type = kErrorIOStr;
-    throw GoyoException(L"Not found " + src_construction_dir);
+    throw SmsException(L"Not found " + src_construction_dir);
   }
 
   src_kouji_file = src_construction_dir + KOUJI;
   if (!this->ExistsFile(src_kouji_file)) {
     m_error_type = kErrorIOStr;
-    throw GoyoException(L"Not found " + src_kouji_file);
+    throw SmsException(L"Not found " + src_kouji_file);
   }
 
   wstring contruction_database_dir = src_construction_dir + CONSTRUCTION_DB;
   if (!this->ExistsFile(contruction_database_dir)) {
     m_error_type = kErrorIOStr;
-    throw GoyoException(L"Not found " + contruction_database_dir);
+    throw SmsException(L"Not found " + contruction_database_dir);
   }
 }
 
@@ -211,7 +211,7 @@ void GoyoCopyConstruction::DirectoriesValidation(wstring& src_construction_dir,
  * @param use_external_folder use external folder
  * @param use_shared use shared
  */
-void GoyoCopyConstruction::ArgurmentsValidation(
+void SmsCopyConstruction::ArgurmentsValidation(
                           const Json arguments,
                           bool& use_order_folder,
                           int& src_construction_id,
@@ -223,7 +223,7 @@ void GoyoCopyConstruction::ArgurmentsValidation(
   if (arguments["displayNumber"].is_null() ||
       !arguments["displayNumber"].is_number()) {
     m_error_type = kErrorInvalidCommandStr;
-    throw GoyoException("'args.displayNumber' is not specified");
+    throw SmsException("'args.displayNumber' is not specified");
   }
   display_number = arguments["displayNumber"].int_value();
 
@@ -235,7 +235,7 @@ void GoyoCopyConstruction::ArgurmentsValidation(
         this->Utf8ToUtf16(arguments["newDataFolder"].string_value());
     if (new_data_folder == m_data_dir) {
       m_error_type = kErrorInvalidCommandStr;
-      throw GoyoException("'args.newDataFolder' is not valid");
+      throw SmsException("'args.newDataFolder' is not valid");
     }
   }
   if (!arguments["useExternalFolder"].is_null() &&
@@ -252,7 +252,7 @@ void GoyoCopyConstruction::ArgurmentsValidation(
   if (arguments["srcConstructionId"].is_null() ||
       !arguments["srcConstructionId"].is_number()) {
     m_error_type = kErrorInvalidCommandStr;
-    throw GoyoException("'args.srcConstructionId' is not specified");
+    throw SmsException("'args.srcConstructionId' is not specified");
   }
   src_construction_id = arguments["srcConstructionId"].int_value();
 
@@ -260,14 +260,14 @@ void GoyoCopyConstruction::ArgurmentsValidation(
   if (construction["createDate"].is_null()
     || !construction["createDate"].is_string()) {
     m_error_type = kErrorInvalidCommandStr;
-    throw GoyoException("'args.construction.createDate' is not specified");
+    throw SmsException("'args.construction.createDate' is not specified");
   }
   m_create_date = construction["createDate"].string_value();
 
   if (construction["guId"].is_null()
     || !construction["guId"].is_string()) {
     m_error_type = kErrorInvalidCommandStr;
-    throw GoyoException("'args.construction.guId' is not specified");
+    throw SmsException("'args.construction.guId' is not specified");
   }
   m_guid = construction["guId"].string_value();
 }
@@ -279,9 +279,9 @@ void GoyoCopyConstruction::ArgurmentsValidation(
 * @param full_path
 * @return base path
 */
-wstring GoyoCopyConstruction::GetBasePathToFullPath(wstring full_path) {
+wstring SmsCopyConstruction::GetBasePathToFullPath(wstring full_path) {
   int base_path_endpoint = full_path.find_last_of(L"\\");
   wstring base_path = full_path.substr(0, base_path_endpoint);
   return base_path;
 }
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor

@@ -1,42 +1,39 @@
 /**
- * @file get_constructions.cc
- * @brief get constructions command implementation
+ * @file get_schools.cc
+ * @brief get schools command implementation
  * @author duong.maixuan
  * @date 2018/07/15
  */
 
-#include "command/construction/get_constructions.h"
+#include "command/school/get_schools.h"
 #include <windows.h>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include "util/goyo_app_util.h"
+#include "util/sms_app_util.h"
 
 using namespace std;
 using namespace json11;
-using namespace goyo_db_manager;
+using namespace sms_db_manager;
 
 namespace fs = boost::filesystem;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
-  const string NOT_FOUND_CDIR = "本棚（データフォルダ）が見つかりません！";
-  const string READ_ERROR = "工事情報の取得に失敗しました！";
-  const string UNKNOWN_KNACK = "要領不明";
 
 /**
  * @fn
- * GoyoGetConstructions
+ * SmsGetschools
  * @brief constructor
  */
-GoyoGetConstructions::GoyoGetConstructions() {}
+SmsGetSchools::SmsGetSchools() {}
 
 /**
  * @fn
- * ~GoyoGetConstructions
+ * ~SmsGetSchools
  * @brief destructor
  */
-GoyoGetConstructions::~GoyoGetConstructions() {}
+SmsGetSchools::~SmsGetSchools() {}
 
 /**
  * @fn
@@ -45,145 +42,67 @@ GoyoGetConstructions::~GoyoGetConstructions() {}
  * @param (request) request json 
  * @param (raw) raw string
  */
-Json GoyoGetConstructions::ExecuteCommand(Json &request,
-                                          string &raw) {
-  wstring data_dir = this->GetGoyoAppDataDirectory();
+Json SmsGetSchools::ExecuteCommand(Json &request,
+                                   string &raw) {
+  wstring data_dir = this->GetSmsAppDataDirectory();
   if (!this->ExistsFile(data_dir)) {
     wstring message = L"Not found " + data_dir;
-    GoyoErrorLog(message);
+    SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorIOStr, message);
   }
 
   try {
-    wstring work_dir = this->GetGoyoWorkDirectory();
-    manager::GoyoMasterDatabase master_database(data_dir, work_dir);
-    vector<model::GoyoConstructionInfo> out_constructions;
-    master_database.GetConstructionInfos(out_constructions);
-    GoyoDatabase db = master_database.GetMasterDb();
+    wstring work_dir = this->GetSmsWorkDirectory();
+    manager::SmsMasterDatabase master_db(data_dir, work_dir);
+    vector<model::SmsSchoolInfo> out_schools;
+    master_db.GetschoolInfos(out_schools);
 
-    Json::array constructions = Json::array();
-    for (auto &contruction : out_constructions) {
-      Json construction = this->CreateConstruction(contruction, db);
-      constructions.push_back(construction);
+    Json::array schools = Json::array();
+    for (auto &school_item : out_schools) {
+      Json school = this->CreateSchool(school_item);
+      schools.push_back(school);
     }
-    Json response = Json::object{ { "constructions", constructions }};
+    Json response = Json::object{ { "schools", schools }};
     return Json::object{{ "request", request }, { "response", response }};
-    } catch (GoyoDatabaseException &ex) {
-      GoyoErrorLog(ex.What());
+    } catch (SmsDatabaseException &ex) {
+      SmsErrorLog(ex.What());
       return this->CreateErrorResponse(request, kErrorIOStr, ex.What());
-    } catch (GoyoException &ex) {
-      GoyoErrorLog(ex.what());
+    } catch (SmsException &ex) {
+      SmsErrorLog(ex.what());
       return this->CreateErrorResponse(request, kErrorInternalStr, ex.what());
     }
 }
 
 /**
  * @fn
- * CreateConstruction
- * @param (info) bookrack id 
- * @param (db) display number
- * @brief create construction
- * @return construction object
+ * CreateSchool
+ * @param (info) school info 
+ * @brief create school
+ * @return school object
  */
-Json GoyoGetConstructions::CreateConstruction(
-  model::GoyoConstructionInfo &info, GoyoDatabase &db) {
+Json SmsGetSchools::CreateSchool(model::SmsSchoolInfo &info) {
   try {
-    // get knack
-    Json knack = this->CreateKnack(info.GetKnackInfo(), db);
-
-    // get contractor
-    model::GoyoContractorInfo contactor_info = info.GetContractorInfo();
-    Json::object contractor = Json::object{
-      { "contractorId", contactor_info.GetContractorId() },
-      { "contractorCode", contactor_info.GetContractorCode() },
-      { "contractorName", contactor_info.GetContractorName() },
-    };
-
-    // get contractee
-    model::GoyoContracteeInfo contactee_info = info.GetContracteeInfo();
-    Json::object contractee = Json::object{
-      { "contracteeId" , contactee_info.GetContracteeId() },
-      { "contracteeCode", contactee_info.GetContracteeCode() },
-      { "contracteeName", contactee_info.GetContracteeName() },
-      { "largeCategory", contactee_info.GetLargeCategory() },
-      { "middleCategory", contactee_info.GetMiddleCategory() },
-      { "smallCategory", contactee_info.GetSmallCategory() }
-    };
-
-    // Read data?
-    wstring data_dir = info.GetDataFolder();
-    string constructor_name = info.GetConstructionName();
-    if (this->ExistsFile(data_dir)) {
-      if (info.GetKnackInfo().GetKnackId() <= 0) {
-        constructor_name = READ_ERROR;
-      } // else success
-    } else {
-      constructor_name = NOT_FOUND_CDIR;
-    }
-    string d_type = GoyoAppUtil::GetDriveTypeString(data_dir);
-
-    Json::object construction = Json::object{
-      { "constructionId", info.GetConstructionId() },
+    Json::object school = Json::object{
+      { "schoolId", info.GetschoolId() },
       { "displayNumber", info.GetDisplayNumber() },
-      { "constructionNumber", info.GetConstructionNumber() },
-      { "constructionName", constructor_name },
-      { "startDate", info.GetStartDate() },
-      { "endDate", info.GetEndDate() },
+      { "schoolNumber", info.GetschoolNumber() },
+      { "schoolName", constructor_name },
       { "dataFolder", this->ConvertWstring(info.GetDataFolder()) },
-      { "driveType", d_type },
-      { "isExternalFolder", info.GetExternalFolder() },
-      { "isSharedFolder", info.GetSharedFolder() },
-      { "cloudStorage", info.GetCloudStrage() },
-      { "contractee", contractee },
-      { "contractor", contractor },
-      { "knack", knack },
-      { "isSample", info.IsSample() },
     };
 
     // case kuraemon-connect
-    auto year = info.GetConstructionYear();
+    auto year = info.GetSchoolYear();
     if (year) {
-      construction["year"] = info.GetConstructionYear();
+      school["year"] = info.GetSchoolYear();
     } else {
-      construction["year"] = "";
+      school["year"] = "";
     }
 
-    return construction;
-  } catch (GoyoException &ex) {
+    return school;
+  } catch (SmsException &ex) {
     throw ex;
   }
 }
 
-/**
- * @fn
- * CreateKnack
- * @param (knack_info) knack info
- * @brief create knack
- * @return nack object
- */
-Json GoyoGetConstructions::CreateKnack(
-  model::GoyoKnackInfo &knack_info, GoyoDatabase &db) {
-  try {
-    GoyoStatement statement(db,
-      u8"SELECT knackId, knackName, knackType from knack WHERE knackId = ?;");
-    statement.Bind(1, knack_info.GetKnackId());
-    string name = UNKNOWN_KNACK;
-    int knackType = 0;
-    if (statement.ExecuteStep()) {
-      GoyoColumn name_col = statement.GetColumn(1);
-      name = name_col.GetString();
-      GoyoColumn type_col = statement.GetColumn(2);
-      knackType = type_col.GetInt();
-    }
-    statement.Reset();
-    return Json::object{
-      { "knackId", knack_info.GetKnackId() },
-      { "knackName", name },
-      { "knackType", knackType },
-    };
-  } catch (GoyoDatabaseException &ex) {
-    throw ex;
-  }
-}
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor

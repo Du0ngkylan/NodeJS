@@ -1,30 +1,26 @@
-﻿/**
- * @file import_construction.cc
- * @brief import construction command implementation
- * @author Nguyen Toan
- * @date 2018/11/12
+/**
+ * @file import_school.cc
+ * @brief import school command implementation
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#include "command/construction/import_construction.h"
-#include "command/album/album_common.h"
-#include "util/goyo_app_util.h"
-#include <command/construction/get_construction_detail.h>
+#include "command/school/import_school.h"
+#include "util/Sms_app_util.h"
+#include <command/school/get_school_detail.h>
 #include <boost/date_time/local_time/custom_time_zone.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
-#include <command/album/add_album_frames.h>
-#include <command/album/update_album_frames.h>
-#include <command/album/get_album_frames.h>
+
 
 using namespace std;
 using namespace json11;
-using namespace goyo_db_manager;
+using namespace sms_db_manager;
 
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
 
-namespace goyo_bookrack_accessor {
-
+namespace sms_accessor {
 
 	/**
 	* @fn
@@ -34,7 +30,7 @@ namespace goyo_bookrack_accessor {
 	* @param j_settings
 	* @param key
 	*/
-	inline void CreateSettings(model::album::GoyoAlbumSettings &settings,
+	inline void CreateSettings(model::album::SmsAlbumSettings &settings,
 		const Json &j_settings, string &key) {
 		switch (j_settings.type()) {
 		case Json::Type::OBJECT: {
@@ -53,17 +49,17 @@ namespace goyo_bookrack_accessor {
 			break;
 		}
 		case Json::Type::NUMBER: {
-			model::GoyoValue vl(j_settings.int_value());
+			model::SmsValue vl(j_settings.int_value());
 			settings.PutValue(key, vl);
 			break;
 		}
 		case Json::Type::STRING: {
-			model::GoyoValue vl(j_settings.string_value());
+			model::SmsValue vl(j_settings.string_value());
 			settings.PutValue(key, vl);
 			break;
 		}
 		case Json::Type::BOOL: {
-			model::GoyoValue vl(j_settings.bool_value());
+			model::SmsValue vl(j_settings.bool_value());
 			settings.PutValue(key, vl);
 			break;
 		}
@@ -78,8 +74,8 @@ namespace goyo_bookrack_accessor {
 
 
 	inline void GetAlbumInBoockrackItemTree(
-		vector<GoyoBookrackItem> &bookrack_items,
-		vector<GoyoBookrackItem> &album_item) {
+		vector<SmsBookrackItem> &bookrack_items,
+		vector<SmsBookrackItem> &album_item) {
 		for (auto &bookrack_item : bookrack_items) {
 			if (bookrack_item.GetBookrackItemType() == 3) {
 				album_item.push_back(bookrack_item);
@@ -92,10 +88,10 @@ namespace goyo_bookrack_accessor {
 
 	/**
 	 * @fn
-	 * GoyoImportConstruction
+	 * SmsImportSchool
 	 * @brief constructor
 	 */
-	GoyoImportConstruction::GoyoImportConstruction() {
+	SmsImportSchool::SmsImportSchool() {
 		// InitKey
 		m_key_string[L"工事内容"] = "constructionContents";
 		m_key_string[L"業務概要"] = "constructionContents";
@@ -156,21 +152,21 @@ namespace goyo_bookrack_accessor {
 		m_key_string[L"主な業務の内容"] = "mainBusinessContents";
 	}
 
-	/**
-	 * @fn
-	 * ~GoyoImportConstruction
-	 * @brief destructor
-	 */
-	GoyoImportConstruction::~GoyoImportConstruction() {}
+/**
+ * @fn
+ * ~SmsImportSchool
+ * @brief destructor
+ */
+SmsImportSchool::~SmsImportSchool() {}
 
-	inline wstring GetNewDataFolderConstruction(wstring parent_data_dir) {
-		for (auto i = 1; i < 100000; ++i) {
-			auto new_construction_folder = L"construction" + std::to_wstring(i);
-			const auto parent = fs::wpath(parent_data_dir) / new_construction_folder;
-			if (!fs::exists(parent)) return new_construction_folder;
-		}
-		return {};
-	}
+inline wstring GetNewDataFolderConstruction(wstring parent_data_dir) {
+  for (auto i = 1; i < 100000; ++i) {
+    auto new_construction_folder = L"construction" + std::to_wstring(i);
+    const auto parent = fs::wpath(parent_data_dir) / new_construction_folder;
+    if (!fs::exists(parent)) return new_construction_folder;
+  }
+  return {};
+}
 
 
 
@@ -182,10 +178,10 @@ namespace goyo_bookrack_accessor {
 	 * @param raw raw string
 	 * @return result json
 	 */
-	Json GoyoImportConstruction::ExecuteCommand(Json &request, string &raw) {
-		auto data_dir = this->GetGoyoAppDataDirectory();
+	Json SmsImportSchool::ExecuteCommand(Json &request, string &raw) {
+		auto data_dir = this->GetSmsAppDataDirectory();
 		if (!ExistsFile(data_dir)) {
-			const auto message = L"not found GoyoAppDataDirectory" + data_dir;
+			const auto message = L"not found SmsAppDataDirectory" + data_dir;
 			return this->CreateErrorResponse(request, kErrorIOStr, message);
 		}
 		auto j_data_folder = request["args"]["dataFolder"];
@@ -219,8 +215,8 @@ namespace goyo_bookrack_accessor {
 			is_sample = request["args"]["isSample"].bool_value();
 		}
 
-		const auto work_dir = this->GetGoyoWorkDirectory();
-		manager::GoyoMasterDatabase master_db(data_dir, work_dir);
+		const auto work_dir = this->GetSmsWorkDirectory();
+		manager::SmsMasterDatabase master_db(data_dir, work_dir);
 		master_db.BeginTransaction();
 
 		try {
@@ -237,12 +233,12 @@ namespace goyo_bookrack_accessor {
 				return this->CreateErrorResponse(request, kErrorInvalidCommandStr, message);
 			}
 
-			manager::GoyoConstructionDatabase src_construction_db(src_data_folder, work_dir);
+			manager::SmsConstructionDatabase src_construction_db(src_data_folder, work_dir);
 			auto construction_id = 0;
 			try {
 				auto src_construction_info = src_construction_db.GetConstructionInfo();
 
-				GoyoStatement statement(master_db.GetMasterDb(),
+				SmsStatement statement(master_db.GetMasterDb(),
 					"select * from construction where construction.dataFolder = ?");
 				statement.Bind(1, ConvertWstring(src_data_folder));
 				if (statement.ExecuteStep()) {
@@ -257,9 +253,9 @@ namespace goyo_bookrack_accessor {
         src_construction_info.SetIsSample(is_sample);
 
 				const auto j_src_construction_info =
-					GoyoGetConstructionDetail::CreateConstruction(src_construction_info, master_db, false);
+					SmsGetConstructionDetail::CreateConstruction(src_construction_info, master_db, false);
 
-				GoyoConstructionInfo new_construction_info{};
+				SmsConstructionInfo new_construction_info{};
 				GetConstructionInfo(new_construction_info, j_src_construction_info);
 				construction_id = master_db.CreateConstruction(new_construction_info, true);
                 master_db.Commit();
@@ -273,11 +269,11 @@ namespace goyo_bookrack_accessor {
 			Json response = Json::object{ {"constructionId", construction_id} };
 			return Json::object{ {"request", request}, {"response", response} };
 		}
-		catch (GoyoDatabaseException &ex) {
+		catch (SmsDatabaseException &ex) {
 			master_db.Rollback();
 			return this->CreateErrorResponse(request, kErrorIOStr, ex.What());
 		}
-		catch (GoyoException &ex) {
+		catch (SmsException &ex) {
 			master_db.Rollback();
 			return this->CreateErrorResponse(request, kErrorInvalidCommandStr, ex.What());
 		}
@@ -295,7 +291,7 @@ namespace goyo_bookrack_accessor {
 	* @param j_ref_diagram_file
 	* @return relative path Reference Diagram
 	*/
-	std::wstring GoyoImportConstruction::CopyReferenceDiagramFile(
+	std::wstring SmsImportSchool::CopyReferenceDiagramFile(
 		const Json &j_ref_diagram_file, wstring &album_dir) {
 		auto ref_diagram_file = j_ref_diagram_file.string_value();
 
@@ -304,17 +300,17 @@ namespace goyo_bookrack_accessor {
 		fs::wpath from(w_ref_diagram_file);
 		auto album_files = fs::wpath(album_dir) / FILES;
 		auto file_name = from.filename().wstring();
-		file_name = GoyoAppUtil::GenerateUniqueFileNameInFolder(file_name,
+		file_name = SmsAppUtil::GenerateUniqueFileNameInFolder(file_name,
 			album_files.wstring());
 		const auto to(album_files / file_name);
 		copy_file(from, to);
 		return L"files\\" + file_name;
 	}
 
-	void GoyoImportConstruction::AddAlbumFrames(
+	void SmsImportSchool::AddAlbumFrames(
 		vector<Json> &album_frames_json,
-		manager::GoyoAlbumDatabase &album_db,
-		manager::GoyoAlbumItemDatabase &album_item_db) {
+		manager::SmsAlbumDatabase &album_db,
+		manager::SmsAlbumItemDatabase &album_item_db) {
 		for (auto &j_album_frame : album_frames_json) {
 			auto album = album_db.GetAlbum();
 			const auto album_id = album.GetAlbumId();
@@ -325,7 +321,7 @@ namespace goyo_bookrack_accessor {
 			auto photo_frame_id = album_db.GetMaxItemId("photoFrameId", "photoFrame");
 			auto text_frame_id = album_db.GetMaxItemId("textFrameId", "textFrame");
 			auto ref_diagram_id = album_db.GetMaxItemId("referenceDiagramId", "referenceDiagram");
-			GoyoAlbumFrame album_frame;
+			SmsAlbumFrame album_frame;
 			album_frame.SetRecordStatus(RecordStatus::ADDED);
 			album_frame.SetAlbumId(album_id);
 			album_frame.SetAlbumFrameId(++album_frame_id);
@@ -343,32 +339,32 @@ namespace goyo_bookrack_accessor {
 					j_ref_source_album_frame_id.int_value());
 			// Set PhotoFrames
 			auto j_array_photo_frames = GetArrayFJson(j_album_frame["photoFrames"]);
-			vector<GoyoPhotoFrame> photo_frames;
+			vector<SmsPhotoFrame> photo_frames;
 			auto photo_display_number = 0;
 
 			for (auto &j_photo_frame : j_array_photo_frames) {
 				auto j_photo_frame_id = j_photo_frame["photoFrameId"];
 				auto j_album_item_id = j_photo_frame["albumItemId"];
-				GoyoPhotoFrame photo_frame;
+				SmsPhotoFrame photo_frame;
 				photo_frame.SetRecordStatus(RecordStatus::ADDED);
 				photo_frame.SetAlbumFrameId(album_frame_id);
 				photo_frame.SetDisplayNumber(++photo_display_number);
 				photo_frame.SetPhotoFrameId(++photo_frame_id);
-				GoyoAlbumItem album_item;
+				SmsAlbumItem album_item;
 				album_item.SetRecordStatus(ADDED);
 				album_item_db.GetCurrentAlbumItemPath();
 				auto album_item_path = fs::wpath(album_dir).parent_path().parent_path()
 					/ "albumItems"
 					/ album_item_db.GetCurrentAlbumItemPath();
 				auto album_item_dir = album_item_path.wstring();
-				GoyoDebugLog(album_item_path.wstring());
+				SmsDebugLog(album_item_path.wstring());
 
-				GoyoAddAlbumFrames::InsertAlbumItem(j_photo_frame,
+				SmsAddAlbumFrames::InsertAlbumItem(j_photo_frame,
 					album_item_db,
 					album_item,
 					album_item_path.wstring());
 
-				GoyoUpdateAlbumFrames::SetUniqueAlbumAlias(
+				SmsUpdateAlbumFrames::SetUniqueAlbumAlias(
 					j_photo_frame, photo_frame, album_item.GetFileName(), album_db);
 				photo_frame.SetAlbumItemId(album_item.GetAlbumItemId());
 				photo_frames.push_back(photo_frame);
@@ -376,17 +372,17 @@ namespace goyo_bookrack_accessor {
 			album_frame.SetPhotoFrames(photo_frames);
 
 			// Set TextFrame
-			vector<GoyoTextFrame> text_frames;
+			vector<SmsTextFrame> text_frames;
 			auto &j_text_frames = j_album_frame["textFrames"];
 			for (auto &pair_text_frame : j_text_frames.object_items()) {
 				const auto key = pair_text_frame.first;
 				if (!j_text_frames[key].is_null()) {
 					auto value = pair_text_frame.second;
-					GoyoTextFrame text_frame;
+					SmsTextFrame text_frame;
 					text_frame.SetRecordStatus(ADDED);
 					text_frame.SetTextFrameId(++text_frame_id);
 					text_frame.SetAlbumFrameId(album_frame.GetAlbumFrameId());
-					GoyoAddAlbumFrames::GetContentTextFrame(value, text_frame);
+					SmsAddAlbumFrames::GetContentTextFrame(value, text_frame);
 					text_frames.push_back(text_frame);
 				}
 			}
@@ -400,7 +396,7 @@ namespace goyo_bookrack_accessor {
 				auto j_photo_info_key = j_construction_photo[PHOTO_INFO_KEY];
 				auto j_ref_key = j_construction_photo[REF_DIA_INFO_KEY];
 				if (!j_photo_info_key.is_null()) {
-					GoyoAddAlbumFrames::UpdateConstructionPhotoInfo(
+					SmsAddAlbumFrames::UpdateConstructionPhotoInfo(
 						album_dir,
 						album_frame,
 						j_construction_photo,
@@ -421,7 +417,7 @@ namespace goyo_bookrack_accessor {
 						}
 					}
 					auto ref_dia_path = BuildReferenceDiagramsPath(album_frame_id);
-					GoyoAddAlbumFrames::WriteAlbumFrameJsonFile(ref_dia_path, j_ref, REF_DIA_INFO_KEY);
+					SmsAddAlbumFrames::WriteAlbumFrameJsonFile(ref_dia_path, j_ref, REF_DIA_INFO_KEY);
 				}
 			}
 			album_db.UpdateAlbumFrame(album_frame);
@@ -440,12 +436,12 @@ namespace goyo_bookrack_accessor {
 	* @param album_id
 	* @param album_db
 	*/
-	void GoyoImportConstruction::CreateAlbum(const Json &j_album, int &album_id,
-		manager::GoyoAlbumDatabase &album_db) {
+	void SmsImportSchool::CreateAlbum(const Json &j_album, int &album_id,
+		manager::SmsAlbumDatabase &album_db) {
 		auto album_path = album_db.GetParentFolderDb();
 
 		try {
-			GoyoAlbum album;
+			SmsAlbum album;
 			SetAlbum(album, j_album, RecordStatus::ADDED);
 			album.SetAlbumFrameTotalCount(0);
 			auto template_folder =
@@ -457,7 +453,7 @@ namespace goyo_bookrack_accessor {
 				fs::wpath src_album_template = GetWStringFJson(j_album_template);
 				// copy source album template
 				if (!fs::exists(src_album_template) || src_album_template.empty())
-					throw GoyoException("folder album template invalid");
+					throw SmsException("folder album template invalid");
 				CopyAlbumTemplate(src_album_template, template_folder);
 			}
 			// copy source cover file
@@ -471,7 +467,7 @@ namespace goyo_bookrack_accessor {
 					src_covers.emplace_back(src);
 				}
 				else {
-					throw GoyoException(L"source file cover error: " + src);
+					throw SmsException(L"source file cover error: " + src);
 				}
 			}
 			CopyCoverFiles(src_covers, fs::wpath(album_path));
@@ -484,9 +480,9 @@ namespace goyo_bookrack_accessor {
 	}
 
 
-	void GoyoImportConstruction::GetContractee(const Json& j_contractee, GoyoContracteeInfo& contractee_info)
+	void SmsImportSchool::GetContractee(const Json& j_contractee, SmsContracteeInfo& contractee_info)
 	{
-		GoyoDebugLog("Get data contractee");
+		SmsDebugLog("Get data contractee");
 		auto& j_contractee_code = j_contractee["contracteeCode"];
 		auto contractee_code = j_contractee_code.string_value();
 		auto& j_contractee_name = j_contractee["contracteeName"];
@@ -506,21 +502,21 @@ namespace goyo_bookrack_accessor {
 		}
 		auto j_contractee_id = j_contractee["contracteeId"];
 		const auto contractee_id = j_contractee_id.int_value();
-		contractee_info = GoyoContracteeInfo(contractee_id, contractee_code,
+		contractee_info = SmsContracteeInfo(contractee_id, contractee_code,
 			contractee_name, large_category,
 			middle_category, small_category);
 	}
 
-	void GoyoImportConstruction::GetContractor(const Json& contractor_json, GoyoContractorInfo& contractor_info)
+	void SmsImportSchool::GetContractor(const Json& contractor_json, SmsContractorInfo& contractor_info)
 	{
-		GoyoDebugLog("Get data contractor");
+		SmsDebugLog("Get data contractor");
 		auto& j_contractor_code = contractor_json["contractorCode"];
 		auto contractor_code = GetStringFJson(j_contractor_code);
 		auto& j_contractor_name = contractor_json["contractorName"];
 		auto contractor_name = GetStringFJson(j_contractor_name);
 		auto& j_contractor_id = contractor_json["contractorId"];
 		const auto contractor_id = j_contractor_id.int_value();
-		contractor_info = GoyoContractorInfo(contractor_id,
+		contractor_info = SmsContractorInfo(contractor_id,
 			contractor_code,
 			contractor_name);
 	}
@@ -532,15 +528,15 @@ namespace goyo_bookrack_accessor {
 	* @param info model of construction
 	* @param construction json data input
 	*/
-	void GoyoImportConstruction::GetConstructionInfo(
-		model::GoyoConstructionInfo& info, const Json& construction) {
+	void SmsImportSchool::GetConstructionInfo(
+		model::SmsConstructionInfo& info, const Json& construction) {
 		try {
 			auto& construction_id_json = construction["constructionId"];
 			if (!construction_id_json.is_null()) {
 				info.SetConstructionId(GetIntFJson(construction_id_json));
 			}
 			else {
-				throw GoyoException("'args constructionId' is not specified");
+				throw SmsException("'args constructionId' is not specified");
 			}
             auto& is_sample_json = construction["isSample"];
             if (!is_sample_json.is_null()) {
@@ -549,14 +545,14 @@ namespace goyo_bookrack_accessor {
 			// knack
 			auto& knack_json = construction["knack"];
 			if (!knack_json.is_null()) {
-				GoyoDebugLog("Get data knack");
+				SmsDebugLog("Get data knack");
 				auto& j_knack_id = knack_json["knackId"];
 				const auto knack_id = GetIntFJson(j_knack_id);
 				auto& j_knack_name = knack_json["knackName"];
 				auto knack_name = j_knack_name.string_value();
 				auto& j_knack_type = knack_json["knackType"];
 				const auto knack_type = GetIntFJson(j_knack_type);
-				model::GoyoKnackInfo knack_info(knack_id, knack_name, knack_type);
+				model::SmsKnackInfo knack_info(knack_id, knack_name, knack_type);
 				info.SetKnackInfo(knack_info);
 			}
 			info.SetCloudStrage(0);
@@ -564,14 +560,14 @@ namespace goyo_bookrack_accessor {
 			// contractee
 			auto& j_contractee = construction["contractee"];
 			if (!j_contractee.is_null()) {
-				GoyoContracteeInfo contractee_info;
+				SmsContracteeInfo contractee_info;
 				GetContractee(j_contractee, contractee_info);
 				info.SetContracteeInfo(contractee_info);
 			}
 			// contractor
 			auto& contractor_json = construction["contractor"];
 			if (!contractor_json.is_null()) {
-				GoyoContractorInfo contractor_info;
+				SmsContractorInfo contractor_info;
 				GetContractor(contractor_json, contractor_info);
 				info.SetContractorInfo(contractor_info);
 			}
@@ -636,15 +632,15 @@ namespace goyo_bookrack_accessor {
 				info.SetConstructionNumber(construction_number);
 			}
 		}
-		catch (GoyoException& ex) {
-			GoyoErrorLog(ex.What());
-			throw GoyoException(ex.What());
+		catch (SmsException& ex) {
+			SmsErrorLog(ex.What());
+			throw SmsException(ex.What());
 		}
-		catch (GoyoDatabaseException& ex) {
+		catch (SmsDatabaseException& ex) {
 			const auto message =
-				ex.What() + string(" - error please check GoyoDatabase");
-			GoyoErrorLog(message);
-			throw GoyoException(message);
+				ex.What() + string(" - error please check SmsDatabase");
+			SmsErrorLog(message);
+			throw SmsException(message);
 		}
 	}
 
@@ -656,23 +652,23 @@ namespace goyo_bookrack_accessor {
 	* @param info model of construction
 	* @param construction json data input
 	*/
-	int GoyoImportConstruction::CreateFileKouji(model::GoyoConstructionInfo& info,
+	int SmsImportSchool::CreateFileKouji(model::SmsConstructionInfo& info,
 		const Json& construction) {
 		try {
 			auto knack_info = info.GetKnackInfo();
 			if (knack_info.GetKnackId() == 0)
-				throw GoyoException("KnackInfo is not specified");
+				throw SmsException("KnackInfo is not specified");
 			auto knack_type = to_wstring(knack_info.GetKnackType());
 			auto knack_id = to_wstring(knack_info.GetKnackId());
 			const auto& file_name =
 				knack_type.append(L"_").append(knack_id).append(L"_kouji.XML");
-			auto working_dir = this->GetGoyoWorkDirectory();
+			auto working_dir = this->GetSmsWorkDirectory();
 			const fs::wpath kouji_xml_org(
 				working_dir.append(L"\\xml\\").append(file_name));
 			if (!fs::exists(kouji_xml_org)) {
 				auto message = file_name + L" not found Kouji template file";
-				GoyoDebugLog(message);
-				throw GoyoException(message);
+				SmsDebugLog(message);
+				throw SmsException(message);
 			}
 
 			auto w_kouji_file = info.GetDataFolder() + L"\\kouji.XML";
@@ -683,11 +679,11 @@ namespace goyo_bookrack_accessor {
 			WriteUnicodeXML(w_kouji_file, pt_kouji);
 			return 0;
 		}
-		catch (GoyoException &ex) {
+		catch (SmsException &ex) {
 			throw ex;
 		}
 		catch (fs::filesystem_error) {
-			throw GoyoException("filesystem_error create file KOUJI.XML fail");
+			throw SmsException("filesystem_error create file KOUJI.XML fail");
 		}
 
 	}
@@ -700,19 +696,19 @@ namespace goyo_bookrack_accessor {
 	* @param construction json data input
 	* @param dst data for file kouji.XML after update
 	*/
-	void GoyoImportConstruction::UpdateDataKoujiXml(const Json& construction,
+	void SmsImportSchool::UpdateDataKoujiXml(const Json& construction,
 		pt::wptree& dst) {
 		try {
 			auto& root = dst.get_child(ROOT_NAME);
 			for (auto&& it : m_key_string) {
 				// if path doesn't exist, put value
 				auto key = root.get_optional<wstring>(it.first);
-				GoyoDebugLog(L"Key " + it.first + L" -- " + Utf8ToUtf16(it.second));
+				SmsDebugLog(L"Key " + it.first + L" -- " + Utf8ToUtf16(it.second));
 				if (key) {
 					auto& json = construction[it.second];
 					if (!json.is_null()) {
 						auto v = Utf8ToUtf16(json.string_value());
-						GoyoDebugLog(L"Value update: " + v);
+						SmsDebugLog(L"Value update: " + v);
 						root.put(it.first, v);
 					}
 				}
@@ -721,19 +717,19 @@ namespace goyo_bookrack_accessor {
 			for (auto&& it : m_key_number) {
 				// if path doesn't exist, put value
 				auto key = root.get_optional<int>(it.first);
-				GoyoDebugLog(L"Key " + it.first + L" -- " + Utf8ToUtf16(it.second));
+				SmsDebugLog(L"Key " + it.first + L" -- " + Utf8ToUtf16(it.second));
 				if (key) {
 					auto& json = construction[it.second];
 					if (!json.is_null()) {
 						auto v = GetIntFJson(json);
-						GoyoDebugLog("Value update: " + to_string(v));
+						SmsDebugLog("Value update: " + to_string(v));
 						root.put(it.first, v);
 					}
 				}
 			}
 
 			wstring knack_id = L"電子納品基準案";
-			GoyoDebugLog(L"Key " + knack_id);
+			SmsDebugLog(L"Key " + knack_id);
 			if (root.get_optional<int>(knack_id)) {
 				auto& json = construction["knack"]["knackId"];
 				if (!json.is_null()) {
@@ -741,9 +737,9 @@ namespace goyo_bookrack_accessor {
 					root.put(knack_id, v);
 				}
 			}
-			GoyoDebugLog(L"Update contractee");
+			SmsDebugLog(L"Update contractee");
 			for (auto&& it : m_key_contractee) {
-				GoyoDebugLog(L"Key " + it.first + L" -- " + Utf8ToUtf16(it.second));
+				SmsDebugLog(L"Key " + it.first + L" -- " + Utf8ToUtf16(it.second));
 				// if path doesn't exist, put value
 				if (root.get_optional<wstring>(it.first)) {
 					auto& json = construction["contractee"][it.second];
@@ -753,9 +749,9 @@ namespace goyo_bookrack_accessor {
 					}
 				}
 			}
-			GoyoDebugLog(L"Update contractor");
+			SmsDebugLog(L"Update contractor");
 			for (auto&& it : m_key_contractor) {
-				GoyoDebugLog(L"Key " + it.first + L" -- " + Utf8ToUtf16(it.second));
+				SmsDebugLog(L"Key " + it.first + L" -- " + Utf8ToUtf16(it.second));
 				// if path doesn't exist, put value
 				if (root.get_child_optional(it.first)) {
 					auto& json = construction["contractor"][it.second];
@@ -771,7 +767,7 @@ namespace goyo_bookrack_accessor {
 				auto business_codes = construction["businessCodes"].array_items();
 				pt::wptree pt_business_codes;
 				for (auto& business_code : business_codes) {
-					GoyoDebugLog(L"Key " + wstring(BUSINESS_CODES_SUB_TAG));
+					SmsDebugLog(L"Key " + wstring(BUSINESS_CODES_SUB_TAG));
 					if (!business_code.is_null()) {
 						const auto& v = GetWStringFJson(business_code);
 						pt_business_codes.put(BUSINESS_CODES_SUB_TAG, v);
@@ -785,7 +781,7 @@ namespace goyo_bookrack_accessor {
 				auto business_keywords = construction["businessKeywords"].array_items();
 				pt::wptree pt_business_keywords;
 				for (auto& business_keyword : business_keywords) {
-					GoyoDebugLog(L"Key " + wstring(BUSINESS_KEYWORDS_SUB_TAG));
+					SmsDebugLog(L"Key " + wstring(BUSINESS_KEYWORDS_SUB_TAG));
 					if (!business_keyword.is_null()) {
 						const auto& v = GetWStringFJson(business_keyword);
 						pt_business_keywords.put(BUSINESS_KEYWORDS_SUB_TAG, (v));
@@ -843,7 +839,7 @@ namespace goyo_bookrack_accessor {
 			if (root.get_child_optional(FACILITY_NAMES_TAG)) {
 				root.erase(FACILITY_NAMES_TAG);
 				auto facility_names = construction["facilityNames"].array_items();
-				GoyoDebugLog(L"Key: " + FACILITY_NAMES_TAG + L" - facilityNames");
+				SmsDebugLog(L"Key: " + FACILITY_NAMES_TAG + L" - facilityNames");
 				pt::wptree pt_facility_names;
 				for (auto&& facility_name : facility_names) {
 					if (!facility_name.is_null()) {
@@ -855,11 +851,11 @@ namespace goyo_bookrack_accessor {
 			}
 
 			// Update 住所情報タグ - addresses
-			GoyoDebugLog(L"Update addresses");
+			SmsDebugLog(L"Update addresses");
 			if (root.get_child_optional(ADDRESSES_TAG)) {
 				root.erase(ADDRESSES_TAG);
 				auto addresses = construction["addresses"].array_items();
-				GoyoDebugLog(L"Key: " + ADDRESSES_TAG + L" - addresses");
+				SmsDebugLog(L"Key: " + ADDRESSES_TAG + L" - addresses");
 				pt::wptree pt_addresses;
 				for (auto&& item : addresses) {
 					auto& address_json = item["address"];
@@ -873,7 +869,7 @@ namespace goyo_bookrack_accessor {
 			}
 
 			// Update 工種・工法型式情報 - constructionMethodForms
-			GoyoDebugLog(L"key: " + CONSTRUCTION_METHOD_FORMS_TAG +
+			SmsDebugLog(L"key: " + CONSTRUCTION_METHOD_FORMS_TAG +
 				L" -  constructionMethodForms");
 			if (root.get_child_optional(CONSTRUCTION_METHOD_FORMS_TAG)) {
 				root.erase(CONSTRUCTION_METHOD_FORMS_TAG);
@@ -898,9 +894,9 @@ namespace goyo_bookrack_accessor {
 			// Update WaterRouteInformations
 			UpdateWaterRouteInformations(construction, dst);
 
-			GoyoDebugLog(L"Update photoInformationTags");
+			SmsDebugLog(L"Update photoInformationTags");
 			if (dst.count(ROOT_PHOTO_INFO_TAG) == 1) {
-				GoyoDebugLog(L"key: " + ROOT_PHOTO_INFO_TAG +
+				SmsDebugLog(L"key: " + ROOT_PHOTO_INFO_TAG +
 					L" -  photoInformationTags");
 				dst.erase(ROOT_PHOTO_INFO_TAG);
 
@@ -912,7 +908,7 @@ namespace goyo_bookrack_accessor {
 					size = size - tags.size();
 					for (auto& tag : tags) {
 						auto v = GetWStringFJson(tag);
-						GoyoDebugLog(L"v=" + v);
+						SmsDebugLog(L"v=" + v);
 						pt_tags.add(PHOTO_INFO_TAG, v);
 					}
 				}
@@ -927,13 +923,13 @@ namespace goyo_bookrack_accessor {
 		}
 		catch (boost::property_tree::ptree_error& e) {
 			const auto message = "Set data for KOUJI.XML fail - " + string(e.what());
-			GoyoErrorLog(message);
-			throw GoyoException(message);
+			SmsErrorLog(message);
+			throw SmsException(message);
 		}
-		catch (GoyoException& ex) {
+		catch (SmsException& ex) {
 			const auto message = "Set data for KOUJI.XML fail - " + string(ex.what());
-			GoyoErrorLog(message);
-			throw GoyoException(message);
+			SmsErrorLog(message);
+			throw SmsException(message);
 		}
 	}
 
@@ -945,10 +941,10 @@ namespace goyo_bookrack_accessor {
 	* @param construction json data input
 	* @param dst data for file kouji.XML after update
 	*/
-	void GoyoImportConstruction::UpdateWaterRouteInformations(
+	void SmsImportSchool::UpdateWaterRouteInformations(
 		const json11::Json& construction, boost::property_tree::wptree& dst) {
 		auto& root = dst.get_child(ROOT_NAME);
-		GoyoDebugLog(L"Update WaterRouteInformations");
+		SmsDebugLog(L"Update WaterRouteInformations");
 		if (root.get_child_optional(WATER_ROUTE_INFORMATIONS_TAG)) {
 			root.erase(WATER_ROUTE_INFORMATIONS_TAG);
 			auto water_route_informations =
@@ -958,21 +954,21 @@ namespace goyo_bookrack_accessor {
 				const auto& distance_meters = item["distanceMeters"].array_items();
 				pt::wptree pt_distance_meters;
 				for (auto&& dis : distance_meters) {
-					GoyoDebugLog(L"Key: :" + DISTANCE_METER_SECTION_TAG +
+					SmsDebugLog(L"Key: :" + DISTANCE_METER_SECTION_TAG +
 						L" - WaterRouteInformations");
 					auto& j_meter_section = dis["distanceMeterSection"];
 					if (!j_meter_section.is_null()) {
 						auto meter_section = Utf8ToUtf16(j_meter_section.string_value());
 						pt_distance_meters.put(DISTANCE_METER_SECTION_TAG, meter_section);
 					}
-					GoyoDebugLog(L"key: " + P_STATION_START_N_TAG + L" - pStationStartN");
+					SmsDebugLog(L"key: " + P_STATION_START_N_TAG + L" - pStationStartN");
 					auto& j_p_station_start_n = dis["pStationStartN"];
 					if (!j_p_station_start_n.is_null()) {
 						auto p_station_start_n =
 							Utf8ToUtf16(j_p_station_start_n.string_value());
 						pt_distance_meters.put(P_STATION_START_N_TAG, p_station_start_n);
 					}
-					GoyoDebugLog(L"key: " + P_STATION_START_M_TAG + L" - pStationStartM");
+					SmsDebugLog(L"key: " + P_STATION_START_M_TAG + L" - pStationStartM");
 					auto& j_p_station_start_m = dis["pStationStartM"];
 					if (!j_p_station_start_m.is_null()) {
 						auto p_station_start_m =
@@ -980,27 +976,27 @@ namespace goyo_bookrack_accessor {
 						pt_distance_meters.put(P_STATION_START_M_TAG, p_station_start_m);
 					}
 
-					GoyoDebugLog(L"key: " + P_STATION_END_N_TAG + L" - pStationEndN");
+					SmsDebugLog(L"key: " + P_STATION_END_N_TAG + L" - pStationEndN");
 					auto& j_p_station_end_n = dis["pStationEndN"];
 					if (!j_p_station_end_n.is_null()) {
 						auto p_station_end_n = Utf8ToUtf16(j_p_station_end_n.string_value());
 						pt_distance_meters.put(P_STATION_END_N_TAG, p_station_end_n);
 					}
-					GoyoDebugLog(L"key: " + P_STATION_END_M_TAG + L" - pStationEndM");
+					SmsDebugLog(L"key: " + P_STATION_END_M_TAG + L" - pStationEndM");
 					auto& j_p_station_end_m = dis["pStationEndM"];
 					if (!j_p_station_end_m.is_null()) {
 						auto p_station_end_m = Utf8ToUtf16(j_p_station_end_m.string_value());
 						pt_distance_meters.put(P_STATION_END_M_TAG, p_station_end_m);
 					}
-					GoyoDebugLog(L"key: " + P_DISTANCE_START_N_TAG + L" - pDistanceStartN");
-					GoyoDebugLog(L"Update pDistanceStartN");
+					SmsDebugLog(L"key: " + P_DISTANCE_START_N_TAG + L" - pDistanceStartN");
+					SmsDebugLog(L"Update pDistanceStartN");
 					auto& j_p_distance_start_n = dis["pDistanceStartN"];
 					if (!j_p_distance_start_n.is_null()) {
 						auto p_distance_start_n =
 							Utf8ToUtf16(j_p_distance_start_n.string_value());
 						pt_distance_meters.put(P_DISTANCE_START_N_TAG, p_distance_start_n);
 					}
-					GoyoDebugLog(L"key: " + P_DISTANCE_START_M_TAG + L" - pDistanceStartM");
+					SmsDebugLog(L"key: " + P_DISTANCE_START_M_TAG + L" - pDistanceStartM");
 					auto& j_p_distance_start_m = dis["pDistanceStartM"];
 					if (!j_p_distance_start_m.is_null()) {
 						auto p_distance_start_m =
@@ -1008,15 +1004,15 @@ namespace goyo_bookrack_accessor {
 						pt_distance_meters.put(P_DISTANCE_START_M_TAG, p_distance_start_m);
 					}
 
-					GoyoDebugLog(L"key: " + P_DISTANCE_END_N_TAG + L" - pDistanceEndN");
+					SmsDebugLog(L"key: " + P_DISTANCE_END_N_TAG + L" - pDistanceEndN");
 					auto& j_p_distance_end_n = dis["pDistanceEndN"];
 					if (!j_p_distance_end_n.is_null()) {
 						auto p_distance_end_n =
 							Utf8ToUtf16(j_p_distance_end_n.string_value());
 						pt_distance_meters.put(P_DISTANCE_END_N_TAG, p_distance_end_n);
 					}
-					GoyoDebugLog(L"key: " + P_DISTANCE_END_M_TAG + L" - pDistanceEndM");
-					GoyoDebugLog(L"Update pDistanceEndM");
+					SmsDebugLog(L"key: " + P_DISTANCE_END_M_TAG + L" - pDistanceEndM");
+					SmsDebugLog(L"Update pDistanceEndM");
 					auto& j_p_distance_end_m = dis["pDistanceEndM"];
 					if (!j_p_distance_end_m.is_null()) {
 						auto p_distance_end_m =
@@ -1027,37 +1023,37 @@ namespace goyo_bookrack_accessor {
 						make_pair(DISTANCE_METERS_TAG, pt_distance_meters));
 					pt_distance_meters.clear();
 				}
-				GoyoDebugLog(L"key: " + WATER_ROUTE_NAME_TAG + L" - waterRouteName");
+				SmsDebugLog(L"key: " + WATER_ROUTE_NAME_TAG + L" - waterRouteName");
 				auto& j_water_route_name = item["waterRouteName"];
 				if (!j_water_route_name.is_null()) {
 					auto water_route_name = Utf8ToUtf16(j_water_route_name.string_value());
 					pt_water_route_informations.put(WATER_ROUTE_NAME_TAG, water_route_name);
 				}
-				GoyoDebugLog(L"key: " + WATER_ROUTE_CODE_TAG + L" - waterRouteCode");
+				SmsDebugLog(L"key: " + WATER_ROUTE_CODE_TAG + L" - waterRouteCode");
 				auto& j_water_route_code = item["waterRouteCode"];
 				if (!j_water_route_code.is_null()) {
 					auto water_route_code = Utf8ToUtf16(j_water_route_code.string_value());
 					pt_water_route_informations.put(WATER_ROUTE_CODE_TAG, water_route_code);
 				}
-				GoyoDebugLog(L"key: " + ROUTE_SECTION_TAG + L" - routeSection");
+				SmsDebugLog(L"key: " + ROUTE_SECTION_TAG + L" - routeSection");
 				auto& j_route_section = item["routeSection"];
 				if (!j_route_section.is_null()) {
 					auto route_section = Utf8ToUtf16(j_route_section.string_value());
 					pt_water_route_informations.put(ROUTE_SECTION_TAG, route_section);
 				}
-				GoyoDebugLog(L"key: " + ROUTE_NAME_TAG + L" - routeName");
+				SmsDebugLog(L"key: " + ROUTE_NAME_TAG + L" - routeName");
 				auto& j_route_name = item["routeName"];
 				if (!j_route_name.is_null()) {
 					auto route_name = Utf8ToUtf16(j_route_name.string_value());
 					pt_water_route_informations.put(ROUTE_NAME_TAG, route_name);
 				}
-				GoyoDebugLog(L"key: " + RIVER_CODES_TAG + L" - riverCodes");
+				SmsDebugLog(L"key: " + RIVER_CODES_TAG + L" - riverCodes");
 				auto river_codes = item["riverCodes"].array_items();
 				for (auto&& river_code : river_codes) {
 					const auto& v = Utf8ToUtf16(river_code.string_value());
 					pt_water_route_informations.add(RIVER_CODES_TAG, v);
 				}
-				GoyoDebugLog(L"key: " + LINE_CODES_TAG + L" - lineCodes");
+				SmsDebugLog(L"key: " + LINE_CODES_TAG + L" - lineCodes");
 				auto line_codes = item["lineCodes"].array_items();
 				for (auto&& line_code : line_codes) {
 					const auto& v = Utf8ToUtf16(line_code.string_value());
@@ -1080,7 +1076,7 @@ namespace goyo_bookrack_accessor {
 	* @param template_folder old folder
 	* @param template_folder_org new folder
 	*/
-	void GoyoImportConstruction::CopyAlbumTemplate(fs::wpath &template_folder,
+	void SmsImportSchool::CopyAlbumTemplate(fs::wpath &template_folder,
 		fs::wpath &template_folder_org) {
 		try {
 			vector<fs::wpath> src_files;
@@ -1093,7 +1089,7 @@ namespace goyo_bookrack_accessor {
 			}
 		}
 		catch (fs::filesystem_error) {
-			throw GoyoException("copy album template fail");
+			throw SmsException("copy album template fail");
 		}
 	}
 
@@ -1105,14 +1101,14 @@ namespace goyo_bookrack_accessor {
 	* @param album_json json input data
 	* @param album_dir album folder
 	*/
-	void GoyoImportConstruction::CopyCoverFiles(vector<fs::wpath> &src_covers,
+	void SmsImportSchool::CopyCoverFiles(vector<fs::wpath> &src_covers,
 		fs::wpath &album_dir) {
 		try {
 			const auto album_files = album_dir / FILES;
 			vector<fs::wpath> dst_covers = { album_files / FR_COVER,
 																			 album_files / BK_COVER,
 																			 album_files / SP_COVER };
-			GoyoDebugLog(L"copy cover files: " + album_files.wstring());
+			SmsDebugLog(L"copy cover files: " + album_files.wstring());
 
 			if (!is_directory(album_files)) create_directories(album_files);
 			for (auto i = 2; i >= 0; --i) {
@@ -1123,11 +1119,11 @@ namespace goyo_bookrack_accessor {
 			}
 		}
 		catch (...) {  // fs::filesystem_error
-			throw GoyoException("Copy Cover Files fail");
+			throw SmsException("Copy Cover Files fail");
 		}
 	}
 
-	void GoyoImportConstruction::GetAlbumSetting(GoyoAlbum& album, const Json& settings) const {
+	void SmsImportSchool::GetAlbumSetting(SmsAlbum& album, const Json& settings) const {
 		try {
 			auto photo_information_icon = settings["photoInformationIcon"];
 			if (!photo_information_icon.is_null()) {
@@ -1166,7 +1162,7 @@ namespace goyo_bookrack_accessor {
 			}
 		}
 		catch (...) {
-			throw GoyoException("get album setting fail");
+			throw SmsException("get album setting fail");
 		}
 	}
 
@@ -1174,12 +1170,12 @@ namespace goyo_bookrack_accessor {
 	* @fn
 	* SetAlbum
 	* @brief Set data BookrackItem
-	* @param album  GoyoAlbum
+	* @param album  SmsAlbum
 	* @param j_album Json album input
 	* @param status RecordStatus update or create
-	* @throw no GoyoException get data json
+	* @throw no SmsException get data json
 	*/
-	void GoyoImportConstruction::SetAlbum(GoyoAlbum &album, const Json &j_album,
+	void SmsImportSchool::SetAlbum(SmsAlbum &album, const Json &j_album,
 		const RecordStatus status) const {
 		try {
 			// Only create
@@ -1209,7 +1205,7 @@ namespace goyo_bookrack_accessor {
 			}
 			album.SetAlbumType(album_type);
 
-			GoyoAlbumSettings album_settings;
+			SmsAlbumSettings album_settings;
 			album.SetBookCoverSterIcon(0);
 			auto &settings = j_album["albumSettings"];
 			if (!settings.is_null()) {
@@ -1218,7 +1214,7 @@ namespace goyo_bookrack_accessor {
 			}
 			album.SetAlbumSettings(album_settings);
 		}
-		catch (GoyoException &ex) {
+		catch (SmsException &ex) {
 			throw ex;
 		}
 	}
@@ -1228,11 +1224,11 @@ namespace goyo_bookrack_accessor {
 	//* @fn
 	//* SetBookrackItem
 	//* @brief Set data BookrackItem
-	//* @param item  GoyoBookrackItem
+	//* @param item  SmsBookrackItem
 	//* @param j_album Json album input
 	//* @param status RecordStatus update or create
 	//*/
-	//void GoyoImportConstruction::SetBookrackItem(GoyoBookrackItem &item,
+	//void SmsImportSchool::SetBookrackItem(SmsBookrackItem &item,
 	//	const Json &j_album) const {
 	//	auto bookrack_item_name = j_album["albumSettings"]["albumName"];
 	//	if (!bookrack_item_name.is_null())
@@ -1249,7 +1245,7 @@ namespace goyo_bookrack_accessor {
 	//	// Only create
 	//	auto album_type = j_album["albumType"];
 	//	if (album_type.is_null() && album_type.is_number())
-	//		throw GoyoException("albumType is not specified");
+	//		throw SmsException("albumType is not specified");
 	//
 	//	// drop album
 	//	auto special_type = 0;
@@ -1267,7 +1263,7 @@ namespace goyo_bookrack_accessor {
 	//
 	//	auto parent_bookrack_item_id = j_album["parentBookrackItemId"];
 	//	if (parent_bookrack_item_id.is_null())
-	//		throw GoyoException("parentBookrackItemId is not specified");
+	//		throw SmsException("parentBookrackItemId is not specified");
 	//	item.SetParentBookrackItem(parent_bookrack_item_id.int_value());
 	//	item.SetCreateDate(date);
 	//}
@@ -1276,20 +1272,20 @@ namespace goyo_bookrack_accessor {
 	/**
 	* @fn
 	* SetAlbumSetting
-	* @brief get data for GoyoAlbumSettings from json
-	* @param settings GoyoAlbumSettings
+	* @brief get data for SmsAlbumSettings from json
+	* @param settings SmsAlbumSettings
 	* @param j_settings input json setting
 	*/
-	void GoyoImportConstruction::SetAlbumSetting(GoyoAlbumSettings &settings,
+	void SmsImportSchool::SetAlbumSetting(SmsAlbumSettings &settings,
 		const Json &j_settings) const {
 		CreateSettings(settings, j_settings, string());
 	}
 
 
 
-	Json GoyoImportConstruction::GetAlbumDetail(int album_id, manager::GoyoAlbumDatabase &album_db,
-		GoyoBookrackItem &bookrack_item,
-		manager::GoyoAlbumItemDatabase &album_item_db) {
+	Json SmsImportSchool::GetAlbumDetail(int album_id, manager::SmsAlbumDatabase &album_db,
+		SmsBookrackItem &bookrack_item,
+		manager::SmsAlbumItemDatabase &album_item_db) {
 		auto album = album_db.GetAlbum();
 		auto album_settings = album.GetAlbumSettings();
 
@@ -1337,20 +1333,20 @@ namespace goyo_bookrack_accessor {
 	/**
 	* @fn
 	* GetSettingsTree
-	* @brief convert GoyoAlbumSettings to tree structrue
-	* @param settings GoyoAlbumSettings input data
+	* @brief convert SmsAlbumSettings to tree structrue
+	* @param settings SmsAlbumSettings input data
 	* @param root out put
 	*/
-	void GoyoImportConstruction::GetSettingsTree(GoyoAlbumSettings &settings,
+	void SmsImportSchool::GetSettingsTree(SmsAlbumSettings &settings,
 		pt::ptree &root) const {
 		std::vector<std::string> key_settings;
 		settings.GetKeyList(key_settings);
 		pt::ptree tmp;
 		for (auto &key : key_settings) {
-			GoyoDebugLog(key);
+			SmsDebugLog(key);
 			auto &v = settings.GetValue(key);
 			auto data_type = v.GetDataType();
-			GoyoDebugLog(std::to_string(data_type));
+			SmsDebugLog(std::to_string(data_type));
 			PutValueSetting(v, data_type, tmp, key);
 		}
 		root.add_child("settings", tmp);
@@ -1361,17 +1357,17 @@ namespace goyo_bookrack_accessor {
 	* @fn
 	* GetAlbumSettings
 	* @brief create album settings
-	* @param settings is a GoyoAlbumSettings
+	* @param settings is a SmsAlbumSettings
 	* @return album settings object
 	*/
-	Json GoyoImportConstruction::GetDataAlbumSettings(pt::ptree &settings) const {
-		GoyoDebugLog("Start GetDataAlbumSettings");
+	Json SmsImportSchool::GetDataAlbumSettings(pt::ptree &settings) const {
+		SmsDebugLog("Start GetDataAlbumSettings");
 		try {
 			Json::object j_album_settings;
 			// Json j_sentence;
-			GoyoDebugLog("Get Sentence setting");
+			SmsDebugLog("Get Sentence setting");
 			if (auto optional = settings.get_child_optional("sentence")) {
-				GoyoDebugLog("Get font setting for sentence");
+				SmsDebugLog("Get font setting for sentence");
 				auto &child = optional.get();
 				Json j_font;
 				if (auto op_font_binary = child.get_optional<string>("font.fontBinary")) {
@@ -1385,17 +1381,17 @@ namespace goyo_bookrack_accessor {
 				}
 				j_album_settings["sentence"] =
 					Json::object{ { "displayType", display_type },{ "font", j_font } };
-				GoyoDebugLog("Out sentence setting");
+				SmsDebugLog("Out sentence setting");
 			}
 
-			GoyoDebugLog("Get ClickType setting");
+			SmsDebugLog("Get ClickType setting");
 			if (auto optional = settings.get_optional<int>("clickType")) {
 				j_album_settings["clickType"] = optional.get();
-				GoyoDebugLog("Out clickType setting");
+				SmsDebugLog("Out clickType setting");
 			}
 
 			if (auto op_display_option = settings.get_child_optional("displayOption")) {
-				GoyoDebugLog("Get DisplayOption setting");
+				SmsDebugLog("Get DisplayOption setting");
 				auto &child = op_display_option.get();
 				Json::object j_display_option;
 				if (auto optional = child.get_optional<int>("bookmarkOnIndexWindow")) {
@@ -1419,7 +1415,7 @@ namespace goyo_bookrack_accessor {
 				j_album_settings["displayOption"] = j_display_option;
 			}
 
-			GoyoDebugLog("PhotoInfoTemplate setting");
+			SmsDebugLog("PhotoInfoTemplate setting");
 			if (auto op_photo_info = settings.get_child_optional("photoInfoTemplate")) {
 				auto &child = op_photo_info.get();
 				Json::object j_photo_info_temp;
@@ -1441,13 +1437,13 @@ namespace goyo_bookrack_accessor {
 				j_album_settings["photoInfoTemplate"] = j_photo_info_temp;
 			}
 
-			GoyoDebugLog("Get pagingDirection setting");
+			SmsDebugLog("Get pagingDirection setting");
 			if (auto optional = settings.get_optional<int>("pagingDirection")) {
 				j_album_settings["pagingDirection"] = optional.get();
-				GoyoDebugLog("Out pagingDirection setting");
+				SmsDebugLog("Out pagingDirection setting");
 			}
 
-			GoyoDebugLog("Get reducedImage setting");
+			SmsDebugLog("Get reducedImage setting");
 			if (auto op_reduced_image = settings.get_child_optional("reducedImage")) {
 				auto &child = op_reduced_image.get();
 				auto jpeg_quality = 0;
@@ -1466,24 +1462,24 @@ namespace goyo_bookrack_accessor {
 
 			if (auto optional = settings.get_optional<int>("matDesign.matType")) {
 				j_album_settings["matDesign"] = Json::object{ { "matType", optional.get() } };
-				GoyoDebugLog("Out matDesign setting");
+				SmsDebugLog("Out matDesign setting");
 			}
 
-			GoyoDebugLog("Get albumName setting");
+			SmsDebugLog("Get albumName setting");
 			if (auto &optional = settings.get_optional<string>("albumName")) {
 				j_album_settings["albumName"] = optional.get();
 			}
 
-			GoyoDebugLog("Get passwordHash setting");
+			SmsDebugLog("Get passwordHash setting");
 			if (auto &optional = settings.get_optional<string>("passwordHash")) {
 				j_album_settings["passwordHash"] = optional.get();
 			}
-			GoyoDebugLog("return from GetDataAlbumSettings");
+			SmsDebugLog("return from GetDataAlbumSettings");
 			return Json(j_album_settings);
 		}
 		catch (const pt::ptree_error &ex) {
-			GoyoErrorLog(ex.what());
-			throw GoyoException("Parser setting data fail");
+			SmsErrorLog(ex.what());
+			throw SmsException("Parser setting data fail");
 		}
 	}
 
@@ -1493,16 +1489,16 @@ namespace goyo_bookrack_accessor {
 	* GetBookCoverOption
 	* @brief get BookCoverOption setting
 	* @param settings data of album setting
-	* @param album_db is GoyoAlbumDatabase
-	* @param item_db is GoyoAlbumItemDatabase
+	* @param album_db is SmsAlbumDatabase
+	* @param item_db is SmsAlbumItemDatabase
 	* @return Json BookCoverOption setting
 	*/
-	Json GoyoImportConstruction::GetBookCoverOption(
-		pt::ptree &settings, manager::GoyoAlbumDatabase &album_db,
-		manager::GoyoAlbumItemDatabase &item_db) const {
-		GoyoDebugLog("Call GetBookCoverOption");
+	Json SmsImportSchool::GetBookCoverOption(
+		pt::ptree &settings, manager::SmsAlbumDatabase &album_db,
+		manager::SmsAlbumItemDatabase &item_db) const {
+		SmsDebugLog("Call GetBookCoverOption");
 		Json::object j_book_cover_option;
-		GoyoDebugLog("Get frontImagePosition");
+		SmsDebugLog("Get frontImagePosition");
 		if (auto optional = settings.get_optional<int>("frontImagePosition")) {
 			auto front_position = optional.get();
 			j_book_cover_option["frontImagePosition"] = front_position;
@@ -1510,7 +1506,7 @@ namespace goyo_bookrack_accessor {
 				GetAlbumItemPath(front_position, album_db, item_db);
 			j_book_cover_option["frontImagePath"] = front_image_path;
 		}
-		GoyoDebugLog("Get reducedImagePosition");
+		SmsDebugLog("Get reducedImagePosition");
 		if (auto optional = settings.get_optional<int>("reducedImagePosition")) {
 			auto reduced_position = optional.get();
 			j_book_cover_option["reducedImagePosition"] = reduced_position;
@@ -1518,7 +1514,7 @@ namespace goyo_bookrack_accessor {
 				GetAlbumItemPath(reduced_position, album_db, item_db);
 			j_book_cover_option["reducedImagePath"] = reduced_image_path;
 		}
-		GoyoDebugLog("Get font setting");
+		SmsDebugLog("Get font setting");
 		if (auto &opt_font = settings.get_optional<string>("font.fontBinary")) {
 			auto &font_binary = opt_font.get();
 			auto win_font = LogFont(font_binary);
@@ -1529,7 +1525,7 @@ namespace goyo_bookrack_accessor {
 			j_book_cover_option["font"] = CreateFont(win_font, font_color);
 		}
 
-		GoyoDebugLog("Get other setting");
+		SmsDebugLog("Get other setting");
 		if (auto optional = settings.get_optional<int>("bookCoverColorType")) {
 			j_book_cover_option["bookCoverColorType"] = optional.get();
 		}
@@ -1551,7 +1547,7 @@ namespace goyo_bookrack_accessor {
 		if (auto optional = settings.get_optional<int>("thicknessByPage")) {
 			j_book_cover_option["thicknessByPage"] = optional.get();
 		}
-		GoyoDebugLog("return bookCoverOption setting");
+		SmsDebugLog("return bookCoverOption setting");
 		return Json(j_book_cover_option);
 	}
 
@@ -1561,13 +1557,13 @@ namespace goyo_bookrack_accessor {
 	* GetAlbumItemPath
 	* @brief get path of AlbumItem
 	* @param display_number position of AlbumItem
-	* @param album_db is GoyoAlbumDatabase
-	* @param album_item_db is GoyoAlbumItemDatabase
+	* @param album_db is SmsAlbumDatabase
+	* @param album_item_db is SmsAlbumItemDatabase
 	* @return path of AlbumItem
 	*/
-	string GoyoImportConstruction::GetAlbumItemPath(
-		const int display_number, manager::GoyoAlbumDatabase &album_db,
-		manager::GoyoAlbumItemDatabase &album_item_db) const {
+	string SmsImportSchool::GetAlbumItemPath(
+		const int display_number, manager::SmsAlbumDatabase &album_db,
+		manager::SmsAlbumItemDatabase &album_item_db) const {
 		int position = display_number;
 		if (display_number == 0) {
 			position = 1;
@@ -1582,7 +1578,7 @@ namespace goyo_bookrack_accessor {
 
 		wstring parent = album_item_db.GetParentFolderDb();
 		auto &path =
-			GoyoAppUtil::Utf16ToUtf8(parent + L"\\albumItems\\" +
+			SmsAppUtil::Utf16ToUtf8(parent + L"\\albumItems\\" +
 				album_item.GetParentFolder()) +
 			"\\" + album_item.GetFileName();
 
@@ -1594,18 +1590,18 @@ namespace goyo_bookrack_accessor {
 	* @fn
 	* GetImageFileTotalCount
 	* @brief count albumItemId in photoFrame
-	* @param db is a GoyoAlbumDatabase
+	* @param db is a SmsAlbumDatabase
 	* @return number for ImageFile
 	*/
-	int GoyoImportConstruction::GetImageFileTotalCount(
-		manager::GoyoAlbumDatabase &db) const {
+	int SmsImportSchool::GetImageFileTotalCount(
+		manager::SmsAlbumDatabase &db) const {
 
 		try {
 			return db.GetPhotoFrameTotalCount(string("WHERE albumItemId > 0"));
 		}
-		catch (GoyoDatabaseException &ex) {
-			GoyoErrorLog(ex.What());
-			throw GoyoException("Get ImageFileTotalCount fail");
+		catch (SmsDatabaseException &ex) {
+			SmsErrorLog(ex.What());
+			throw SmsException("Get ImageFileTotalCount fail");
 		}
 	}
 
@@ -1614,13 +1610,13 @@ namespace goyo_bookrack_accessor {
 	* @fn
 	* GetImageFileTotalCount
 	* @brief count albumFrameId in albumFrame
-	* @param db is a GoyoAlbumDatabase
+	* @param db is a SmsAlbumDatabase
 	* @return number for Frame
 	*/
-	int GoyoImportConstruction::GetFrameTotalCount(
-		manager::GoyoAlbumDatabase &db) const {
+	int SmsImportSchool::GetFrameTotalCount(
+		manager::SmsAlbumDatabase &db) const {
 		try {
-			GoyoStatement statement(db.GetAlbumDB(),
+			SmsStatement statement(db.GetAlbumDB(),
 				u8"SELECT count(albumFrameId) FROM albumFrame "
 				u8"WHERE albumFrameId > 0; ");
 			auto count = 0;
@@ -1630,11 +1626,11 @@ namespace goyo_bookrack_accessor {
 			}
 			return count;
 		}
-		catch (GoyoDatabaseException &ex) {
-			GoyoErrorLog(ex.What());
-			throw GoyoException("Get FrameTotalCount fail");
+		catch (SmsDatabaseException &ex) {
+			SmsErrorLog(ex.What());
+			throw SmsException("Get FrameTotalCount fail");
 		}
 	}
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 

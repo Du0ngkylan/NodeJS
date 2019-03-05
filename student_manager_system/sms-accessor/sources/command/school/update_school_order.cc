@@ -1,36 +1,36 @@
 /**
- * @file update_construction_order.cc
- * @brief update construction order command implementation
- * @author le giap
- * @date 2018/03/26
+ * @file update_school_order.cc
+ * @brief update school order command implementation
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
 #include <boost/filesystem.hpp>
-#include "command/construction/update_construction_order.h"
-#include "goyo_db_if.h"
+#include "command/construction/update_school_order.h"
+#include "sms_db_if.h"
 
 using namespace std;
 using namespace json11;
-using namespace goyo_db_manager;
+using namespace sms_db_manager;
 
 namespace pt = boost::property_tree;
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
  * @fn
- * GoyoUpdateConstructionOrder
+ * SmsUpdateSchoolOrder
  * @brief constructor
  */
-GoyoUpdateConstructionOrder::GoyoUpdateConstructionOrder() {
-  m_data_dir = this->GetGoyoAppDataDirectory();
+SmsUpdateSchoolOrder::SmsUpdateSchoolOrder() {
+  m_data_dir = this->GetSmsAppDataDirectory();
 }
 
 /**
  * @fn
- * ~GoyoUpdateConstructionOrder
+ * ~SmsUpdateSchoolOrder
  * @brief destructor
  */
-GoyoUpdateConstructionOrder::~GoyoUpdateConstructionOrder() = default;
+SmsUpdateSchoolOrder::~SmsUpdateSchoolOrder() = default;
 
 /**
  * @fn
@@ -39,94 +39,80 @@ GoyoUpdateConstructionOrder::~GoyoUpdateConstructionOrder() = default;
  * @param request request json
  * @param raw raw string
  */
-Json GoyoUpdateConstructionOrder::ExecuteCommand(Json& request, string& raw) {
+Json SmsUpdateSchoolOrder::ExecuteCommand(Json& request, string& raw) {
   // validate arguments
-  auto& constructionsJson = request["args"]["constructions"];
-  if (constructionsJson.is_null() || !constructionsJson.is_array()) {
-    const string message = "'args.constructions' is not specified";
-    GoyoErrorLog(message);
+  auto& j_school = request["args"]["schools"];
+  if (j_school.is_null() || !j_school.is_array()) {
+    const string message = "'args.schools' is not specified";
+    SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorInvalidCommandStr, message);
   }
-  map<int, int> constructions;
-  for (auto& it : constructionsJson.array_items()) {
-    auto constructionId = GetIntFJson(it["constructionId"]);
+  map<int, int> schools;
+  for (auto& it : j_school.array_items()) {
+    auto schoolId = GetIntFJson(it["schoolId"]);
     auto displayNumber = GetIntFJson(it["displayNumber"]);
-    constructions[constructionId] = displayNumber;
+    schools[schoolId] = displayNumber;
   }
   try {
-    const auto workingDir = GetGoyoWorkDirectory();
-    manager::GoyoMasterDatabase masterDb(m_data_dir, workingDir);
-    auto count = masterDb.UpdateDisplayNumberConstruction(constructions);
+    const auto workingDir = GetSmsWorkDirectory();
+    manager::SmsMasterDatabase master_db(m_data_dir, workingDir);
+    auto count = master_db.UpdateDisplayNumberSchool(schools);
     Json response = Json::object{{"updateCount", count}};
     return Json::object{{"request", request}, {"response", response}};
-  } catch (GoyoException& ex) {
+  } catch (SmsException& ex) {
     return this->CreateErrorResponse(request, kErrorIOStr, ex.what());
-  } catch (GoyoDatabaseException& ex) {
+  } catch (SmsDatabaseException& ex) {
     return this->CreateErrorResponse(request, kErrorInternalStr, ex.what());
   }
 }
 
-int GoyoUpdateConstructionOrder::UpdateConstruction(const Json& construction) {
-  model::GoyoConstructionInfo constructionInfo{};
-  GetConstructionInfo(constructionInfo, construction);
+int SmsUpdateSchoolOrder::UpdateSchool(const Json& school) {
+  model::SmsSchoolInfo schoolInfo{};
+  GetSchoolInfo(schoolInfo, school);
 
-  const auto workingDir = GetGoyoWorkDirectory();
+  const auto workingDir = GetSmsWorkDirectory();
   try {
-    manager::GoyoMasterDatabase masterDb(m_data_dir, workingDir);
+    manager::SmsMasterDatabase master_db(m_data_dir, workingDir);
 
-    GoyoStatement statement(masterDb.GetMasterDb(),
+    SmsStatement statement(master_db.GetmasterDB(),
                             u8"SELECT displayNumber FROM "
-                            u8"construction WHERE constructionId = ?;");
-    statement.Bind(1, constructionInfo.GetConstructionId());
+                            u8"schools WHERE schoolId = ?;");
+    statement.Bind(1, schoolInfo.GetSchoolId());
     auto displayNumberUpdate = 0;
     if (statement.ExecuteStep()) {
       displayNumberUpdate = statement.GetColumn(0).GetInt();
     }
-    if (displayNumberUpdate != constructionInfo.GetDisplayNumber()) {
-      masterDb.UpdateConstruction(constructionInfo);
+    if (displayNumberUpdate != schoolInfo.GetDisplayNumber()) {
+      master_db.UpdateSchool(schoolInfo);
       return 1;
     }
     return 0;
-  } catch (GoyoDatabaseException& ex) {
-    throw GoyoException(ex.What());
+  } catch (SmsDatabaseException& ex) {
+    throw SmsException(ex.What());
   }
 }
 
-void GoyoUpdateConstructionOrder::GetConstructionInfo(
-    model::GoyoConstructionInfo& info, const Json& construction) {
+void SmsUpdateSchoolOrder::GetSchoolInfo(
+    model::SmsSchoolInfo& info, const Json& j_school) {
   try {
-    if (!construction.is_null()) {
-      auto& constructionIdJson = construction["constructionId"];
-      info.SetConstructionId(GetIntFJson(constructionIdJson));
+    if (!j_school.is_null()) {
+      info.SetConstructionId(GetIntFJson(j_school["schoolId"]));
 
       // dataFolder
-      auto& dataFolderJson = construction["dataFolder"];
+      auto& dataFolderJson = j_school["dataFolder"];
       auto dataFolder = GetWStringFJson(dataFolderJson);
       info.SetDataFolder(dataFolder);
 
       // displayNumber
-      auto& displayNumberJson = construction["displayNumber"];
+      auto& displayNumberJson = j_school["displayNumber"];
       info.SetDisplayNumber(GetIntFJson(displayNumberJson));
-
-      // isExternalFolder
-      auto& isExternalFolderJson = construction["isExternalFolder"];
-      info.SetExternalFolder(GetBoolFJson(isExternalFolderJson));
-
-      // isExternalFolder
-      auto& isSharedFolderJson = construction["isExternalFolder"];
-      info.SetSharedFolder(GetBoolFJson(isSharedFolderJson));
-
-      // cloud Strage
-      auto& cloudStrageJson = construction["cloudStrage"];
-      info.SetCloudStrage(GetIntFJson(cloudStrageJson));
-
     } else {
-      throw GoyoException("data construction json invalid");
+      throw SmsException("data school json invalid");
     }
-  } catch (GoyoException& ex) {
-    GoyoErrorLog(ex.What());
-    throw GoyoException(ex.What());
+  } catch (SmsException& ex) {
+    SmsErrorLog(ex.What());
+    throw SmsException(ex.What());
   }
 }
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
