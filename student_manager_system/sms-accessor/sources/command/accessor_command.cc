@@ -1,8 +1,8 @@
 /**
  * @file accessor_command.cc
  * @brief base command implementation
- * @author yonaha
- * @date 2018/02/16
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
 #include "accessor_command.h"
@@ -14,14 +14,14 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <fstream>
 #include <locale>
-#include "util/goyo_app_util.h"
+#include "util/sms_app_util.h"
 
 using namespace std;
 using namespace boost::property_tree::ini_parser;
 using namespace json11;
 namespace fs = boost::filesystem;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 
 /**
@@ -55,23 +55,23 @@ inline string HexString(unsigned char *data, int len) {
 //              istreambuf_iterator<char>());
 //   check_ifs.close();
 //   // convert utf16
-//   wstring utf16_str = GoyoAppUtil::ShiftJisToUTF16(str);
+//   wstring utf16_str = SmsAppUtil::ShiftJisToUTF16(str);
 //   return utf16_str;
 // }
 
 /**
  * @fn
- * GoyoAccessorCommand
+ * SmsAccessorCommand
  * @brief constructor
  */
-GoyoAccessorCommand::GoyoAccessorCommand() {}
+SmsAccessorCommand::SmsAccessorCommand() {}
 
 /**
  * @fn
- * ~GoyoAccessorCommand
+ * ~SmsAccessorCommand
  * @brief destructor
  */
-GoyoAccessorCommand::~GoyoAccessorCommand() {}
+SmsAccessorCommand::~SmsAccessorCommand() {}
 
 /**
  * @fn
@@ -81,7 +81,7 @@ GoyoAccessorCommand::~GoyoAccessorCommand() {}
  * @param (error) error json
  * @return json object
  */
-json11::Json GoyoAccessorCommand::CreateErrorResponse(json11::Json &request,
+json11::Json SmsAccessorCommand::CreateErrorResponse(json11::Json &request,
                                                       json11::Json &error) {
   return json11::Json::object{{"request", request}, {"error", error}};
 }
@@ -95,10 +95,10 @@ json11::Json GoyoAccessorCommand::CreateErrorResponse(json11::Json &request,
  * @param (message) error message
  * @return json object
  */
-json11::Json GoyoAccessorCommand::CreateErrorResponse(json11::Json &request,
+json11::Json SmsAccessorCommand::CreateErrorResponse(json11::Json &request,
                                                       const string &type,
                                                       const string &message) {
-	GoyoErrorLog(message);
+	SmsErrorLog(message);
   json11::Json error =
       json11::Json::object{{"type", type}, {"message", message}};
   return this->CreateErrorResponse(request, error);
@@ -113,11 +113,11 @@ json11::Json GoyoAccessorCommand::CreateErrorResponse(json11::Json &request,
  * @param (message) error message
  * @return json object
  */
-json11::Json GoyoAccessorCommand::CreateErrorResponse(json11::Json &request,
+json11::Json SmsAccessorCommand::CreateErrorResponse(json11::Json &request,
                                                       const string &type,
                                                       const wstring &message) {
-  std::string newMessage = GoyoAppUtil::Utf16ToUtf8(message);
-	GoyoErrorLog(newMessage);
+  std::string newMessage = SmsAppUtil::Utf16ToUtf8(message);
+	SmsErrorLog(newMessage);
   json11::Json error =
       json11::Json::object{{"type", type}, {"message", newMessage}};
   return this->CreateErrorResponse(request, error);
@@ -130,7 +130,7 @@ json11::Json GoyoAccessorCommand::CreateErrorResponse(json11::Json &request,
  * @param (rect) rectangle
  * @return json object
  */
-json11::Json GoyoAccessorCommand::CreateSRect(SRECT &srect) {
+json11::Json SmsAccessorCommand::CreateSRect(SRECT &srect) {
   return json11::Json::object{
       {"left", srect.left},
       {"top", srect.top},
@@ -146,7 +146,7 @@ json11::Json GoyoAccessorCommand::CreateSRect(SRECT &srect) {
  * @param (color_ref) color reference
  * @return color hex string
  */
-string GoyoAccessorCommand::ConvertColorRef(COLORREF &color_ref) {
+string SmsAccessorCommand::ConvertColorRef(COLORREF &color_ref) {
   // COLORREF ref = RGB(red, green, blue);
   unsigned char b[3];
   b[0] = GetRValue(color_ref);
@@ -163,7 +163,7 @@ string GoyoAccessorCommand::ConvertColorRef(COLORREF &color_ref) {
  * @param (hex_color) color reference
  * @return coloref
  */
-COLORREF GoyoAccessorCommand::ConvertHexColor(string hex_color) {
+COLORREF SmsAccessorCommand::ConvertHexColor(string hex_color) {
   hex_color = hex_color.substr(1);
   BYTE r;
   BYTE g;
@@ -187,9 +187,9 @@ COLORREF GoyoAccessorCommand::ConvertHexColor(string hex_color) {
  * @param (hex_string) hex string
  * @return log font
  */
-LOGFONT GoyoAccessorCommand::LogFont(string hex_string) {
+LOGFONT SmsAccessorCommand::LogFont(string hex_string) {
   LOGFONT log_font;
-  vector<char> bytes = GoyoAppUtil::HexToBytes(hex_string);
+  vector<char> bytes = SmsAppUtil::HexToBytes(hex_string);
   memcpy(&log_font, reinterpret_cast<const LOGFONT *>(&bytes[0]),
          sizeof(LOGFONT));
   return log_font;
@@ -202,7 +202,7 @@ LOGFONT GoyoAccessorCommand::LogFont(string hex_string) {
  * @param (log_font) log font
  * @return hex string of log font
  */
-string GoyoAccessorCommand::LogFontInHexString(LOGFONT &log_font) {
+string SmsAccessorCommand::LogFontInHexString(LOGFONT &log_font) {
   unsigned char font[sizeof(LOGFONT)];
   memcpy(&font, reinterpret_cast<const unsigned char *>(&log_font),
          sizeof(LOGFONT));
@@ -217,9 +217,9 @@ string GoyoAccessorCommand::LogFontInHexString(LOGFONT &log_font) {
  * @param (font_color) when not set, empty
  * @return font object
  */
-json11::Json::object GoyoAccessorCommand::CreateFont(LOGFONT &log_font, std::string font_color) {
+json11::Json::object SmsAccessorCommand::CreateFont(LOGFONT &log_font, std::string font_color) {
   wstring f(log_font.lfFaceName);
-  string font_name = GoyoAccessorCommand::ConvertWstring(f);
+  string font_name = SmsAccessorCommand::ConvertWstring(f);
   int font_weight = log_font.lfWeight;
 
   int font_size = 0;
@@ -268,23 +268,23 @@ json11::Json::object GoyoAccessorCommand::CreateFont(LOGFONT &log_font, std::str
  * @param (file) file path
  * @return json object
  */
-json11::Json GoyoAccessorCommand::ParseJsonFile(wstring file) {
-  // auto ss = GoyoAppUtil::ReadUnicodeFile(file, W_MODE_READ_UTF8);
+json11::Json SmsAccessorCommand::ParseJsonFile(wstring file) {
+  // auto ss = SmsAppUtil::ReadUnicodeFile(file, W_MODE_READ_UTF8);
   // auto str = ss.str();
 
-  // string content = GoyoAppUtil::Utf16ToUtf8(str);
+  // string content = SmsAppUtil::Utf16ToUtf8(str);
   wifstream wif(file);
   wif.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
   wstringstream wss;
   wss << wif.rdbuf();
   wif.close();
 
-  string content = GoyoAccessorCommand::ConvertWstring(wss.str());
+  string content = SmsAccessorCommand::ConvertWstring(wss.str());
   string err;
 
   auto json = json11::Json::parse(content, err);
   if (!err.empty()) {
-    throw GoyoException(err);
+    throw SmsException(err);
   }
   return json;
 }
@@ -296,12 +296,12 @@ json11::Json GoyoAccessorCommand::ParseJsonFile(wstring file) {
    * @param (json) json
    * @param (file) file path
    */
-  void GoyoAccessorCommand::WriteJsonFile(json11::Json json,
+  void SmsAccessorCommand::WriteJsonFile(json11::Json json,
                                           std::wstring file) {
 
     wofstream wof(file);
     wof.imbue(locale(locale::empty(), new codecvt_utf8<wchar_t>));
-    wstring ws = GoyoAccessorCommand::ConvertString(json.dump());
+    wstring ws = SmsAccessorCommand::ConvertString(json.dump());
     wof << ws;
     wof.close();
     
@@ -309,47 +309,47 @@ json11::Json GoyoAccessorCommand::ParseJsonFile(wstring file) {
 
 /**
  * @fn
- * GetGoyoAppDirectory
+ * GetSmsAppDirectory
  * @brief get application directory
- * @return goyo application directory
+ * @return Sms application directory
  */
-wstring GoyoAccessorCommand::GetGoyoAppDirectory() {
-  wstring app_goyo_dir(
-      _wgetenv(goyo_bookrack_accessor::kEnvAppDirName.c_str()));
-  return app_goyo_dir;
+wstring SmsAccessorCommand::GetSmsAppDirectory() {
+  wstring app_Sms_dir(
+      _wgetenv(sms_accessor::kEnvAppDirName.c_str()));
+  return app_Sms_dir;
 }
 
 /**
  * @fn
- * GetGoyoAppDataDirectory
+ * GetSmsAppDataDirectory
  * @brief get application data directory
- * @return goyo application data directory
+ * @return Sms application data directory
  */
-wstring GoyoAccessorCommand::GetGoyoAppDataDirectory() {
-  wstring app_goyo_dir = this->GetGoyoAppDirectory();
-  return app_goyo_dir;
+wstring SmsAccessorCommand::GetSmsAppDataDirectory() {
+  wstring app_Sms_dir = this->GetSmsAppDirectory();
+  return app_Sms_dir;
 }
 
 /**
  * @fn
- * GetGoyoBookrackDirectory
+ * GetSmsBookrackDirectory
  * @param(construction_id) construction id
  * @brief get bookrack directory
- * @return goyo bookrack directory : empty - otherwise error
+ * @return Sms bookrack directory : empty - otherwise error
  */
-wstring GoyoAccessorCommand::GetGoyoBookrackDirectory(
+wstring SmsAccessorCommand::GetSmsBookrackDirectory(
     wstring &construction_id) {
-  throw GoyoException("unsupported function!");
+  throw SmsException("unsupported function!");
 }
 
 /**
  * @fn
- * GetGoyoWorkDirectory
+ * GetSmsWorkDirectory
  * @brief get application resource base directory
- * @return goyo application resource base directory
+ * @return Sms application resource base directory
  */
-wstring GoyoAccessorCommand::GetGoyoWorkDirectory() {
-  wstring work_dir(_wgetenv(goyo_bookrack_accessor::kEnvWorkDirName.c_str()));
+wstring SmsAccessorCommand::GetSmsWorkDirectory() {
+  wstring work_dir(_wgetenv(sms_accessor::kEnvWorkDirName.c_str()));
   auto pos = work_dir.find(L".asar");
   if (pos != wstring::npos) {
     work_dir.replace(pos, 5, L".asar.unpacked");
@@ -360,24 +360,24 @@ wstring GoyoAccessorCommand::GetGoyoWorkDirectory() {
 
 /**
  * @fn
- * GetGoyoDatabaseRootDirectory
+ * GetSmsDatabaseRootDirectory
  * @brief get database root directory
- * @return goyo database root directory
+ * @return Sms database root directory
  */
-wstring GoyoAccessorCommand::GetGoyoDatabaseRootDirectory() {
-  fs::wpath work_dir(this->GetGoyoWorkDirectory());
+wstring SmsAccessorCommand::GetSmsDatabaseRootDirectory() {
+  fs::wpath work_dir(this->GetSmsWorkDirectory());
   fs::wpath db_root = work_dir / L"databases";
   return db_root.wstring();
 }
 
 /**
  * @fn
- * GetGoyoBookrackResourcesDirectory
+ * GetSmsBookrackResourcesDirectory
  * @brief get bookrack resources directory
  * @param work_dir working directory
- * @return goyo bookrack resources directory
+ * @return Sms bookrack resources directory
  */
-wstring GoyoAccessorCommand::GetGoyoBookrackResourcesDirectory(wstring work_dir) {
+wstring SmsAccessorCommand::GetSmsBookrackResourcesDirectory(wstring work_dir) {
   fs::wpath work_dir_path(work_dir);
   fs::wpath resource_dir = work_dir_path / L"ba_resources";
   return resource_dir.wstring();
@@ -390,8 +390,8 @@ wstring GoyoAccessorCommand::GetGoyoBookrackResourcesDirectory(wstring work_dir)
  * @param (path) file path
  * @return true - exists , false - not exists
  */
-bool GoyoAccessorCommand::ExistsFile(wstring &path) {
-  return GoyoAppUtil::ExistsFile(path);
+bool SmsAccessorCommand::ExistsFile(wstring &path) {
+  return SmsAppUtil::ExistsFile(path);
 }
 
 /**
@@ -402,9 +402,9 @@ bool GoyoAccessorCommand::ExistsFile(wstring &path) {
  * @param (number_of_files) number of files
  * @return file size
  */
-unsigned long long GoyoAccessorCommand::GetTotalFileSize(wstring path,
+unsigned long long SmsAccessorCommand::GetTotalFileSize(wstring path,
                                                          int *number_of_files) {
-  return GoyoAppUtil::GetTotalFileSize(path, number_of_files);
+  return SmsAppUtil::GetTotalFileSize(path, number_of_files);
 }
 
 /**
@@ -415,9 +415,9 @@ unsigned long long GoyoAccessorCommand::GetTotalFileSize(wstring path,
  * @param (ext_filter) extension filter
  * @return files in directory
  */
-std::vector<fs::path> GoyoAccessorCommand::GetFilesInDirectory(
+std::vector<fs::path> SmsAccessorCommand::GetFilesInDirectory(
     fs::path full_path, fs::path *ext_filter) {
-  return GoyoAppUtil::GetFilesInDirectory(full_path, ext_filter);
+  return SmsAppUtil::GetFilesInDirectory(full_path, ext_filter);
 }
 
 /**
@@ -427,12 +427,12 @@ std::vector<fs::path> GoyoAccessorCommand::GetFilesInDirectory(
  * @param (path) file path
  * @return true - created , otherwise error
  */
-bool GoyoAccessorCommand::CreateDirectory(wstring &path) {
+bool SmsAccessorCommand::CreateDirectory(wstring &path) {
   try {
     fs::create_directory(path);
     fs::permissions(path, fs::perms::others_all);
   } catch (fs::filesystem_error &ex) {
-    throw GoyoException(ex.what());
+    throw SmsException(ex.what());
   }
   return true;
 }
@@ -443,8 +443,8 @@ bool GoyoAccessorCommand::CreateDirectory(wstring &path) {
  * @brief convert utf8 to utf16
  * @param (utf8) string
  */
-wstring GoyoAccessorCommand::Utf8ToUtf16(const string &utf8) {
-  return GoyoAppUtil::Utf8ToUtf16(utf8);
+wstring SmsAccessorCommand::Utf8ToUtf16(const string &utf8) {
+  return SmsAppUtil::Utf8ToUtf16(utf8);
 }
 
 /**
@@ -454,9 +454,9 @@ wstring GoyoAccessorCommand::Utf8ToUtf16(const string &utf8) {
  * @param (path) file path
  * @return property tree
  */
-boost::property_tree::wptree GoyoAccessorCommand::ReadUnicodeIni(
+boost::property_tree::wptree SmsAccessorCommand::ReadUnicodeIni(
     wstring &path) {
-  return GoyoAppUtil::ReadUnicodeIni(path);
+  return SmsAppUtil::ReadUnicodeIni(path);
 }
 
 /**
@@ -466,9 +466,9 @@ boost::property_tree::wptree GoyoAccessorCommand::ReadUnicodeIni(
  * @param (path) file path
  * @return 1 if success, 0 if not success
  */
-int GoyoAccessorCommand::WriteUnicodeIni(wstring &path,
+int SmsAccessorCommand::WriteUnicodeIni(wstring &path,
                                          boost::property_tree::wptree &pt) {
-  return GoyoAppUtil::WriteUnicodeIni(path, pt);
+  return SmsAppUtil::WriteUnicodeIni(path, pt);
 }
 
 /**
@@ -478,10 +478,10 @@ int GoyoAccessorCommand::WriteUnicodeIni(wstring &path,
  * @param path file path
  * @return property tree
  */
-boost::property_tree::wptree GoyoAccessorCommand::ReadUnicodeXML(
+boost::property_tree::wptree SmsAccessorCommand::ReadUnicodeXML(
     wstring &path) {
 
-  auto ss = GoyoAppUtil::ReadUnicodeFile(path, W_MODE_READ_UTF16LE);
+  auto ss = SmsAppUtil::ReadUnicodeFile(path, W_MODE_READ_UTF16LE);
 
   boost::property_tree::wptree pt;
   read_xml(ss, pt, boost::property_tree::xml_parser::trim_whitespace);
@@ -496,15 +496,15 @@ boost::property_tree::wptree GoyoAccessorCommand::ReadUnicodeXML(
  * @param (path) file path
  * @return 1 if success, 0 if not success
  */
-int GoyoAccessorCommand::WriteUnicodeXML(wstring path,
+int SmsAccessorCommand::WriteUnicodeXML(wstring path,
                                          boost::property_tree::wptree pt) {
   try {
     wstringstream ss;
     boost::property_tree::xml_writer_settings<wstring> settings(' ', 1, L"UTF-16LE");
     write_xml(ss, pt, settings);
-    GoyoAppUtil::WriteUnicodeFile(path, W_MODE_WRITE_UTF16LE, ss);
+    SmsAppUtil::WriteUnicodeFile(path, W_MODE_WRITE_UTF16LE, ss);
   } catch (ini_parser_error &ex) {
-    throw GoyoException(ex.what());
+    throw SmsException(ex.what());
   }
   return 1;
 }
@@ -516,8 +516,8 @@ int GoyoAccessorCommand::WriteUnicodeXML(wstring path,
  * @param (str) string
  * @return converted string
  */
-string GoyoAccessorCommand::ConvertWstring(wstring &str) {
-  return GoyoAppUtil::Utf16ToUtf8(str);
+string SmsAccessorCommand::ConvertWstring(wstring &str) {
+  return SmsAppUtil::Utf16ToUtf8(str);
 }
 
 /**
@@ -527,7 +527,7 @@ string GoyoAccessorCommand::ConvertWstring(wstring &str) {
  * @param (str) string
  * @return converted string
  */
-string GoyoAccessorCommand::ConvertWstring(boost::optional<wstring> &str) {
+string SmsAccessorCommand::ConvertWstring(boost::optional<wstring> &str) {
   return ConvertWstring(str.get());
 }
 
@@ -538,8 +538,8 @@ string GoyoAccessorCommand::ConvertWstring(boost::optional<wstring> &str) {
  * @param (str) string
  * @return converted wstring
  */
-wstring GoyoAccessorCommand::ConvertString(string &str) {
-  return GoyoAppUtil::Utf8ToUtf16(str);
+wstring SmsAccessorCommand::ConvertString(string &str) {
+  return SmsAppUtil::Utf8ToUtf16(str);
 }
 
 /**
@@ -549,7 +549,7 @@ wstring GoyoAccessorCommand::ConvertString(string &str) {
  * @param (str) string
  * @return converted string
  */
-string GoyoAccessorCommand::ConvertFormatDateTime(string &str) {
+string SmsAccessorCommand::ConvertFormatDateTime(string &str) {
   if (str.length() < 14) {
     return str;
   }
@@ -570,7 +570,7 @@ string GoyoAccessorCommand::ConvertFormatDateTime(string &str) {
  * @param (str) string
  * @return converted string
  */
-string GoyoAccessorCommand::ConvertFormatDate(string &str) {
+string SmsAccessorCommand::ConvertFormatDate(string &str) {
   if (str.length() < 8) {
     return str;
   }
@@ -587,51 +587,51 @@ string GoyoAccessorCommand::ConvertFormatDate(string &str) {
  * @param (str) string
  * @return converted string
  */
-string GoyoAccessorCommand::ConvertFormatDate(boost::optional<wstring> &str) {
-  return GoyoAccessorCommand::ConvertFormatDate(
-      GoyoAccessorCommand::ConvertWstring(str));
+string SmsAccessorCommand::ConvertFormatDate(boost::optional<wstring> &str) {
+  return SmsAccessorCommand::ConvertFormatDate(
+      SmsAccessorCommand::ConvertWstring(str));
 }
 
-std::wstring GoyoAccessorCommand::GetWStringFJson(const json11::Json &json) {
+std::wstring SmsAccessorCommand::GetWStringFJson(const json11::Json &json) {
   if (json.is_string())
     return Utf8ToUtf16(json.string_value());
   else
-    throw GoyoException(json.dump() + " String value invalid");
+    throw SmsException(json.dump() + " String value invalid");
 }
 
-std::string GoyoAccessorCommand::GetStringFJson(const json11::Json &json) const {
+std::string SmsAccessorCommand::GetStringFJson(const json11::Json &json) const {
   if (json.is_string())
     return json.string_value();
   else
-    throw GoyoException(json.dump() + " String value invalid");
+    throw SmsException(json.dump() + " String value invalid");
 }
 
-int GoyoAccessorCommand::GetIntFJson(const json11::Json &json) const {
+int SmsAccessorCommand::GetIntFJson(const json11::Json &json) const {
   if (json.is_number())
     return json.int_value();
   else
-    throw GoyoException(json.dump() + " int value invalid");
+    throw SmsException(json.dump() + " int value invalid");
 }
 
-bool GoyoAccessorCommand::GetBoolFJson(const json11::Json &json) const{
+bool SmsAccessorCommand::GetBoolFJson(const json11::Json &json) const{
   if (json.is_bool())
     return json.bool_value();
   else
-    throw GoyoException(json.dump() + " bool value invalid");
+    throw SmsException(json.dump() + " bool value invalid");
 }
 
-json11::Json::object GoyoAccessorCommand::GetObjFJson(const json11::Json &json) const{
+json11::Json::object SmsAccessorCommand::GetObjFJson(const json11::Json &json) const{
   if (json.is_object())
     return json.object_items();
   else
-    throw GoyoException(json.dump() + " Object value invalid");
+    throw SmsException(json.dump() + " Object value invalid");
 }
 
-  json11::Json::array GoyoAccessorCommand::GetArrayFJson(const json11::Json &json) const{
+  json11::Json::array SmsAccessorCommand::GetArrayFJson(const json11::Json &json) const{
   if (json.is_array())
     return json.array_items();
   else
-    throw GoyoException(json.dump() + " Array value invalid");
+    throw SmsException(json.dump() + " Array value invalid");
 }
 
 /**
@@ -640,7 +640,7 @@ json11::Json::object GoyoAccessorCommand::GetObjFJson(const json11::Json &json) 
  * @brief create guid
  * @return guid string
  */
-string GoyoAccessorCommand::CreateGuid() { return GoyoAppUtil::CreateGuid(); }
+string SmsAccessorCommand::CreateGuid() { return SmsAppUtil::CreateGuid(); }
 
 
 /**
@@ -649,7 +649,7 @@ string GoyoAccessorCommand::CreateGuid() { return GoyoAppUtil::CreateGuid(); }
 * @brief output progress
 * @param status
 */
-void GoyoAccessorCommand::OutputProgress(Json::object &status) {
+void SmsAccessorCommand::OutputProgress(Json::object &status) {
   Json progress = Json::object{
     { "progress", status }
   };
@@ -663,7 +663,7 @@ void GoyoAccessorCommand::OutputProgress(Json::object &status) {
 * @param is_shared shared construction : true, otherwise : false
 * @param dbs target databases
 */
-void GoyoAccessorCommand::ReleaseDatabases(const bool is_shared, std::vector<goyo_db_manager::manager::GoyoBaseDatabase *> &dbs) {
+void SmsAccessorCommand::ReleaseDatabases(const bool is_shared, std::vector<Sms_db_manager::manager::SmsBaseDatabase *> &dbs) {
   // not close
   // if (is_shared) {
   //   for (auto &db : dbs) {
@@ -677,13 +677,13 @@ void GoyoAccessorCommand::ReleaseDatabases(const bool is_shared, std::vector<goy
 * ValidateDiskFreeSpaceSize
 * @brief validate disk free space size
 * @param dir
-* @throw GoyoAppUtil::GetDiskFreeSpaceSize < EFFECTIVE_DISK_MB_SIZE
+* @throw SmsAppUtil::GetDiskFreeSpaceSize < EFFECTIVE_DISK_MB_SIZE
 */
-void GoyoAccessorCommand::ValidateDiskFreeSpaceSize(std::wstring &dir) {
-  auto size_mb = GoyoAppUtil::GetDiskFreeSpaceSize(dir);
+void SmsAccessorCommand::ValidateDiskFreeSpaceSize(std::wstring &dir) {
+  auto size_mb = SmsAppUtil::GetDiskFreeSpaceSize(dir);
   if (size_mb < EFFECTIVE_DISK_MB_SIZE) {
-    throw GoyoException("Disk space is insufficient.(free : " + to_string(size_mb) + "MB)");
+    throw SmsException("Disk space is insufficient.(free : " + to_string(size_mb) + "MB)");
   }
 }
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor

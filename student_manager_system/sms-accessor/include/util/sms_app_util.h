@@ -1,12 +1,12 @@
 /**
- * @file goyo_app_util.h
+ * @file sms_app_util.h
  * @brief application utility header
- * @author yonaha
- * @date 2018/03/01
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_UTIL_GOYO_APP_UTIL_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_UTIL_GOYO_APP_UTIL_H_
+#ifndef SMS_ACCESSOR_INCLUDE_UTIL_SMS_APP_UTIL_H_
+#define SMS_ACCESSOR_INCLUDE_UTIL_SMS_APP_UTIL_H_
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -15,7 +15,7 @@
 
 namespace fs = boost::filesystem;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 const std::wstring W_MODE_WRITE_UTF16LE = L"w,ccs=UTF-16LE";
 const std::wstring W_MODE_READ_UTF16LE = L"r,ccs=UTF-16LE";
@@ -24,17 +24,17 @@ const std::wstring W_MODE_READ_UTF8 = L"r,ccs=UTF-8";
 
 
 /**
- * @class GoyoAppUtil
+ * @class SmsAppUtil
  * @brief application utility
  */
-class GoyoAppUtil {
+class SmsAppUtil {
  public:
   /**
    * @fn
-   * ~GoyoAppUtil
+   * ~SmsAppUtil
    * @brief destructor
    */
-  ~GoyoAppUtil();
+  ~SmsAppUtil();
 
   /**
    * @fn
@@ -53,7 +53,7 @@ class GoyoAppUtil {
    * @return true - exists , false - not exists
    */
   static bool ExistsDirectory(std::wstring &path);
-  
+
   /**
    * @fn
    * GetTotalFileSize
@@ -81,7 +81,7 @@ class GoyoAppUtil {
   //  * @param (sjis) string
   //  * @return string
   //  */
-  // static std::string GoyoAppUtil::ShiftJisToUTF8(const std::string &sjis);
+  // static std::string SmsAppUtil::ShiftJisToUTF8(const std::string &sjis);
 
   /**
    * @fn
@@ -127,7 +127,7 @@ class GoyoAppUtil {
    * @return string
    */
   static std::string UTF8ToShiftJis(const std::string &str);
-  
+
   /**
    * @fn
    * IsUnicode
@@ -174,7 +174,7 @@ class GoyoAppUtil {
    * @param (color) color integer value
    * @return color code string
    */
-  static std::string GoyoAppUtil::ConvertColorCode(int color);
+  static std::string SmsAppUtil::ConvertColorCode(int color);
 
   /**
    * @fn
@@ -299,10 +299,10 @@ class GoyoAppUtil {
 private:
   /**
    * @fn
-   * GoyoAppUtil
+   * SmsAppUtil
    * @brief constructor
    */
-  GoyoAppUtil();
+  SmsAppUtil();
 
   /**
    * @fn
@@ -314,6 +314,6 @@ private:
   static std::string LowerString(std::string str);
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_UTIL_GOYO_APP_UTIL_H_
+#endif  // SMS_ACCESSOR_INCLUDE_UTIL_SMS_APP_UTIL_H_

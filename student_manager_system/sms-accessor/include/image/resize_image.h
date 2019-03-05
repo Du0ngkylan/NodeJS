@@ -1,36 +1,36 @@
 /**
  * @file resize_image.h
  * @brief resize image command header
- * @author kanegon
- * @date 2018/06/11
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_RESIZE_IMAGE_H
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_RESIZE_IMAGE_H
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_RESIZE_IMAGE_H
+#define SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_RESIZE_IMAGE_H
 
 #include "../accessor_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoCreateThumbnail
+ * @class SmsCreateThumbnail
  * @brief Create Thumbnail command
  */
-class GoyoResizeImage : public GoyoAccessorCommand {
+class SmsResizeImage : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoResizeImage
+   * SmsResizeImage
    * @brief constructor
    */
-  GoyoResizeImage();
+  SmsResizeImage();
 
   /**
    * @fn
-   * ~GoyoResizeImage
+   * ~SmsResizeImage
    * @brief destructor
    */
-  ~GoyoResizeImage();
+  ~SmsResizeImage();
 
   /**
    * @fn
@@ -55,7 +55,7 @@ class GoyoResizeImage : public GoyoAccessorCommand {
    * @param (string) UTF-8 string
    * @return std::string shift-jis string
    */
-  std::string GoyoResizeImage::UTF8toSjis(std::string srcUTF8);
+  std::string SmsResizeImage::UTF8toSjis(std::string srcUTF8);
 
  private:
   // store error type
@@ -65,6 +65,6 @@ class GoyoResizeImage : public GoyoAccessorCommand {
   std::string errorMessage;
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_RESIZE_IMAGE_H
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_RESIZE_IMAGE_H

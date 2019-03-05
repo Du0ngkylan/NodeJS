@@ -1,12 +1,12 @@
 /**
- * @file goyo_exception.h
- * @brief goyo exception header
- * @author yonaha
- * @date 2018/02/20
+ * @file sms_exception.h
+ * @brief sms exception header
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_EXCEPT_GOYO_EXCEPTION_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_EXCEPT_GOYO_EXCEPTION_H_
+#ifndef SMS_ACCESSOR_INCLUDE_EXCEPT_Sms_EXCEPTION_H_
+#define SMS_ACCESSOR_INCLUDE_EXCEPT_Sms_EXCEPTION_H_
 
 #include <exception>
 #include <string>
@@ -14,60 +14,60 @@
 #define THROW_EXCEPTION(EXCEPTION_TYPE, message) \
   throw EXCEPTION_TYPE(message, __FILE__, __func__, __LINE__)
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoException
- * @brief  goyo exception
+ * @class SmsException
+ * @brief  Sms exception
  */
-class GoyoException : public std::exception {
+class SmsException : public std::exception {
  public:
   /**
    * @fn
-   * GoyoException
+   * SmsException
    * @brief constructor
    * @param (message) message that throws
    */
-  explicit GoyoException(const std::string& message);
+  explicit SmsException(const std::string& message);
 
   /**
    * @fn
-   * GoyoException
+   * SmsException
    * @brief constructor
    * @param (message) message that throws
    */
-  explicit GoyoException(const std::wstring& message);
+  explicit SmsException(const std::wstring& message);
 
   /**
    * @fn
-   * GoyoException
-   * @brief constructor
-   * @param (message) message that throws
-   * @param (file) file that throws
-   * @param (function) function that throws
-   * @param (line) line number that throws
-   */
-  GoyoException(const std::string& message, const char* file,
-                const char* funcion, const int line);
-
-  /**
-   * @fn
-   * GoyoException
+   * SmsException
    * @brief constructor
    * @param (message) message that throws
    * @param (file) file that throws
    * @param (function) function that throws
    * @param (line) line number that throws
    */
-  GoyoException(const std::wstring& message, const char* file,
+  SmsException(const std::string& message, const char* file,
                 const char* funcion, const int line);
 
   /**
    * @fn
-   * ~GoyoException
+   * SmsException
+   * @brief constructor
+   * @param (message) message that throws
+   * @param (file) file that throws
+   * @param (function) function that throws
+   * @param (line) line number that throws
+   */
+  SmsException(const std::wstring& message, const char* file,
+                const char* funcion, const int line);
+
+  /**
+   * @fn
+   * ~SmsException
    * @brief destructor
    */
-  virtual ~GoyoException() throw();
+  virtual ~SmsException() throw();
 
   /**
    * @fn
@@ -116,6 +116,6 @@ class GoyoException : public std::exception {
   int m_line;
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_EXCEPT_GOYO_EXCEPTION_H_
+#endif  // SMS_ACCESSOR_INCLUDE_EXCEPT_Sms_EXCEPTION_H_

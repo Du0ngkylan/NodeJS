@@ -1,36 +1,36 @@
 /**
  * @file get_image_info.h
  * @brief get image information command header
- * @author kanegon
- * @date 2018/06/12
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_GET_IMAGE_INFO_H
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_GET_IMAGE_INFO_H
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_GET_IMAGE_INFO_H
+#define SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_GET_IMAGE_INFO_H
 
 #include "../accessor_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoGetImageInfo
+ * @class SmsGetImageInfo
  * @brief Get Image Information command
  */
-class GoyoGetImageInfo : public GoyoAccessorCommand {
+class SmsGetImageInfo : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoGetImageInfo
+   * SmsGetImageInfo
    * @brief constructor
    */
-  GoyoGetImageInfo();
+  SmsGetImageInfo();
 
   /**
    * @fn
-   * ~GoyoGetImageInfo
+   * ~SmsGetImageInfo
    * @brief destructor
    */
-  ~GoyoGetImageInfo();
+  ~SmsGetImageInfo();
 
   /**
    * @fn
@@ -55,7 +55,7 @@ class GoyoGetImageInfo : public GoyoAccessorCommand {
    * @param (string) UTF-8 string
    * @return std::string shift-jis string
    */
-  std::string GoyoGetImageInfo::UTF8toSjis(std::string srcUTF8);
+  std::string SmsGetImageInfo::UTF8toSjis(std::string srcUTF8);
 
  private:
   // store error type
@@ -65,6 +65,6 @@ class GoyoGetImageInfo : public GoyoAccessorCommand {
   std::string errorMessage;
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_GET_IMAGE_INFO_H
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_GET_IMAGE_INFO_H

@@ -1,36 +1,36 @@
 /**
  * @file accessor_command_factory.h
- * @brief goyo bookrack accessor command factory header
- * @author yonaha
- * @date 2018/02/15
+ * @brief sms accessor command factory header
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef   GOYO_BOOKRACK_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_FACTORY_H_
-#define   GOYO_BOOKRACK_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_FACTORY_H_
+#ifndef   SMS_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_FACTORY_H_
+#define   SMS_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_FACTORY_H_
 
 #include "../accessor_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoAccessorCommandFactory
- * @brief  goyo accessor command factory
+ * @class SmsAccessorCommandFactory
+ * @brief  Sms accessor command factory
  */
-class GoyoAccessorCommandFactory {
+class SmsAccessorCommandFactory {
 public:
   /**
    * @fn
-   * GoyoAccessorCommandFactory
+   * SmsAccessorCommandFactory
    * @brief constructor
    */
-  GoyoAccessorCommandFactory();
+  SmsAccessorCommandFactory();
 
   /**
    * @fn
-   * GoyoAccessorCommandFactory
+   * SmsAccessorCommandFactory
    * @brief destructor
    */
-  ~GoyoAccessorCommandFactory();
+  ~SmsAccessorCommandFactory();
 
   /**
    * @fn
@@ -68,12 +68,12 @@ public:
   * @brief get command
   * @param(command) command string
   */
-  GoyoAccessorCommand *GetCommand(std::string command);
+  SmsAccessorCommand *GetCommand(std::string command);
 
 private:
-  std::map<std::string, GoyoAccessorCommand*> commands; 
+  std::map<std::string, SmsAccessorCommand*> commands; 
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_FACTORY_H_
+#endif  // SMS_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_FACTORY_H_

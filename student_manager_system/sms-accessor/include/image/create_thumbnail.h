@@ -1,36 +1,36 @@
 /**
  * @file create_thumbnail.h
  * @brief CreateThumbnail command header
- * @author kanegon
- * @date 2018/06/11
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_CREATE_THUMBNAIL_H
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_CREATE_THUMBNAIL_H
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_CREATE_THUMBNAIL_H
+#define SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_CREATE_THUMBNAIL_H
 
 #include "../accessor_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoCreateThumbnail
+ * @class SmsCreateThumbnail
  * @brief Create Thumbnail command
  */
-class GoyoCreateThumbnail : public GoyoAccessorCommand {
+class SmsCreateThumbnail : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoCreateThumbnail
+   * SmsCreateThumbnail
    * @brief constructor
    */
-  GoyoCreateThumbnail();
+  SmsCreateThumbnail();
 
   /**
    * @fn
-   * ~GoyoCreateThumbnail
+   * ~SmsCreateThumbnail
    * @brief destructor
    */
-  ~GoyoCreateThumbnail();
+  ~SmsCreateThumbnail();
 
   /**
    * @fn
@@ -55,7 +55,7 @@ class GoyoCreateThumbnail : public GoyoAccessorCommand {
    * @param (string) UTF-8 string
    * @return std::string shift-jis string
    */
-  std::string GoyoCreateThumbnail::UTF8toSjis(std::string srcUTF8);
+  std::string SmsCreateThumbnail::UTF8toSjis(std::string srcUTF8);
 
  private:
   // store error type
@@ -65,6 +65,6 @@ class GoyoCreateThumbnail : public GoyoAccessorCommand {
   std::string errorMessage;
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_CREATE_THUMBNAIL_H
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_CREATE_THUMBNAIL_H

@@ -1,11 +1,11 @@
 /**
- * @file goyo_app_util.cc
+ * @file sms_app_util.cc
  * @brief application utility implementation
- * @author yonaha
- * @date 2018/03/01
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#include "util/goyo_app_util.h"
+#include "util/sms_app_util.h"
 #include <boost/beast/core/detail/base64.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -16,29 +16,29 @@
 #include <locale>
 #include <regex>
 #include "common.h"
-#include "except/goyo_exception.h"
+#include "except/sms_exception.h"
 #include "accessor_command.h"
 
 using namespace std;
 using namespace boost::property_tree::ini_parser;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 const int HASH_LENGTH = 32;
 
 /**
  * @fn
- * GoyoAppUtil
+ * SmsAppUtil
  * @brief constructor
  */
-GoyoAppUtil::GoyoAppUtil() {}
+SmsAppUtil::SmsAppUtil() {}
 
 /**
  * @fn
- * ~GoyoAppUtil
+ * ~SmsAppUtil
  * @brief destructor
  */
-GoyoAppUtil::~GoyoAppUtil() {}
+SmsAppUtil::~SmsAppUtil() {}
 
 /**
  * @fn
@@ -47,7 +47,7 @@ GoyoAppUtil::~GoyoAppUtil() {}
  * @param (path) file path
  * @return true - exists , false - otherwise error
  */
-bool GoyoAppUtil::ExistsFile(wstring &path) {
+bool SmsAppUtil::ExistsFile(wstring &path) {
   // boost::system::error_code error;
   // const fs::path file(path);
   // return fs::exists(file, error);
@@ -61,7 +61,7 @@ bool GoyoAppUtil::ExistsFile(wstring &path) {
  * @param (path) directory path
  * @return true - exists , false - not exists
  */
-bool GoyoAppUtil::ExistsDirectory(wstring &path) {
+bool SmsAppUtil::ExistsDirectory(wstring &path) {
   return fs::is_directory(path);
 }
 
@@ -73,13 +73,13 @@ bool GoyoAppUtil::ExistsDirectory(wstring &path) {
  * @param (number_of_files) number of files
  * @return size of files or directory
  */
-unsigned long long GoyoAppUtil::GetTotalFileSize(wstring path,
+unsigned long long SmsAppUtil::GetTotalFileSize(wstring path,
                                         int *number_of_files) {
   unsigned long long filesize = 0;
   int i_number_of_files = 0;
   vector<fs::path> files;
-  if (!GoyoAppUtil::ExistsFile(path)) {
-    throw GoyoException(L"File not found: " + path);
+  if (!SmsAppUtil::ExistsFile(path)) {
+    throw SmsException(L"File not found: " + path);
   }
   try {
     if (path.find(L"*") != wstring::npos) {
@@ -101,7 +101,7 @@ unsigned long long GoyoAppUtil::GetTotalFileSize(wstring path,
       i_number_of_files++;
     }
   } catch (fs::filesystem_error &ex) {
-    throw GoyoException(ex.what());
+    throw SmsException(ex.what());
   }
   number_of_files = &i_number_of_files;
   return filesize;
@@ -114,10 +114,10 @@ unsigned long long GoyoAppUtil::GetTotalFileSize(wstring path,
   * @param (path) file path
   * @return size of directory
   */
-unsigned long long GoyoAppUtil::GetTotalDirectorySize(std::wstring path) {
+unsigned long long SmsAppUtil::GetTotalDirectorySize(std::wstring path) {
   unsigned long long filesize = 0;
-  if (!GoyoAppUtil::ExistsDirectory(path)) {
-    throw GoyoException(L"Directory not found: " + path);
+  if (!SmsAppUtil::ExistsDirectory(path)) {
+    throw SmsException(L"Directory not found: " + path);
   }
   for( fs::directory_iterator file( path );
        file != fs::directory_iterator(); 
@@ -130,7 +130,7 @@ unsigned long long GoyoAppUtil::GetTotalDirectorySize(std::wstring path) {
         filesize += fs::file_size(current);
       }
     } catch (fs::filesystem_error &ex) {
-      throw GoyoException(ex.what());
+      throw SmsException(ex.what());
     }
   }
   return filesize;
@@ -144,7 +144,7 @@ unsigned long long GoyoAppUtil::GetTotalDirectorySize(std::wstring path) {
  * @param (ext_filter) extension filter
  * @return files in directory
  */
-vector<fs::path> GoyoAppUtil::GetFilesInDirectory(fs::path full_path,
+vector<fs::path> SmsAppUtil::GetFilesInDirectory(fs::path full_path,
                                                         fs::path *ext_filter) {
   vector<fs::path> files;
   try {
@@ -163,7 +163,7 @@ vector<fs::path> GoyoAppUtil::GetFilesInDirectory(fs::path full_path,
       }
     }
   } catch (exception &ex) {
-    throw GoyoException(ex.what());
+    throw SmsException(ex.what());
   }
   return files;
 }
@@ -175,7 +175,7 @@ vector<fs::path> GoyoAppUtil::GetFilesInDirectory(fs::path full_path,
  * @param (str) string
  * @return lower string
  */
-string GoyoAppUtil::LowerString(string str) {
+string SmsAppUtil::LowerString(string str) {
   transform(str.begin(), str.end(), str.begin(), ::tolower);
   return str;
 }
@@ -187,7 +187,7 @@ string GoyoAppUtil::LowerString(string str) {
 //  * @param (sjis) string
 //  * @return string
 //  */
-// string GoyoAppUtil::ShiftJisToUTF8(const string &sjis) {
+// string SmsAppUtil::ShiftJisToUTF8(const string &sjis) {
 //   wstring utf16 = ShiftJisToUTF16(sjis);
 //   return Utf16ToUtf8(utf16);
 // }
@@ -199,7 +199,7 @@ string GoyoAppUtil::LowerString(string str) {
  * @param (utf8) string
  * @return wide string
  */
-wstring GoyoAppUtil::Utf8ToUtf16(const string &utf8) {
+wstring SmsAppUtil::Utf8ToUtf16(const string &utf8) {
   auto const dest_size = ::MultiByteToWideChar(CP_UTF8, 0U, utf8.data(), -1, nullptr, 0U);
   std::vector<wchar_t> dest(dest_size, L'\0');
   if (::MultiByteToWideChar(CP_UTF8, 0U, utf8.data(), -1, dest.data(), dest.size()) == 0) {
@@ -217,7 +217,7 @@ wstring GoyoAppUtil::Utf8ToUtf16(const string &utf8) {
  * @param (str) wstring
  * @return converted utf8
  */
-string GoyoAppUtil::Utf16ToUtf8(const wstring& str) {
+string SmsAppUtil::Utf16ToUtf8(const wstring& str) {
   auto const dest_size = ::WideCharToMultiByte(CP_UTF8, 0U, str.data(), -1, nullptr, 0, nullptr, nullptr);
   std::vector<char> dest(dest_size, '\0');
   if (::WideCharToMultiByte(CP_UTF8, 0U, str.data(), -1, dest.data(), dest.size(), nullptr, nullptr) == 0) {
@@ -235,7 +235,7 @@ string GoyoAppUtil::Utf16ToUtf8(const wstring& str) {
  * @brief convert shift-jis string
  * @return string
  */
-string GoyoAppUtil::UTF8ToShiftJis(const std::string &str) {
+string SmsAppUtil::UTF8ToShiftJis(const std::string &str) {
   int lenghtUnicode = MultiByteToWideChar(CP_UTF8, 0, str.c_str(),
                                           str.size() + 1, NULL, 0);
   wchar_t* bufUnicode = new wchar_t[lenghtUnicode];
@@ -261,7 +261,7 @@ string GoyoAppUtil::UTF8ToShiftJis(const std::string &str) {
  * @brief convert utf16 string
  * @return wide string
  */
-wstring GoyoAppUtil::ShiftJisToUTF16(const string &str) {
+wstring SmsAppUtil::ShiftJisToUTF16(const string &str) {
   static_assert(sizeof(wchar_t) == 2, "this function is windows only");
   const int len = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(),
                                         -1, nullptr, 0);
@@ -310,7 +310,7 @@ wstring GoyoAppUtil::ShiftJisToUTF16(const string &str) {
 //  * @param (str) wstring
 //  * @return converted ShiftJis
 //  */
-// string GoyoAppUtil::Utf16ToShiftJis(const wstring& str) {
+// string SmsAppUtil::Utf16ToShiftJis(const wstring& str) {
 //      wstring_convert<codecvt_utf8<wchar_t>, wchar_t> cv;
 //      std::string mbs = cv.to_bytes(str);
 
@@ -341,7 +341,7 @@ wstring GoyoAppUtil::ShiftJisToUTF16(const string &str) {
  * @brief determine whether is unicode file
  * @return true - unicode : false - other
  */
-bool GoyoAppUtil::IsUnicode(wstring &path) {
+bool SmsAppUtil::IsUnicode(wstring &path) {
   // read all data to buffer
   ifstream ifs(path, ios::binary | ios::ate);
   ifstream::pos_type pos = ifs.tellg();
@@ -366,7 +366,7 @@ bool GoyoAppUtil::IsUnicode(wstring &path) {
  * @brief convert hex string
  * @return hex string
  */
-string GoyoAppUtil::HexString(unsigned char *data, int len) {
+string SmsAppUtil::HexString(unsigned char *data, int len) {
   stringstream ss;
   ss << hex;
   for (int i = 0; i < len; ++i) {
@@ -382,7 +382,7 @@ string GoyoAppUtil::HexString(unsigned char *data, int len) {
  * @brief convert byte array(vector)
  * @return vector
  */
-vector<char> GoyoAppUtil::HexToBytes(const string &hex) {
+vector<char> SmsAppUtil::HexToBytes(const string &hex) {
   vector<char> bytes;
 
   for (unsigned int i = 0; i < hex.length(); i += 2) {
@@ -401,7 +401,7 @@ vector<char> GoyoAppUtil::HexToBytes(const string &hex) {
  * @param (color) color integer value
  * @return color code string
  */
-string GoyoAppUtil::ConvertColorCode(int color) {
+string SmsAppUtil::ConvertColorCode(int color) {
   std::stringstream stream;
   stream << std::setw(4) << std::setfill('0') << std::hex << color;
   string color_code = "#" + stream.str();
@@ -415,7 +415,7 @@ string GoyoAppUtil::ConvertColorCode(int color) {
  * @param (color_code) color code
  * @return color code value
  */
-int GoyoAppUtil::ConvertColorValue(std::string color_code) {
+int SmsAppUtil::ConvertColorValue(std::string color_code) {
   int color = 0;
   if (!color_code.empty()) {
     std::stringstream ss;
@@ -431,17 +431,17 @@ int GoyoAppUtil::ConvertColorValue(std::string color_code) {
  * @brief create guid
  * @return guid string
  */
-string GoyoAppUtil::CreateGuid() {
+string SmsAppUtil::CreateGuid() {
   GUID guid;
 
   if (::CoCreateGuid(&guid) != S_OK) {
-    throw GoyoException("Failed to create guid.");
+    throw SmsException("Failed to create guid.");
   }
 
   // convert string
   WCHAR wc[40];
   ZeroMemory(wc, sizeof(WCHAR) * 40);
-  GoyoDebugLog(std::to_string(::StringFromGUID2(guid, wc, 40)));
+  SmsDebugLog(std::to_string(::StringFromGUID2(guid, wc, 40)));
 
   wstring ws(wc);
   string guid_str(ws.begin(), ws.end());
@@ -456,7 +456,7 @@ string GoyoAppUtil::CreateGuid() {
  * @param(s) source string
  * @return base64 string
  */
-string GoyoAppUtil::Base64_encode(const string& s) {
+string SmsAppUtil::Base64_encode(const string& s) {
   return boost::beast::detail::base64_encode(s);
 }
 
@@ -467,7 +467,7 @@ string GoyoAppUtil::Base64_encode(const string& s) {
  * @param (b) base64 string
  * @return string
  */
-string GoyoAppUtil::Base64_decode(const string& b) {
+string SmsAppUtil::Base64_decode(const string& b) {
   return boost::beast::detail::base64_decode(b);
 }
 
@@ -501,7 +501,7 @@ inline void FreeHashResources(HCRYPTPROV h_prov,
  * @param (len) raw data length
  * @return hex string
  */
-string GoyoAppUtil::GetFileHash(char *data, int len)
+string SmsAppUtil::GetFileHash(char *data, int len)
 {
   if (data == nullptr || len == 0)
   {
@@ -523,7 +523,7 @@ string GoyoAppUtil::GetFileHash(char *data, int len)
   {
     FreeHashResources(h_prov, h_hash);
     string msg = "Error in AcquireContext " + to_string(GetLastError());
-    throw GoyoException(msg);
+    throw SmsException(msg);
   }
 
   // create hash
@@ -536,7 +536,7 @@ string GoyoAppUtil::GetFileHash(char *data, int len)
   {
     FreeHashResources(h_prov, h_hash);
     string msg = "Error in CryptCreateHash " + to_string(GetLastError());
-    throw GoyoException(msg);
+    throw SmsException(msg);
   }
 
   // append target data
@@ -548,7 +548,7 @@ string GoyoAppUtil::GetFileHash(char *data, int len)
   {
     FreeHashResources(h_prov, h_hash);
     string msg = "Error in CryptHashData " + to_string(GetLastError());
-    throw GoyoException(msg);
+    throw SmsException(msg);
   }
 
   // get hash
@@ -561,7 +561,7 @@ string GoyoAppUtil::GetFileHash(char *data, int len)
   {
     FreeHashResources(h_prov, h_hash);
     string msg = "Error in CryptGetHashParam " + to_string(GetLastError());
-    throw GoyoException(msg);
+    throw SmsException(msg);
   }
   FreeHashResources(h_prov, h_hash);
 
@@ -575,7 +575,7 @@ string GoyoAppUtil::GetFileHash(char *data, int len)
 * @param(file_name) thumbnail path
 * @return support - true
 */
-bool GoyoAppUtil::IsSupportImageFormat(std::wstring file_name) {
+bool SmsAppUtil::IsSupportImageFormat(std::wstring file_name) {
 
   fs::wpath f(file_name);
   auto ext = f.extension().string();
@@ -600,7 +600,7 @@ bool GoyoAppUtil::IsSupportImageFormat(std::wstring file_name) {
  * @param(folder) parent folder
  * @return generated file name
  */
-wstring GoyoAppUtil::GenerateUniqueFileNameInFolder(const wstring &file_name,
+wstring SmsAppUtil::GenerateUniqueFileNameInFolder(const wstring &file_name,
                                                     const wstring &folder) {
   fs::wpath file_src_path(file_name);
   fs::wpath folder_path(folder);
@@ -633,7 +633,7 @@ wstring GoyoAppUtil::GenerateUniqueFileNameInFolder(const wstring &file_name,
  * @param(path) path
  * @return free space (MB)
  */
-unsigned long long GoyoAppUtil::GetDiskFreeSpaceSize(std::wstring &path) {
+unsigned long long SmsAppUtil::GetDiskFreeSpaceSize(std::wstring &path) {
   ULARGE_INTEGER freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes;		
   if (GetDiskFreeSpaceEx(
     path.c_str(),
@@ -656,11 +656,11 @@ unsigned long long GoyoAppUtil::GetDiskFreeSpaceSize(std::wstring &path) {
  * @param(folder_path) path
  * @return drive type unknown, removable, fixed, remote, cdrom, ramdisk
  */
-string GoyoAppUtil::GetDriveTypeString(wstring &folder_path) {
+string SmsAppUtil::GetDriveTypeString(wstring &folder_path) {
   fs::path d(folder_path);
   wstring root = fs::absolute(d).root_path().wstring();
   UINT type = GetDriveTypeW(root.c_str());
-  GoyoTraceLog(L"driveType=" + to_wstring(type) + L" drive=" + root);
+  SmsTraceLog(L"driveType=" + to_wstring(type) + L" drive=" + root);
   string d_type = "unknown";
   switch (type) {
     case DRIVE_REMOVABLE:
@@ -695,17 +695,17 @@ string GoyoAppUtil::GetDriveTypeString(wstring &folder_path) {
  * @param (mode) write mode
  * @param (str) string
  */
-void GoyoAppUtil::WriteUnicodeFile(wstring &path, const wstring &mode, wstringstream &ss) {
+void SmsAppUtil::WriteUnicodeFile(wstring &path, const wstring &mode, wstringstream &ss) {
   FILE *fp = nullptr;
   errno_t err;
   if ((err = _wfopen_s(&fp, path.c_str(), mode.c_str())) != 0) {
-    throw GoyoException(L"failed to open file. [" + path + L"] err=" + to_wstring(err));
+    throw SmsException(L"failed to open file. [" + path + L"] err=" + to_wstring(err));
   }
-  
+
   int size = fwprintf_s(fp, L"%s", ss.str().c_str());
   fclose(fp);
   if (size < 0) {
-    throw GoyoException(L"failed to write file. [" + path + L"]");
+    throw SmsException(L"failed to write file. [" + path + L"]");
   }
 }
 
@@ -716,11 +716,11 @@ void GoyoAppUtil::WriteUnicodeFile(wstring &path, const wstring &mode, wstringst
  * @param (path) file path
  * @param (mode)
  */
-wstringstream GoyoAppUtil::ReadUnicodeFile(wstring &path, const wstring &mode) {
+wstringstream SmsAppUtil::ReadUnicodeFile(wstring &path, const wstring &mode) {
   FILE *fp = nullptr;
   errno_t err;
   if ((err = _wfopen_s(&fp, path.c_str(), mode.c_str())) != 0) {
-    throw GoyoException(L"failed to open file. [" + path + L"] err=" + to_wstring(err));
+    throw SmsException(L"failed to open file. [" + path + L"] err=" + to_wstring(err));
   }
   
   const int BUF_LEN = 1024;
@@ -745,12 +745,12 @@ wstringstream GoyoAppUtil::ReadUnicodeFile(wstring &path, const wstring &mode) {
  * @param (path) file path
  * @return property tree
  */
-boost::property_tree::wptree GoyoAppUtil::ReadUnicodeIni(wstring &path) {
-      // old-goyo18 logic
-  // if (GoyoAppUtil::IsUnicode(path) == false) {
+boost::property_tree::wptree SmsAppUtil::ReadUnicodeIni(wstring &path) {
+      // old-Sms18 logic
+  // if (SmsAppUtil::IsUnicode(path) == false) {
   //   auto str = ConvertShiftJisToUnicodeFromFile(path);
   //   wstringstream ss(str);
-  //   GoyoAppUtil::WriteUnicodeFile(path, W_MODE_WRITE_UTF16LE, ss);
+  //   SmsAppUtil::WriteUnicodeFile(path, W_MODE_WRITE_UTF16LE, ss);
   // }
 
   auto ss = ReadUnicodeFile(path, W_MODE_READ_UTF16LE);
@@ -759,7 +759,7 @@ boost::property_tree::wptree GoyoAppUtil::ReadUnicodeIni(wstring &path) {
   try {
     read_ini(ss, pt);
   } catch (ini_parser_error &ex) {
-    throw GoyoException(ex.what());
+    throw SmsException(ex.what());
   }
 
   return pt;
@@ -772,13 +772,13 @@ boost::property_tree::wptree GoyoAppUtil::ReadUnicodeIni(wstring &path) {
  * @param (path) file path
  * @return 1 if success, 0 if not success
  */
-int GoyoAppUtil::WriteUnicodeIni(wstring &path, boost::property_tree::wptree &pt) {
+int SmsAppUtil::WriteUnicodeIni(wstring &path, boost::property_tree::wptree &pt) {
   try {
     wstringstream ss;
     write_ini(ss, pt, 0);
     WriteUnicodeFile(path, W_MODE_WRITE_UTF16LE, ss);
   } catch (ini_parser_error &ex) {
-    throw GoyoException(ex.what());
+    throw SmsException(ex.what());
   }
   return 1;
 }
@@ -790,15 +790,15 @@ int GoyoAppUtil::WriteUnicodeIni(wstring &path, boost::property_tree::wptree &pt
 //* @param(src_file) source file name
 //* @return generated file path, if not converted then return empty string
 //*/
-//wstring GoyoAppUtil::ConvertImageFile(const wstring &src_file) {
+//wstring SmsAppUtil::ConvertImageFile(const wstring &src_file) {
 //
 //  fs::wpath file_src_path(src_file);
 //  auto ext = file_src_path.extension().string();
 //  boost::algorithm::to_lower(ext);
 //
-//  GoyoDebugLog(L"convert from:" + src_file);
+//  SmsDebugLog(L"convert from:" + src_file);
 //  if (ext != ".tif" && ext != ".tiff") {
-//    GoyoDebugLog("not converted");
+//    SmsDebugLog("not converted");
 //    return L"";
 //  }
 //  
@@ -812,15 +812,15 @@ int GoyoAppUtil::WriteUnicodeIni(wstring &path, boost::property_tree::wptree &pt
 //
 //  wstring dest = temp_path + L"\\" + file_src_path.filename().stem().wstring() + L".jpg";
 //
-//  GoyoDebugLog(L"convert   to:" + dest);
+//  SmsDebugLog(L"convert   to:" + dest);
 //  string s = Utf16ToShiftJis(src_file);
 //  string d = Utf16ToShiftJis(dest);
 //  
 //  // convert jpeg
-//  GoyoImage image(s);
+//  SmsImage image(s);
 //  image.ConvertJpg(d);
 //
 //  return dest;
 //}
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor

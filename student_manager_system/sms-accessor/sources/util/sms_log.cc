@@ -1,8 +1,8 @@
 /**
- * @file goyo_log.cc
+ * @file sms_log.cc
  * @brief log utility implementation
- * @author yonaha
- * @date 2018/02/19
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
 #include <boost/log/trivial.hpp>
@@ -15,8 +15,8 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/attributes/mutable_constant.hpp>
-#include "util/goyo_log.h"
-#include "util/goyo_app_util.h"
+#include "util/sms_log.h"
+#include "util/sms_app_util.h"
 #include <Windows.h>
 
 namespace logging = boost::log;
@@ -27,18 +27,18 @@ namespace expr = boost::log::expressions;
 namespace fs = boost::filesystem;
 using namespace std;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
-  enum GoyoLogLevel {
-    GOYO_TRACE = 5, 
-    GOYO_DEBUG = 4, 
-    GOYO_INFO = 3, 
-    GOYO_WARN = 2,
-    GOYO_ERROR = 1,
-    GOYO_FATAL = 0,
+  enum SmsLogLevel {
+    SMS_TRACE = 5, 
+    SMS_DEBUG = 4, 
+    SMS_INFO = 3, 
+    SMS_WARN = 2,
+    SMS_ERROR = 1,
+    SMS_FATAL = 0,
   };
 
-  static GoyoLogLevel log_level_ = GoyoLogLevel::GOYO_INFO;
+  static SmsLogLevel log_level_ = SmsLogLevel::SMS_INFO;
 
 // macro that includes severity, filename and line number
 #define CUSTOM_LOG(logger, sev, file, line) \
@@ -48,7 +48,7 @@ namespace goyo_bookrack_accessor {
          (SetToGetAttribute("Line", line)) \
          (::boost::log::keywords::severity = (boost::log::trivial::sev)) \
    )
-  
+
   /**
    * @fn
    * SetToGetAttribute
@@ -70,25 +70,25 @@ namespace goyo_bookrack_accessor {
    * @return file name
    */
   static std::string PathToFileName(std::wstring path) {
-    return GoyoAppUtil::Utf16ToUtf8(path.substr(path.find_last_of(L"/\\")+1));
+    return SmsAppUtil::Utf16ToUtf8(path.substr(path.find_last_of(L"/\\")+1));
   }
 
   /**
    * @fn
-   * GoyoLogUtil
+   * SmsLogUtil
    * @brief constructor
    */
-  GoyoLogUtil::GoyoLogUtil() {}
+  SmsLogUtil::SmsLogUtil() {}
 
   /**
    * @fn
-   * ~GoyoLogUtil
+   * ~SmsLogUtil
    * @brief destructor
    */
-  GoyoLogUtil::~GoyoLogUtil() {}
+  SmsLogUtil::~SmsLogUtil() {}
 
   const ULONGLONG MAX_FREE_SIZE_MB = 10ULL;
-  const std::wstring DEF_LOG = L"logs/%Y%m%d_%5N.goyo_log";
+  const std::wstring DEF_LOG = L"logs/%Y%m%d_%5N.Sms_log";
   std::wstring log_root_f;
 
   /**
@@ -96,7 +96,7 @@ namespace goyo_bookrack_accessor {
    * InitializeLogSystem
    * @brief initialize log system
    */
-  void GoyoLogUtil::InitializeLogSystem(const wchar_t* folder) {
+  void SmsLogUtil::InitializeLogSystem(const wchar_t* folder) {
     logging::core::get()->add_global_attribute("File",
                                   attrs::mutable_constant<std::string>(""));
     logging::core::get()->add_global_attribute("Line",
@@ -105,7 +105,7 @@ namespace goyo_bookrack_accessor {
     fs::wpath f;
     boost::system::error_code error;
     if (folder == NULL
-      || !GoyoAppUtil::ExistsFile(wstring(folder))) {
+      || !SmsAppUtil::ExistsFile(wstring(folder))) {
       log_root_f = DEF_LOG;
       f = fs::wpath(DEF_LOG);
     } else {
@@ -113,7 +113,7 @@ namespace goyo_bookrack_accessor {
       f = fs::wpath(log_root_f + L"\\" + DEF_LOG);
     }
 
-    if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB) {
+    if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB) {
       logging::add_common_attributes();
       logging::add_file_log(
         keywords::file_name = f,
@@ -132,7 +132,6 @@ namespace goyo_bookrack_accessor {
           )
       );
     }
-
   }
 
   /**
@@ -143,16 +142,16 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write trce log
    */
-  void GoyoLogUtil::WriteTraceLog(const std::string &message,
+  void SmsLogUtil::WriteTraceLog(const std::string &message,
                                   const wchar_t* file, const int line) {
     src::severity_logger<logging::trivial::severity_level> lg;
-    
-    if (log_level_ != GoyoLogLevel::GOYO_TRACE) return;
 
-	  try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
-	      CUSTOM_LOG(lg, trace, file, line) << message;
-	  } catch (...) {
+    if (log_level_ != SmsLogLevel::Sms_TRACE) return;
+
+    try {
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+        CUSTOM_LOG(lg, trace, file, line) << message;
+    } catch (...) {
     }
   }
 
@@ -164,15 +163,14 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write trace log
    */
-  void GoyoLogUtil::WriteTraceLog(const std::wstring& message,
+  void SmsLogUtil::WriteTraceLog(const std::wstring& message,
                                   const wchar_t* file, const int line) {
-      
-      if (log_level_ != GoyoLogLevel::GOYO_TRACE) return;
+      if (log_level_ != SmsLogLevel::Sms_TRACE) return;
 
-      auto str = GoyoAppUtil::Utf16ToUtf8(message);
+      auto str = SmsAppUtil::Utf16ToUtf8(message);
       src::severity_logger<logging::trivial::severity_level> lg;
       try {
-        if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+        if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
           CUSTOM_LOG(lg, trace, file, line) << str;
 	    } catch (...) {
       }
@@ -186,13 +184,13 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write debug log
    */
-  void GoyoLogUtil::WriteDebugLog(const std::string &message,
+  void SmsLogUtil::WriteDebugLog(const std::string &message,
                                   const wchar_t* file, const int line) {
-    if (log_level_ < GoyoLogLevel::GOYO_DEBUG) return;
+    if (log_level_ < SmsLogLevel::Sms_DEBUG) return;
 
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, debug, file, line) << message;
 	  } catch (...) {
     }
@@ -206,14 +204,14 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write debug log
    */
-  void GoyoLogUtil::WriteDebugLog(const std::wstring& message,
+  void SmsLogUtil::WriteDebugLog(const std::wstring& message,
                                   const wchar_t* file, const int line) {
-    if (log_level_ < GoyoLogLevel::GOYO_DEBUG) return;
+    if (log_level_ < SmsLogLevel::Sms_DEBUG) return;
 
-    auto str = GoyoAppUtil::Utf16ToUtf8(message);
+    auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, debug, file, line) << str;
     } catch (...) {
     }
@@ -227,13 +225,13 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write info log
    */
-  void GoyoLogUtil::WriteInfoLog(const std::string &message,
+  void SmsLogUtil::WriteInfoLog(const std::string &message,
                                  const wchar_t* file, const int line) {
-    if (log_level_ < GoyoLogLevel::GOYO_INFO) return;
+    if (log_level_ < SmsLogLevel::Sms_INFO) return;
 
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, info, file, line) << message;
 	  } catch (...) {
     }
@@ -247,14 +245,14 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write info log
    */
-  void GoyoLogUtil::WriteInfoLog(const std::wstring& message,
+  void SmsLogUtil::WriteInfoLog(const std::wstring& message,
                                  const wchar_t* file, const int line) {
-    if (log_level_ < GoyoLogLevel::GOYO_INFO) return;
+    if (log_level_ < SmsLogLevel::Sms_INFO) return;
 
-    auto str = GoyoAppUtil::Utf16ToUtf8(message);
+    auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, info, file, line) << str;
     } catch (...) {
     }
@@ -268,13 +266,13 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write warning log
    */
-  void GoyoLogUtil::WriteWarningLog(const std::string &message,
+  void SmsLogUtil::WriteWarningLog(const std::string &message,
                                     const wchar_t* file, const int line) {
-    if (log_level_ < GoyoLogLevel::GOYO_WARN) return;
+    if (log_level_ < SmsLogLevel::Sms_WARN) return;
 
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, warning, file, line) << message;
     } catch (...) {
     }
@@ -288,14 +286,14 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write warning log
    */
-  void GoyoLogUtil::WriteWarningLog(const std::wstring& message,
+  void SmsLogUtil::WriteWarningLog(const std::wstring& message,
                                     const wchar_t* file,const int line) {
-    if (log_level_ < GoyoLogLevel::GOYO_WARN) return;
+    if (log_level_ < SmsLogLevel::Sms_WARN) return;
 
-    auto str = GoyoAppUtil::Utf16ToUtf8(message);
+    auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, warning, file, line) << str;
     } catch (...) {
     }
@@ -309,14 +307,14 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write error log
    */
-  void GoyoLogUtil::WriteErrorLog(const std::string &message,
+  void SmsLogUtil::WriteErrorLog(const std::string &message,
                                   const wchar_t* file, const int line) {
 
-    if (log_level_ < GoyoLogLevel::GOYO_ERROR) return;
+    if (log_level_ < SmsLogLevel::Sms_ERROR) return;
 
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, error, file, line) << message;
     } catch (...) {
     }
@@ -330,14 +328,14 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write error log
    */
-  void GoyoLogUtil::WriteErrorLog(const std::wstring& message,
+  void SmsLogUtil::WriteErrorLog(const std::wstring& message,
                                   const wchar_t* file, const int line) {
-    if (log_level_ < GoyoLogLevel::GOYO_ERROR) return;
+    if (log_level_ < SmsLogLevel::Sms_ERROR) return;
 
-    auto str = GoyoAppUtil::Utf16ToUtf8(message);
+    auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, error, file, line) << str;
     } catch (...) {
     }
@@ -351,11 +349,11 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write fatal log
    */
-  void GoyoLogUtil::WriteFatalLog(const std::string &message,
+  void SmsLogUtil::WriteFatalLog(const std::string &message,
                                   const wchar_t* file, const int line) {
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, fatal, file, line) << message;
     } catch (...) {
     }
@@ -369,12 +367,12 @@ namespace goyo_bookrack_accessor {
    * @param(line) line number
    * @brief write fatal log
    */
-  void GoyoLogUtil::WriteFatalLog(const std::wstring& message,
+  void SmsLogUtil::WriteFatalLog(const std::wstring& message,
                                   const wchar_t* file, const int line) {
-    auto str = GoyoAppUtil::Utf16ToUtf8(message);
+    auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
-      if (GoyoAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
+      if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
         CUSTOM_LOG(lg, fatal, file, line) << str;
     } catch (...) {
     }
@@ -386,25 +384,25 @@ namespace goyo_bookrack_accessor {
   * @param(level) log_level
   * @brief set log level
   */
-  void GoyoLogUtil::SetLogLevel(wchar_t* level) {
+  void SmsLogUtil::SetLogLevel(wchar_t* level) {
     if (level != nullptr) {
       auto l = std::wstring(level);
 
       if (l == L"5") {
-        log_level_ = GoyoLogLevel::GOYO_TRACE;
+        log_level_ = SmsLogLevel::Sms_TRACE;
       } else if (l == L"4") {
-        log_level_ = GoyoLogLevel::GOYO_DEBUG;
+        log_level_ = SmsLogLevel::Sms_DEBUG;
       } else if (l == L"2") {
-        log_level_  = GoyoLogLevel::GOYO_WARN;
+        log_level_  = SmsLogLevel::Sms_WARN;
       } else if (l == L"1") {
-        log_level_  = GoyoLogLevel::GOYO_ERROR;
+        log_level_  = SmsLogLevel::Sms_ERROR;
       } else if (l == L"0") {
-        log_level_  = GoyoLogLevel::GOYO_FATAL;
+        log_level_  = SmsLogLevel::Sms_FATAL;
       } else {
-        log_level_ = GoyoLogLevel::GOYO_INFO;
+        log_level_ = SmsLogLevel::Sms_INFO;
       }
     } else {
-      log_level_ = GOYO_INFO;
+      log_level_ = Sms_INFO;
     }
   }
 
@@ -413,7 +411,7 @@ namespace goyo_bookrack_accessor {
   * GetLogLevel
   * @brief get log level
   */
-  int GoyoLogUtil::GetLogLevel() {
+  int SmsLogUtil::GetLogLevel() {
     return static_cast<int>(log_level_);
   }
 

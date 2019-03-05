@@ -1,15 +1,15 @@
 /**
  * @file common.h
- * @brief goyo bookrack accessor common header
- * @author yonaha
- * @date 2018/02/15
+ * @brief sms accessor common header
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMON_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMON_H_
+#ifndef SMS_ACCESSOR_INCLUDE_COMMON_H_
+#define SMS_ACCESSOR_INCLUDE_COMMON_H_
 
-#define GOYO_BOOKRACK_ACCESSOR_VERSION         "0.00.01"
-#define GOYO_BOOKRACK_ACCESSOR_VERSION_NUMBER  1 //10000
+#define SMS_ACCESSOR_VERSION         "0.00.01"
+#define SMS_ACCESSOR_VERSION_NUMBER  1  // 10000
 
 #include <iostream>
 #include <string>
@@ -22,12 +22,12 @@
 #include "json11.hpp"
 #include <boost/property_tree/ptree.hpp>
 
-#include "except/goyo_exception.h"
-#include "util/goyo_log.h"
+#include "except/sms_exception.h"
+#include "util/sms_log.h"
 
 #pragma pack(push, 4)
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
   typedef struct _SRECT {
     SHORT left;
@@ -37,8 +37,6 @@ namespace goyo_bookrack_accessor {
   } SRECT;
 
 #pragma pack(pop)
-
 }
 
-
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMON_H_
+#endif  // SMS_ACCESSOR_INCLUDE_COMMON_H_

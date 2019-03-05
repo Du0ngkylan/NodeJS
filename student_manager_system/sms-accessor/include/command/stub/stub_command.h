@@ -1,37 +1,36 @@
 /**
  * @file stub_command.h
  * @brief stub command header
- * @author yonaha
- * @date 2018/02/15
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_STUB_STUB_COMMAND_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_STUB_STUB_COMMAND_H_
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_STUB_STUB_COMMAND_H_
+#define SMS_ACCESSOR_INCLUDE_COMMAND_STUB_STUB_COMMAND_H_
 
 #include "../../accessor_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoStubCommand
+ * @class SmsStubCommand
  * @brief stub command
  */
-class GoyoStubCommand : public GoyoAccessorCommand {
+class SmsStubCommand : public SmsAccessorCommand {
  public:
-
   /**
   * @fn
-  * GoyoStubCommand
+  * SmsStubCommand
   * @brief constructor
   */
-  GoyoStubCommand();
+  SmsStubCommand();
 
   /**
   * @fn
-  * ~GoyoStubCommand
+  * ~SmsStubCommand
   * @brief destructor
   */
-  ~GoyoStubCommand();
+  ~SmsStubCommand();
 
   /**
   * @fn
@@ -41,9 +40,8 @@ class GoyoStubCommand : public GoyoAccessorCommand {
   * @param (raw) raw string
   */
   json11::Json ExecuteCommand(json11::Json &request, std::string &raw);
-
 };
 
 }
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_STUB_STUB_COMMAND_H_
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_STUB_STUB_COMMAND_H_

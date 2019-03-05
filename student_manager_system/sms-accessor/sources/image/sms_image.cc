@@ -1,22 +1,22 @@
 /**
- * @file goyo_image.cc
- * @brief goyo image object
- * @author yonaha
- * @date 2018/03/31
+ * @file sms_image.cc
+ * @brief sms image object
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 using namespace cv;
 
-#include "image/goyo_image.h"
-#include "util/goyo_app_util.h"
+#include "image/sms_image.h"
+#include "util/sms_app_util.h"
 
 using namespace std; 
 
 namespace fs = boost::filesystem;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
   /**
   * @fn
@@ -47,7 +47,7 @@ namespace goyo_bookrack_accessor {
   * @return mat
   */
   static inline cv::Mat ReadImage(wstring &file) {
-    if (GoyoAppUtil::ExistsFile(file)) {
+    if (SmsAppUtil::ExistsFile(file)) {
       // read binary
       std::streampos fsize = 0;
       ifstream ifs(file, ios::in | ios::binary);
@@ -96,70 +96,70 @@ namespace goyo_bookrack_accessor {
         return result;
       } else {
         string message = "Failed to save thumbnail.";
-        GoyoErrorLog(message);
-        throw GoyoException(message);
+        SmsErrorLog(message);
+        throw SmsException(message);
       }
 
-    } catch (GoyoException& ex) {
+    } catch (SmsException& ex) {
       throw ex;
     } catch (fs::filesystem_error) {
-      throw GoyoException("file system error.");
+      throw SmsException("file system error.");
     } catch (...) {
-      throw GoyoException("other error.");
+      throw SmsException("other error.");
     }
     return result;
   }
 
   /**
   * @fn
-  * GoyoImage
+  * SmsImage
   * @brief constructor
   * @param(image_path) UTF-16 image path
   */
-  GoyoImage::GoyoImage(wstring image_path) : m_w_image_path(image_path),
-    m_data(nullptr), m_data_length(0), m_image_type(GoyoSourceImageType::FILE) {}
+  SmsImage::SmsImage(wstring image_path) : m_w_image_path(image_path),
+    m_data(nullptr), m_data_length(0), m_image_type(SmsSourceImageType::FILE) {}
 
   /**
   * @fn
-  * GoyoImage
+  * SmsImage
   * @brief constructor
   * @param(data) image data
   * @param(length) image length
   */
-  GoyoImage::GoyoImage(char *data, size_t length) : m_w_image_path(L""), 
-    m_data(data), m_data_length(length), m_image_type(GoyoSourceImageType::STREAM) {}
+  SmsImage::SmsImage(char *data, size_t length) : m_w_image_path(L""), 
+    m_data(data), m_data_length(length), m_image_type(SmsSourceImageType::STREAM) {}
 
   /**
   * @fn
-  * ~GoyoImage
+  * ~SmsImage
   * @brief destructor
   */
-  GoyoImage::~GoyoImage() {}
+  SmsImage::~SmsImage() {}
 
   /**
   * @fn
-  * GoyoImage
+  * SmsImage
   * @brief constructor
   * @param(thumb_path) thumbnail path
   * @param(container_width) container width
   * @param(container_height) container heght
-  * @throw goyo_bookrack_accessor::GoyoException in case of error
+  * @throw sms_accessor::SmsException in case of error
   */
-  void GoyoImage::CreateThumbnail(std::wstring thumb_path, size_t container_width, size_t container_height) {
+  void SmsImage::CreateThumbnail(std::wstring thumb_path, size_t container_width, size_t container_height) {
     this->CreateThumbnail(thumb_path, container_width, container_height, 0);
   }
 
   /**
   * @fn
-  * GoyoImage
+  * SmsImage
   * @brief constructor
   * @param(thumb_path) thumbnail path
   * @param(container_width) container width
   * @param(container_height) container height
   * @param(quality) jpeg quality
-  * @throw goyo_bookrack_accessor::GoyoException in case of error
+  * @throw sms_accessor::SmsException in case of error
   */
-  bool GoyoImage::CreateThumbnail(wstring wthumb_path, size_t container_width,
+  bool SmsImage::CreateThumbnail(wstring wthumb_path, size_t container_width,
    size_t container_height, size_t quality) {
 
     cv::Mat src = ReadImage(m_w_image_path);
@@ -169,8 +169,8 @@ namespace goyo_bookrack_accessor {
     if (src.cols == 0 &&
         src.rows == 0) {
       string message = "Couldn't read image file.";
-      GoyoErrorLog(message);
-      throw GoyoException(message);
+      SmsErrorLog(message);
+      throw SmsException(message);
     }
 
     // get original size
@@ -188,24 +188,24 @@ namespace goyo_bookrack_accessor {
     new_height = new_height == 0 ? 1 : new_height;
     new_width = new_width == 0 ? 1 : new_width;
 
-    GoyoDebugLog("new_height" + to_string(new_height));
-    GoyoDebugLog("new_width" + to_string(new_width));
+    SmsDebugLog("new_height" + to_string(new_height));
+    SmsDebugLog("new_width" + to_string(new_width));
 
     try {
       // resizing...
       resize(src, dst, Size(new_width, new_height), 0, 0, INTER_AREA);
     } catch(...) {
       string message = "Couldn't resize image.";
-      GoyoErrorLog(message);
-      throw GoyoException(message);
+      SmsErrorLog(message);
+      throw SmsException(message);
     }
 
     // check size of dst
     if(dst.cols != new_width ||
        dst.rows != new_height) {
       string message = "Couldn't resize image.";
-      GoyoErrorLog(message);
-      throw GoyoException(message);
+      SmsErrorLog(message);
+      throw SmsException(message);
     }
 
     bool result = false;
@@ -219,19 +219,19 @@ namespace goyo_bookrack_accessor {
 
   /**
   * @fn
-  * GoyoImage
+  * SmsImage
   * @brief constructor
-  * @throw goyo_bookrack_accessor::GoyoException in case of error
+  * @throw sms_accessor::SmsException in case of error
   */
-  cv::Mat GoyoImage::GetImageInfo() {
+  cv::Mat SmsImage::GetImageInfo() {
     cv::Mat src = ReadImage(m_w_image_path);
 
     // Couldn't read image file, thwrow Exception
     if (src.cols == 0 &&
         src.rows == 0) {
       string message = "Couldn't read image file.";
-      GoyoErrorLog(message);
-      throw GoyoException(message);
+      SmsErrorLog(message);
+      throw SmsException(message);
     }
 
     return src;
@@ -239,19 +239,19 @@ namespace goyo_bookrack_accessor {
 
   /**
   * @fn
-  * GoyoImage
+  * SmsImage
   * @brief constructor
-  * @throw goyo_bookrack_accessor::GoyoException in case of error
+  * @throw sms_accessor::SmsException in case of error
   */
-  bool GoyoImage::ConvertJpg(wstring dest_file) {
+  bool SmsImage::ConvertJpg(wstring dest_file) {
     cv::Mat src = ReadImage(m_w_image_path);
 
     // Couldn't read image file, thwrow Exception
     if (src.cols == 0 &&
         src.rows == 0) {
       string message = "Couldn't read image file.";
-      GoyoErrorLog(message);
-      throw GoyoException(message);
+      SmsErrorLog(message);
+      throw SmsException(message);
     }
 
     // convert to jpg
@@ -261,14 +261,14 @@ namespace goyo_bookrack_accessor {
 
   /**
   * @fn
-  * GoyoImage
+  * SmsImage
   * @brief constructor
   * @param(thumb_path) thumbnail path
   * @param(container_width) container width
   * @param(container_height) container height
-  * @throw goyo_bookrack_accessor::GoyoException in case of error
+  * @throw sms_accessor::SmsException in case of error
   */
-  bool GoyoImage::ResizeImage(wstring thumb_path, size_t container_width,
+  bool SmsImage::ResizeImage(wstring thumb_path, size_t container_width,
    size_t container_height, bool ratio_keep) {    
 
     cv::Mat src = ReadImage(m_w_image_path);
@@ -278,8 +278,8 @@ namespace goyo_bookrack_accessor {
     if (src.cols == 0 &&
         src.rows == 0) {
       string message = "Couldn't read image file.";
-      GoyoErrorLog(message);
-      throw GoyoException(message);
+      SmsErrorLog(message);
+      throw SmsException(message);
     }
     int new_height = container_height;
     int new_width = container_width;
@@ -305,15 +305,15 @@ namespace goyo_bookrack_accessor {
       resize(src, dst, Size(new_width, new_height), 0, 0, INTER_AREA);
     } catch(...) {
       string message = "Couldn't resize image.";
-      GoyoErrorLog(message);
-      throw GoyoException(message);
+      SmsErrorLog(message);
+      throw SmsException(message);
     }
 
     // check size of dst
     if(dst.cols != new_width || dst.rows != new_height) {
       string message = "Couldn't resize image.";
-      GoyoErrorLog(message);
-      throw GoyoException(message);
+      SmsErrorLog(message);
+      throw SmsException(message);
     }
 
     // output resized image

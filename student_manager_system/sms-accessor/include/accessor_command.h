@@ -1,21 +1,21 @@
 /**
  * @file accessor_command.h
  * @brief accessor base command header
- * @author yonaha
- * @date 2018/02/15
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_H_
+#ifndef SMS_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_H_
+#define SMS_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_H_
 
 #include <boost/filesystem.hpp>
 #include "common.h"
-#include "goyo_db_if.h"
+#include "sms_db_if.h"
 
 
 namespace fs = boost::filesystem;
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 // error types
 const std::string kErrorInternalStr = "INTERNAL_ERROR";
@@ -25,15 +25,15 @@ const std::string kErrorIOStr = "IO_ERROR";
 const std::string kErrorOtherStr = "OTHER_ERROR";
 
 // app data folder environment name
-const std::wstring kEnvAppDirName = L"GOYO19_APP_DATA";
-const std::wstring kEnvWorkDirName = L"GOYO19_WORK_DIR";
+const std::wstring kEnvAppDirName = L"SMS_APP_DATA";
+const std::wstring kEnvWorkDirName = L"SMS_WORK_DIR";
 
-const std::wstring PROFILE = L"\\Profile.dat";
-const std::wstring ALBUM_FILE = L"\\MMALBUM";
-const std::wstring BOOKRACK_PROFILE = L"\\BKSPROF.DAT";
-const std::wstring BOX_PROFILE = L"\\BOXPROF.DAT";
-const std::wstring LAYOUT_FILE = L"\\PageCfg";
-const std::wstring PHOTO_INF = L"\\kphotoInf.ini";
+// const std::wstring PROFILE = L"\\Profile.dat";
+// const std::wstring ALBUM_FILE = L"\\MMALBUM";
+// const std::wstring BOOKRACK_PROFILE = L"\\BKSPROF.DAT";
+// const std::wstring BOX_PROFILE = L"\\BOXPROF.DAT";
+// const std::wstring LAYOUT_FILE = L"\\PageCfg";
+// const std::wstring PHOTO_INF = L"\\kphotoInf.ini";
 
 const int DEF_THUMB_WIDTH = 600;
 const int DEF_THUMB_HEIGHT = 480;
@@ -43,24 +43,24 @@ const unsigned long long EFFECTIVE_DISK_MB_SIZE = 100;
 
 
 /**
- * @class GoyoAccessorCommand
- * @brief  goyo accessor base command
+ * @class SmsAccessorCommand
+ * @brief sms accessor base command
  */
-class GoyoAccessorCommand {
+class SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoAccessorCommand
+   * SmsAccessorCommand
    * @brief constructor
    */
-  GoyoAccessorCommand();
+  SmsAccessorCommand();
 
   /**
    * @fn
-   * GoyoAccessorCommand
+   * SmsAccessorCommand
    * @brief destructor
    */
-  virtual ~GoyoAccessorCommand();
+  virtual ~SmsAccessorCommand();
 
   /**
    * @fn
@@ -127,7 +127,7 @@ class GoyoAccessorCommand {
    * @param (hex_color) color reference
    * @return coloref
    */
-  static COLORREF GoyoAccessorCommand::ConvertHexColor(std::string hex_color);
+  static COLORREF SmsAccessorCommand::ConvertHexColor(std::string hex_color);
 
   /**
    * LogFont
@@ -185,53 +185,53 @@ class GoyoAccessorCommand {
 
   /**
    * @fn
-   * GetGoyoAppDirectory
+   * GetSmsAppDirectory
    * @brief get application directory
-   * @return goyo application directory
+   * @return sms application directory
    */
-  std::wstring GetGoyoAppDirectory();
+  std::wstring GetSmsAppDirectory();
 
   /**
    * @fn
-   * GetGoyoAppDataDirectory
+   * GetSmsAppDataDirectory
    * @brief get application data directory
-   * @return goyo application data directory
+   * @return sms application data directory
    */
-  std::wstring GetGoyoAppDataDirectory();
+  std::wstring GetSmsAppDataDirectory();
 
   /**
    * @fn
-   * GetGoyoBookrackDirectory
+   * GetSmsBookrackDirectory
    * @param(construction_id) construction id
    * @brief get bookrack directory
-   * @return goyo bookrack directory : empty - otherwise error
+   * @return sms bookrack directory : empty - otherwise error
    */
-  std::wstring GetGoyoBookrackDirectory(std::wstring &construction_id);
+  std::wstring GetSmsBookrackDirectory(std::wstring &construction_id);
 
   /**
    * @fn
-   * GetGoyoWorkDirectory
+   * GetSmsWorkDirectory
    * @brief get application resource base directory
-   * @return goyo application resource base directory
+   * @return sms application resource base directory
    */
-  std::wstring GetGoyoWorkDirectory();
+  std::wstring GetSmsWorkDirectory();
 
   /**
    * @fn
-   * GetGoyoDatabaseRootDirectory
+   * GetSmsDatabaseRootDirectory
    * @brief get database root directory
-   * @return goyo database root directory
+   * @return sms database root directory
    */
-  std::wstring GetGoyoDatabaseRootDirectory();
+  std::wstring GetSmsDatabaseRootDirectory();
 
   /**
    * @fn
-   * GetGoyoBookrackResourcesDirectory
+   * GetSmsBookrackResourcesDirectory
    * @brief get bookrack resources directory
    * @param work_dir working directory
-   * @return goyo bookrack resources directory
+   * @return sms bookrack resources directory
    */
-  static std::wstring GetGoyoBookrackResourcesDirectory(std::wstring work_dir);
+  static std::wstring GetSmsBookrackResourcesDirectory(std::wstring work_dir);
 
   /**
    * @fn
@@ -379,9 +379,8 @@ class GoyoAccessorCommand {
   */
   static void OutputProgress(json11::Json::object &status);
 
-
   std::wstring GetWStringFJson(const json11::Json& json);
-  
+
   std::string GetStringFJson(const json11::Json& json) const;
 
   int GetIntFJson(const json11::Json& json) const;
@@ -399,18 +398,18 @@ class GoyoAccessorCommand {
   * @param is_shared shared construction : true, otherwise : false
   * @param dbs target databases
   */
-  static void ReleaseDatabases(const bool is_shared, std::vector<goyo_db_manager::manager::GoyoBaseDatabase *> &dbs);
+  static void ReleaseDatabases(const bool is_shared, std::vector<Sms_db_manager::manager::SmsBaseDatabase *> &dbs);
 
   /**
   * @fn
   * ValidateDiskFreeSpaceSize
   * @brief validate disk free space size
   * @param dir
-  * @throw GoyoAppUtil::GetDiskFreeSpaceSize < EFFECTIVE_DISK_MB_SIZE
+  * @throw SmsAppUtil::GetDiskFreeSpaceSize < EFFECTIVE_DISK_MB_SIZE
   */
   static void ValidateDiskFreeSpaceSize(std::wstring &dir);
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_H_
+#endif  // SMS_ACCESSOR_INCLUDE_ACCESSOR_COMMAND_H_

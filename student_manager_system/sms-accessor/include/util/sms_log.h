@@ -1,38 +1,37 @@
 /**
- * @file goyo_log.h
+ * @file sms_log.h
  * @brief log utility header
- * @author yonaha
- * @date 2018/02/19
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_UTIL_GOYO_LOG_H_
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_UTIL_GOYO_LOG_H_
+#ifndef SMS_ACCESSOR_INCLUDE_UTIL_SMS_LOG_H_
+#define SMS_ACCESSOR_INCLUDE_UTIL_SMS_LOG_H_
 
 #include <string>
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 
-#define GoyoTraceLog(m)   GoyoLogUtil::WriteTraceLog(m, _T(__FILE__),__LINE__)
-#define GoyoDebugLog(m)   GoyoLogUtil::WriteDebugLog(m, _T(__FILE__),__LINE__)
-#define GoyoInfoLog(m)    GoyoLogUtil::WriteInfoLog(m, _T(__FILE__),__LINE__)
-#define GoyoWarningLog(m) GoyoLogUtil::WriteWarningLog(m, _T(__FILE__),__LINE__)
-#define GoyoErrorLog(m)   GoyoLogUtil::WriteErrorLog(m, _T(__FILE__),__LINE__)
-#define GoyoFatalLog(m)   GoyoLogUtil::WriteFatalLog(m, _T(__FILE__),__LINE__)
+#define SmsTraceLog(m)   SmsLogUtil::WriteTraceLog(m, _T(__FILE__),__LINE__)
+#define SmsDebugLog(m)   SmsLogUtil::WriteDebugLog(m, _T(__FILE__),__LINE__)
+#define SmsInfoLog(m)    SmsLogUtil::WriteInfoLog(m, _T(__FILE__),__LINE__)
+#define SmsWarningLog(m) SmsLogUtil::WriteWarningLog(m, _T(__FILE__),__LINE__)
+#define SmsErrorLog(m)   SmsLogUtil::WriteErrorLog(m, _T(__FILE__),__LINE__)
+#define SmsFatalLog(m)   SmsLogUtil::WriteFatalLog(m, _T(__FILE__),__LINE__)
 
 /**
- * @class GoyoLogUtil
+ * @class SmsLogUtil
  * @brief log utility
  */
-class GoyoLogUtil {
+class SmsLogUtil {
  public:
-
   /**
   * @fn
-  * ~GoyoLogUtil
+  * ~SmsLogUtil
   * @brief destructor
   */
-  ~GoyoLogUtil();
+  ~SmsLogUtil();
 
   /**
   * @fn
@@ -188,18 +187,16 @@ class GoyoLogUtil {
   * @brief get log level
   */
   static int GetLogLevel();
-  
+
  private:
-  
   /**
   * @fn
-  * GoyoLogUtil
+  * SmsLogUtil
   * @brief constructor
   */
-  GoyoLogUtil();
-
+  SmsLogUtil();
 };
 
 }
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_UTIL_GOYO_LOG_H_
+#endif  // SMS_ACCESSOR_INCLUDE_UTIL_SMS_LOG_H_

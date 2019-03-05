@@ -1,36 +1,36 @@
 /**
  * @file convert_jpg.h
  * @brief convert to command header
- * @author kanegon
- * @date 2018/06/11
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
-#ifndef GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_CONVERT_JPG_H
-#define GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_CONVERT_JPG_H
+#ifndef SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_CONVERT_JPG_H
+#define SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_CONVERT_JPG_H
 
 #include "../accessor_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
 /**
- * @class GoyoConvertJpg
+ * @class SmsConvertJpg
  * @brief Convert to JPG command
  */
-class GoyoConvertJpg : public GoyoAccessorCommand {
+class SmsConvertJpg : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * GoyoConvertJpg
+   * SmsConvertJpg
    * @brief constructor
    */
-  GoyoConvertJpg();
+  SmsConvertJpg();
 
   /**
    * @fn
-   * ~GoyoConvertJpg
+   * ~SmsConvertJpg
    * @brief destructor
    */
-  ~GoyoConvertJpg();
+  ~SmsConvertJpg();
 
   /**
    * @fn
@@ -55,7 +55,7 @@ class GoyoConvertJpg : public GoyoAccessorCommand {
    * @param (string) UTF-8 string
    * @return std::string shift-jis string
    */
-  std::string GoyoConvertJpg::UTF8toSjis(std::string srcUTF8);
+  std::string SmsConvertJpg::UTF8toSjis(std::string srcUTF8);
 
  private:
   // store error type
@@ -65,6 +65,6 @@ class GoyoConvertJpg : public GoyoAccessorCommand {
   std::string errorMessage;
 };
 
-}  // namespace goyo_bookrack_accessor
+}  // namespace sms_accessor
 
-#endif  // GOYO_BOOKRACK_ACCESSOR_INCLUDE_COMMAND_BOOKRACK_CONVERT_JPG_H
+#endif  // SMS_ACCESSOR_INCLUDE_COMMAND_IMAGE_CONVERT_JPG_H
