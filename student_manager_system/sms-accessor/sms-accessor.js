@@ -30,7 +30,7 @@ var accessor = {
   INVALID_DATA_FORMAT: 'INVALID_DATA_FORMAT',
   IO_ERROR: 'IO_ERROR',
   OTHER_ERROR: 'OTHER_ERROR',
-  MAX_CONSTRUCTIONS : 1000000,
+  MAX_SCHOOLS : 1000000,
 
   process: null,
   requestQueue: [],
@@ -170,47 +170,27 @@ var accessor = {
   // Functions below are sms operations.
   //
 
-  // Construction
+  // school
 
   getSchools: function() {
     let req = { command: 'get-schools'};
     return this._sendRequest(req);
   },
 
-  getSchoolDetail: function(constructionId) {
+  getSchoolDetail: function(schoolId) {
     let req = {
       command: 'get-school-detail',
-      args: {'constructionId': constructionId}
+      args: {'schoolId': schoolId}
     };
     return this._sendRequest(req);
   },
 
-  getKnacks: function() {
-    let req = {
-      command: 'get-knacks',
-    };
-    return this._sendRequest(req);
-  },
+  updateSchool: function(school, callback = undefined) {
 
-  getPhotoInformationTree: function (constructionId, itemId=1) {
+    this._fillSchoolPrameters(school);
     let req = {
-        command: 'get-photo-info-tree',
-        args: {
-          'constructionId': constructionId,
-          'itemId': itemId,
-        }
-    };
-    return this._sendRequest(req);
-  },
-
-  updateConstruction: function(construction, callback = undefined) {
-
-    this._fillConstructionPrameters(construction);
-    let req = {
-      command: 'update-construction',
-      args: {
-        'construction': construction,
-      }
+      command: 'update-school',
+      args: {'school': school}
     };
     return this._sendRequest(req, callback);
   },
@@ -221,26 +201,26 @@ var accessor = {
     return formatted;
   },
 
-  getNewConstructionFolder : async function(parentFolder) {
-    let response = await this.getConstructions();
-    let nextConstructionId = 1;
-    const constructionIdList = response.constructions
-      .map(construction => Number(construction.constructionId))
+  getNewSchoolFolder : async function(parentFolder) {
+    let response = await this.getSchools();
+    let nextSchoolId = 1;
+    const schoolIdList = response.schools
+      .map(school => Number(school.schoolId))
       .filter(id => id != null && !isNaN(id))
-    if ( constructionIdList.length > 0 ) {
-      const maxConstructionId = Math.max.apply(null, constructionIdList);
-      if ( maxConstructionId != null && !isNaN(maxConstructionId) ) {
-        nextConstructionId = maxConstructionId + 1;
+    if ( schoolIdList.length > 0 ) {
+      const maxSchoolId = Math.max.apply(null, schoolIdList);
+      if ( maxSchoolId != null && !isNaN(maxSchoolId) ) {
+        nextSchoolId = maxSchoolId + 1;
       }
     }
-    const baseFolder = `${parentFolder}\\construction${nextConstructionId}`;
+    const baseFolder = `${parentFolder}\\school${nextSchoolId}`;
 
     if (fs.existsSync(baseFolder) == false) {
       return baseFolder;
     }
 
     let folder = baseFolder;
-      for (let i = 1; i <= this.MAX_CONSTRUCTIONS; i++) {
+      for (let i = 1; i <= this.MAX_SCHOOLS; i++) {
       folder = `${baseFolder}_${i}`;
       if (fs.existsSync(folder) == false) {
           break;
@@ -249,281 +229,83 @@ var accessor = {
     return folder;
   },
 
-  getConstructionFolderPathSet : async function() {
+  getSchoolFolderPathSet : async function() {
     // get current folder map
     let folderSet = new Set();
     try {
-      let response = await this.getConstructions();
-      response.constructions.forEach((construction)=>{
-        folderSet.add(construction.dataFolder);
+      let response = await this.getSchools();
+      response.schools.forEach((school)=>{
+        folderSet.add(school.dataFolder);
       });
     } catch (e) {
     }
     return folderSet;
   },
 
-  _fillConstructionPrameters : function(construction) {
-
-    if (construction.constructionId == 0) {
-
-      if (construction.createDate === undefined) {
-        construction.createDate = this._getCreateDate();
-      }
-
-      // set GUID
-      if (construction.guId === undefined) {
-        construction.guId = uuidv4();
-      }
-    }
-
-    construction.year = parseInt(construction.year);
-    if (construction.routeSection !== undefined) {
-      construction.routeSection = parseInt(construction.routeSection);
-    }
-    if (construction.sourthLatitude !== undefined) {
-      construction.sourthLatitude = String(construction.sourthLatitude);
-    }
-    if (construction.northLatitude !== undefined) {
-      construction.northLatitude = String(construction.northLatitude);
-    }
-    if (construction.westLongitude !== undefined) {
-      construction.westLongitude = String(construction.westLongitude);
-    }
-    if (construction.eastLongitude !== undefined) {
-      construction.eastLongitude = String(construction.eastLongitude);
-    }
-    if (construction.stationStartN !== undefined) {
-      construction.stationStartN = String(construction.stationStartN);
-    }
-    if (construction.stationStartM !== undefined) {
-      construction.stationStartM = String(construction.stationStartM);
-    }
-    if (construction.stationEndN !== undefined) {
-      construction.stationEndN = String(construction.stationEndN);
-    }
-    if (construction.stationEndM !== undefined) {
-      construction.stationEndM = String(construction.stationEndM);
-    }
-    if (construction.distanceStartN !== undefined) {
-      construction.distanceStartN = String(construction.distanceStartN);
-    }
-    if (construction.distanceStartM !== undefined) {
-      construction.distanceStartM = String(construction.distanceStartM);
-    }
-    if (construction.distanceEndN !== undefined) {
-      construction.distanceEndN = String(construction.distanceEndN);
-    }
-    if (construction.distanceEndM !== undefined) {
-      construction.distanceEndM = String(construction.distanceEndM);
-    }
-
-
-  },
-
-  copyConstruction: function(
-    srcConstructionId, displayNumber, newDataFolder = '',useExternalFolder = false, useSharedFolder = false) {
-  let construction = {
+  copySchool: function(
+    srcSchoolId, displayNumber, newDataFolder = '',useExternalFolder = false, useSharedFolder = false) {
+  let school = {
     "createDate" : this._getCreateDate(),
     "guId" : uuidv4()
   };
   let req = {
-    command: 'copy-construction',
+    command: 'copy-school',
     args: {
-      "srcConstructionId": srcConstructionId,
+      "srcSchoolId": srcSchoolId,
       "displayNumber" : displayNumber,
       "newDataFolder" : newDataFolder,
       "useExternalFolder" : useExternalFolder,
       "useSharedFolder" : useSharedFolder,
-      "construction" : construction
+      "school" : school
     }
   };
   return this._sendRequest(req);
 },
 
-  deleteConstruction: function(constructionId, deleteDirectory = true, callback = undefined) {
+  deleteSchool: function(schoolId, deleteDirectory = true, callback = undefined) {
     let req = {
-      command: 'delete-construction',
+      command: 'delete-school',
       args: {
-        'constructionId': constructionId,
+        'schoolId': schoolId,
         'deleteDirectory': deleteDirectory,
       }
     };
     return this._sendRequest(req, callback);
   },
 
-  updateConstructionOrder: function(constructions) {
+  updateSchoolOrder: function(schools) {
     let req = {
-      command: 'update-construction-order',
+      command: 'update-school-order',
       args: {
-        'constructions': constructions,
+        'schools': schools,
       }
     };
     return this._sendRequest(req);
   },
 
-  updatePhotoInformationItems : function(constructionId, photoInfoItemTree) {
+  syncSchool(schoolId = 0, classId = 0) {
     let req = {
-      command: "update-photo-info-items",
-      args : {
-        "constructionId": constructionId,
-        "photoInfoItemTree": photoInfoItemTree
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getUserContractee: function() {
-    let req = {command: 'get-user-contractee'};
-    return this._sendRequest(req);
-  },
-
-  getUserContractor :function() {
-    let req = {
-      command: "get-user-contractor"
-    };
-    return this._sendRequest(req);
-  },
-
-  // Master
-
-  getPrefectures: function() {
-    let req = {command: 'get-prefectures'};
-    return this._sendRequest(req);
-  },
-
-  getRegions: function(prefectureId) {
-    let req = {
-      command: 'get-regions',
+      command: "sync-school",
       args: {
-        'prefectureId': prefectureId,
+        "schoolId": schoolId,
+        "classId": classId,
       }
     };
     return this._sendRequest(req);
   },
 
-  getConstructionFields: function() {
+  importSchool(dataFolder, isExternalFolder = true, isSharedFolder = true, cloudStorage = 0, isSample = false) {
     let req = {
-      command: 'get-construction-fields',
-    };
-    return this._sendRequest(req);
-  },
-
-  getConstructionIndustryTypes: function() {
-    let req = {
-      command: 'get-construction-industry-types',
-    };
-    return this._sendRequest(req);
-  },
-
-  getConstructionTypes: function() {
-    let req = {
-      command: 'get-construction-types',
-    };
-    return this._sendRequest(req);
-  },
-
-  getConstructionMethodForms: function(constructionTypeId) {
-    let req = {
-      command: 'get-construction-method-forms',
+      command: "import-school",
       args: {
-        'constructionTypeId': constructionTypeId,
+        "dataFolder" : dataFolder,
+        "isExternalFolder" : isExternalFolder,
+        "isSharedFolder" : isSharedFolder,
+        "cloudStorage" : cloudStorage,
+        "isSample" : isSample,
       }
     };
     return this._sendRequest(req);
-  },
-
-  getBusinessFields :function(knackId, departmentCode = "", detailCode = "", stageCode = "") {
-    let req = {
-      command:'get-business-fields',
-      args: {
-        'knackId':knackId,
-        'departmentCode' : departmentCode, 
-        'detailCode' : detailCode,
-        'stageCode' : stageCode,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getBusinessKeywords: function(knackId, businessKeywordFieldCode = "", businessKeywordLargeCode = "", businessKeywordMiddleCode = "") {
-    let req = {
-      command:'get-business-keywords',
-      args: {
-        'knackId':knackId,
-        'businessKeywordFieldCode' : businessKeywordFieldCode, 
-        'businessKeywordLargeCode' : businessKeywordLargeCode,
-        'businessKeywordMiddleCode' : businessKeywordMiddleCode,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getWaterRouteInformations :function(waterRouteClassficationCode = "", waterRouteTypeCode = "") {
-    let req = {
-      command:'get-water-route-infos',
-      args: {
-        'waterRouteClassficationCode' : waterRouteClassficationCode, 
-        'waterRouteTypeCode' : waterRouteTypeCode,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getContractee :function(contracteeLargeCode = "", contracteeMiddleCode = "", contracteeSmallCode = "") {
-    let req = {
-      command:'get-contractee',
-      args: {
-        'contracteeLargeCode' : contracteeLargeCode,
-        'contracteeMiddleCode' : contracteeMiddleCode,
-        'contracteeSmallCode' : contracteeSmallCode,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getPhotoClassifications: function(knackId) {;
-    let req = {
-      command:'get-photo-classifications',
-      args:{
-        'knackId':knackId
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getGeneralConstructionMaster: function(callback = undefined) {;
-    let req = {
-      command:'get-general-construction-master'
-    };
-    return this._sendRequest(req,callback);
-  },
-
-  getEizenConstructionMaster: function(callback = undefined) {;
-    let req = {
-      command:'get-eizen-construction-master'
-    };
-    return this._sendRequest(req,callback);
-  },
-
-  getConstructionMaster: function(constructionCode, callback = undefined) {;
-    let req = {
-      command:'get-construction-master',
-      args:{
-        'constructionCode':constructionCode
-      }
-    };
-    return this._sendRequest(req,callback);
-  },
-
-  getConstructionTypeMaster :function(knackId, knackType, callback = undefined) {
-    let req = {
-      command:'get-construction-type-master',
-      args: {
-        'knackId':knackId,
-        'knackType':knackType,
-      }
-    };
-    return this._sendRequest(req, callback);
   },
 
   // Image
@@ -579,99 +361,24 @@ var accessor = {
     return this._sendRequest(req);
   },
 
-  // Bookrack
-
-  getBookracks: function(constructionId) {
-    let req = {
-      command: 'get-bookracks',
-      args: {
-        'constructionId': constructionId,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getBookrackItems: function(constructionId) {
-    let req = {
-      command: 'get-bookrack-items',
-      args: {
-        'constructionId': constructionId,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  updateBookrackItem: function(constructionId, bookrackItem) {
-    let req = {
-      command: 'update-bookrack-item',
-      args: {
-        'constructionId': constructionId,
-        'bookrackItem' : bookrackItem,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  deleteBookrackItem: function(constructionId, bookrackItemId) {
-    let req = {
-      command: 'delete-bookrack-item',
-      args: {
-        'constructionId': constructionId,
-        'bookrackItemId' : bookrackItemId,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  updateBookrackItemOrder: function(constructionId, bookrackItems) {
-    let req = {
-      command: 'update-bookrack-item-order',
-      args: {
-        'constructionId': constructionId,
-        'bookrackItems' : bookrackItems,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  async getBookrackById(bookrackItem, bookrackId){
-    for(let i = 0; i < bookrackItem.length; i++){
-      if(bookrackItem[i].bookrackItemId == bookrackId){
-        return bookrackItem[i];
-      }
-    }
-    return bookrackItem[0];
-  },
-
-  findBookrackItem: function(bookrackItemId, bookrackItems) {
-    for (let i = 0; i < bookrackItems.length; i++) {
-      if (bookrackItems[i].bookrackItemId === bookrackItemId) return bookrackItems[i];
-      if (bookrackItems[i].bookrackItems) {
-        const result = this.findBookrackItem(bookrackItemId, bookrackItems[i].bookrackItems);
-        if (result) return result;
-      };
-    }
-    return null;
-  },
-
   // Album
 
-  getAlbumDetail: function (constructionId, albumId) {
+  getAlbumDetail: function (schoolId, albumId) {
     let req = {
       command: 'get-album-detail',
       args: {
-        'constructionId': constructionId,
+        'schoolId': schoolId,
         'albumId': albumId
       }
     };
     return this._sendRequest(req);
   },
  
-  getAlbumFrames: function (constructionId, albumId, fetchFramePosition = 0, fetchCount = -1) {
+  getAlbumFrames: function (schoolId, albumId, fetchFramePosition = 0, fetchCount = -1) {
     let req = {
       command: 'get-album-frames',
       args: {
-        'constructionId': constructionId,
+        'schoolId': schoolId,
         'albumId': albumId,
         "fetchFramePosition": fetchFramePosition,
         "fetchCount": fetchCount
@@ -680,68 +387,33 @@ var accessor = {
     return this._sendRequest(req);
   },
 
-  getAlbumFrameIds: function (constructionId, albumId) {
+  getAlbumFrameIds: function (schoolId, albumId) {
     let req = {
       command: 'get-album-frame-ids',
       args: {
-        'constructionId': constructionId,
+        'schoolId': schoolId,
         'albumId': albumId
       }
     };
     return this._sendRequest(req);
   },
 
-  getBookmarks: function (constructionId, albumId) {
-    let req = {
-      command: 'get-bookmarks',
-      args: {
-        'constructionId': constructionId,
-        'albumId': albumId,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  updateBookmark(constructionId, albumId, bookmark) {
-    let req = {
-      command: "update-bookmark",
-      args: {
-        "constructionId": constructionId,
-        "albumId": albumId,
-        "bookmark": bookmark,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  deleteBookmark(constructionId, albumId, bookmarkId) {
-    let req = {
-      command: "delete-bookmark",
-      args: {
-        "constructionId": constructionId,
-        "albumId": albumId,
-        "bookmarkId": bookmarkId,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  updateAlbum: function (constructionId, album) {
+  updateAlbum: function (schoolId, album) {
     let req = {
       command: "update-album",
       args: {
-        "constructionId": constructionId,
+        "schoolId": schoolId,
         "album": album,
       }
     };
     return this._sendRequest(req);
   },
 
-  deleteAlbum(constructionId, albumId, immediately = false, callback=()=>{}) {
+  deleteAlbum(schoolId, albumId, immediately = false, callback=()=>{}) {
     let req = {
       command: "delete-album",
       args: {
-        "constructionId": constructionId,
+        "schoolId": schoolId,
         "albumId": albumId,
         "immediately" : immediately,
       }
@@ -749,11 +421,11 @@ var accessor = {
     return this._sendRequest(req, callback);
   },
 
-  updateAlbumFrames: function (constructionId, albumId, albumFrames, callback=()=>{}) {
+  updateAlbumFrames: function (schoolId, albumId, albumFrames, callback=()=>{}) {
     let req = {
       command: 'update-album-frames',
       args: {
-        'constructionId': constructionId,
+        'schoolId': schoolId,
         'albumId': albumId,
         'albumFrames': albumFrames
       }
@@ -761,11 +433,11 @@ var accessor = {
     return this._sendRequest(req, callback);
   },
 
-  updateAlbumFrameOrder: function(constructionId, albumId, albumFrameIds, sortStartPosition = 0) {
+  updateAlbumFrameOrder: function(schoolId, albumId, albumFrameIds, sortStartPosition = 0) {
     let req = {
       command: "update-album-frame-order",
       args: {
-        "constructionId": constructionId,
+        "schoolId": schoolId,
         "albumId": albumId,
         "albumFrameIds": albumFrameIds,
         "sortStartPosition": sortStartPosition,
@@ -774,11 +446,11 @@ var accessor = {
     return this._sendRequest(req);
   },
 
-  deleteAlbumFrame: function(constructionId, albumId, albumFrameId, immediately = false) {
+  deleteAlbumFrame: function(schoolId, albumId, albumFrameId, immediately = false) {
     let req = {
       command: "delete-album-frame",
       args: {
-        "constructionId": constructionId,
+        "schoolId": schoolId,
         "albumId": albumId,
         "albumFrameId": albumFrameId,
         "immediately" : immediately,
@@ -787,11 +459,11 @@ var accessor = {
     return this._sendRequest(req);
   },
 
-  addAlbumFrames: function(constructionId, albumId, albumFrames, callback=()=>{}) {
+  addAlbumFrames: function(schoolId, albumId, albumFrames, callback=()=>{}) {
     let req = {
       command: "add-album-frames",
       args: {
-        "constructionId": constructionId,
+        "schoolId": schoolId,
         "albumId": albumId,
         "albumFrames": albumFrames,
       }
@@ -799,11 +471,11 @@ var accessor = {
     return this._sendRequest(req, callback);
   },
 
-  addEmptyAlbumFrames: function(constructionId, albumId, frameCount, startPosition) {
+  addEmptyAlbumFrames: function(schoolId, albumId, frameCount, startPosition) {
     let req = {
       command: "add-empty-album-frames",
       args: {
-        "constructionId": constructionId,
+        "schoolId": schoolId,
         "albumId": albumId,
         "frameCount": frameCount,
         "startPosition": startPosition
@@ -812,22 +484,22 @@ var accessor = {
     return this._sendRequest(req);
   },
 
-  getAlbumItemExtraInfo(constructionId, albumItemId) {
+  getAlbumItemExtraInfo(schoolId, albumItemId) {
     let req = {
       command: "get-album-item-extra-info",
       args: {
-        "constructionId" : constructionId,
+        "schoolId" : schoolId,
         "albumItemId" : albumItemId
       }
     };
     return this._sendRequest(req);
   },
 
-  getAlbumFrame: function (constructionId, albumId, albumFrameId) {
+  getAlbumFrame: function (schoolId, albumId, albumFrameId) {
     let req = {
       command: 'get-album-frame',
       args: {
-        'constructionId': constructionId,
+        'schoolId': schoolId,
         'albumId': albumId,
         'albumFrameId': albumFrameId
       }
@@ -835,337 +507,35 @@ var accessor = {
     return this._sendRequest(req);
   },
 
-  getAlbumConstructionPhotoInformations: function(constructionId, albumId) {
+  getAlbumSchoolPhotoInformations: function(schoolId, albumId) {
     let request = {
-      command: "get-album-construction-photo-infos",
+      command: "get-album-school-photo-infos",
       args: {
-        "constructionId" : constructionId,
+        "schoolId" : schoolId,
         "albumId" : albumId,
       }
     };
     return this._sendRequest(request);
   },
 
-  // Settings
-
-  getProgramSettings: function () {
-    let req = {
-      command: 'get-program-settings',
-    };
-    return this._sendRequest(req);
-  },
-
-  getConstructionSettings: function (constructionId) {
-    let req = {
-      command: 'get-construction-settings',
-      args: {
-        'constructionId': constructionId
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  updateProgramSettings: function (programSettings) {
-    let req = {
-      command: 'update-program-settings',
-      args: {
-        'programSettings': programSettings
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  updateConstructionSettings: function (constructionId, constructionSettings) {
-    let req = {
-      command: 'update-construction-settings',
-      args: {
-        'constructionId': constructionId,
-        'constructionSettings': constructionSettings,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getPrintSettings: function (constructionId, albumId) {
-    let req = {
-      command: 'get-print-settings',
-      args: {
-        'constructionId': constructionId,
-        'albumId': albumId,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  updatePrintSettings: function (constructionId, albumId, printSettings) {
-    let req = {
-      command: 'update-print-settings',
-      args: {
-        'constructionId': constructionId,
-        'albumId': albumId,
-        'printSettings': printSettings
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  // Search
-
-  searchByFileInfo: function (constructionId, conditions, albumIds = [], callback=()=>{}) {
-    let req = {
-      command: 'search-by-file-info',
-      args: {
-        'constructionId' : constructionId,
-        'conditions' : conditions,
-        'albumIds' : albumIds,  // empty array - all albums
-      }
-    };
-    return this._sendRequest(req, callback);
-  },
-
-  searchBySentence: function (constructionId, conditions, albumIds = [], callback=()=>{}) {
-    let req = {
-      command: 'search-by-sentence',
-      args: {
-        'constructionId' : constructionId,
-        'conditions' : conditions,
-        'albumIds' : albumIds,  // empty array - all albums
-      }
-    };
-    return this._sendRequest(req, callback);
-  },
-
-  searchByConstructionInfo: function (constructionId, conditions, albumIds = [], callback=()=>{}) {
-    let req = {
-      command: 'search-by-construction-info',
-      args: {
-        'constructionId' : constructionId,
-        'conditions' : conditions,
-        'albumIds' : albumIds,  // empty array - all albums
-      }
-    };
-    return this._sendRequest(req, callback);
-  },
-
-  searchNotCompliantImages: function (constructionId, albumIds = [], callback=()=>{}) {
-    let req = {
-      command: 'search-not-compliant-images',
-      args: {
-        'constructionId' : constructionId,
-        'albumIds' : albumIds,  // empty array - all albums
-      }
-    };
-    return this._sendRequest(req, callback);
-  },
-
-  searchSameImages: function (constructionId, albumIds = [], callback=()=>{}) {
-    let req = {
-      command: 'search-same-images',
-      args: {
-        'constructionId' : constructionId,
-        'albumIds' : albumIds,  // empty array - all albums
-      }
-    };
-    return this._sendRequest(req, callback);
-  },
-
-  searchTamperingImages: function (constructionId, albumIds = [], callback=()=>{}) {
-    let req = {
-      command: 'search-tampering-images',
-      args: {
-        'constructionId' : constructionId,
-        'albumIds' : albumIds,  // empty array - all albums
-      }
-    };
-    return this._sendRequest(req, callback);
-  },
-
-  getManagedAlbumItems: function (constructionId, startPosition = 0, fetchCount = 1000, callback=()=>{}) {
-    let req = {
-      command: 'get-managed-album-items',
-      args: {
-        'constructionId': constructionId,
-        'startPosition': startPosition,
-        'fetchCount': fetchCount,
-      }
-    };
-    return this._sendRequest(req, callback);
-  },
-
-  execSharedConstruction(constructionId, available = true) {
-    let req = {
-      command: "exec-shared-construction",
-      args: {
-        "constructionId": constructionId,
-        "serialNumber": this.serialNumber,
-        "hostName": this.hostName,
-        "available": available,
-        "appVersion": this.appVersion,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  lockSharedConstruction(constructionId, lock = true) {
-    let req = {
-      command: "lock-shared-construction",
-      args: {
-        "constructionId": constructionId,
-        "serialNumber" : this.serialNumber,
-        "hostName": this.hostName,
-        "lock": lock,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  lockAlbum(constructionId, albumId, lock = true) {
-    let req = {
-      command: "lock-album",
-      args: {
-        "constructionId": constructionId,
-        "serialNumber" : this.serialNumber,
-        "hostName": this.hostName,
-        "albumId": albumId,
-        "lock": lock,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  lockAlbumItems(constructionId, lock = true) {
-    let req = {
-      command: "lock-album-items",
-      args: {
-        "constructionId": constructionId,
-        "serialNumber" : this.serialNumber,
-        "hostName": this.hostName,
-        "lock": lock,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  unLockAll(constructionId) {
-    let req = {
-      command: "unlock-all",
-      args: {
-        "constructionId": constructionId,
-        "serialNumber" : this.serialNumber,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  async getDataFromBookrackItems(bookrackItems, bookrackItemType, result) {
-    for (let i = 0; i < bookrackItems.length; i++) {
-      if (result == undefined) result = [];
-      if (bookrackItems[i].bookrackItemType == bookrackItemType) {
-        result.push(bookrackItems[i]);
-      }
-      if (bookrackItems[i].bookrackItems) {
-        await this.getDataFromBookrackItems(bookrackItems[i].bookrackItems, bookrackItemType, result);
-      }
-    }
-
-    return result;
-  },
-
-  syncConstruction(constructionId = 0, albumId = 0) {
-    let req = {
-      command: "sync-construction",
-      args: {
-        "constructionId": constructionId,
-        "albumId": albumId,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getSharedConstructionGroup(dataFolder) {
-    let req = {
-      command: "get-shared-construction-group",
-      args: {
-        "dataFolder" : dataFolder,
-        "serialNumber" : this.serialNumber,
-        "hostName" : this.hostName,
-        "appVersion" : this.appVersion
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  clearSharedConstructionHost(dataFolder, serialNumber, targetHost) {
-    let req = {
-      command: "clear-shared-construction-host",
-      args: {
-        "dataFolder" : dataFolder,
-        "serialNumber" : serialNumber,
-        "targetHost" : targetHost,
-        "appVersion" : this.appVersion
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  unlockSharedConstructionHost(dataFolder, serialNumber, targetHost) {
-    let req = {
-      command: "unlock-shared-construction-host",
-      args: {
-        "dataFolder" : dataFolder,
-        "serialNumber" : serialNumber,
-        "targetHost" : targetHost,
-        "appVersion" : this.appVersion
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  importConstruction(dataFolder, isExternalFolder=true, isSharedFolder=true, cloudStorage=0, isSample=false) {
-    let req = {
-      command: "import-construction",
-      args: {
-        "dataFolder" : dataFolder,
-        "isExternalFolder" : isExternalFolder,
-        "isSharedFolder" : isSharedFolder,
-        "cloudStorage" : cloudStorage,
-        "isSample" : isSample,
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  getSharedLockOwners(constructionId) {
-    let req = {
-      command: "get-shared-lock-owners",
-      args: {
-        "constructionId" : constructionId,
-        "serialNumber" : this.serialNumber,
-        "hostName" : this.hostName,
-        "appVersion" : this.appVersion
-      }
-    };
-    return this._sendRequest(req);
-  },
-
-  execTransactionAlbumItems(constructionId, transactionType) {
+  execTransactionAlbumItems(schoolId, transactionType) {
     // transactionType 'begin', 'commit', 'rollback'
     let req = {
       command: "exec-transaction-album-items",
       args: {
-        "constructionId" : constructionId,
+        "schoolId" : schoolId,
         "transactionType" : transactionType,
       }
     };
     return this._sendRequest(req);
   },
 
-  execTransactionAlbum(constructionId, albumId, transactionType, isGarbage = false) {
+  execTransactionAlbum(schoolId, albumId, transactionType, isGarbage = false) {
     // transactionType 'begin', 'commit', 'rollback'
     let req = {
       command: "exec-transaction-album",
       args: {
-        "constructionId" : constructionId,
+        "schoolId" : schoolId,
         "albumId" : albumId,
         "transactionType" : transactionType,
         "isGarbage" : isGarbage
@@ -1174,17 +544,17 @@ var accessor = {
     return this._sendRequest(req);
   },
 
-  execTransactionGarbageAlbum(constructionId, transactionType, createGarbage) {
+  execTransactionGarbageAlbum(schoolId, transactionType, createGarbage) {
     // transactionType 'begin', 'commit', 'rollback'
     let id = createGarbage ? 0 : -1;
-    return this.execTransactionAlbum(constructionId, id, transactionType, true);
+    return this.execTransactionAlbum(schoolId, id, transactionType, true);
   },
 
-  getConnectRegisterState(constructionId, files, callback=()=>{}) {
+  getConnectRegisterState(schoolId, files, callback=()=>{}) {
     let req = {
       command: "get-connect-register-state",
       args: {
-        "constructionId" : constructionId,
+        "schoolId" : schoolId,
         "files" : files,
       }
     };
