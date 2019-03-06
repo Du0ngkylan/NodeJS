@@ -6,12 +6,12 @@
  */
 
 #include <boost/filesystem.hpp>
-#include "command/construction/update_school_order.h"
+#include "command/school/update_school_order.h"
 #include "sms_db_if.h"
 
 using namespace std;
 using namespace json11;
-using namespace sms_db_manager;
+using namespace db_manager;
 
 namespace pt = boost::property_tree;
 namespace sms_accessor {
@@ -21,9 +21,7 @@ namespace sms_accessor {
  * SmsUpdateSchoolOrder
  * @brief constructor
  */
-SmsUpdateSchoolOrder::SmsUpdateSchoolOrder() {
-  m_data_dir = this->GetSmsAppDataDirectory();
-}
+SmsUpdateSchoolOrder::SmsUpdateSchoolOrder() {}
 
 /**
  * @fn
@@ -40,6 +38,7 @@ SmsUpdateSchoolOrder::~SmsUpdateSchoolOrder() = default;
  * @param raw raw string
  */
 Json SmsUpdateSchoolOrder::ExecuteCommand(Json& request, string& raw) {
+  data_dir = this->GetSmsAppDataDirectory();
   // validate arguments
   auto& j_school = request["args"]["schools"];
   if (j_school.is_null() || !j_school.is_array()) {
@@ -54,8 +53,8 @@ Json SmsUpdateSchoolOrder::ExecuteCommand(Json& request, string& raw) {
     schools[schoolId] = displayNumber;
   }
   try {
-    const auto workingDir = GetSmsWorkDirectory();
-    manager::SmsMasterDatabase master_db(m_data_dir, workingDir);
+    const auto work_dir = GetSmsWorkDirectory();
+    manager::SmsMasterDatabase master_db(data_dir, work_dir);
     auto count = master_db.UpdateDisplayNumberSchool(schools);
     Json response = Json::object{{"updateCount", count}};
     return Json::object{{"request", request}, {"response", response}};
@@ -69,10 +68,10 @@ Json SmsUpdateSchoolOrder::ExecuteCommand(Json& request, string& raw) {
 int SmsUpdateSchoolOrder::UpdateSchool(const Json& school) {
   model::SmsSchoolInfo schoolInfo{};
   GetSchoolInfo(schoolInfo, school);
-
-  const auto workingDir = GetSmsWorkDirectory();
+  data_dir = this->GetSmsAppDataDirectory();
+  const auto work_dir = GetSmsWorkDirectory();
   try {
-    manager::SmsMasterDatabase master_db(m_data_dir, workingDir);
+    manager::SmsMasterDatabase master_db(data_dir, work_dir);
 
     SmsStatement statement(master_db.GetmasterDB(),
                             u8"SELECT displayNumber FROM "

@@ -12,7 +12,7 @@
 
 using namespace std; 
 using namespace sms_accessor;
-using namespace sms_db_manager;
+using namespace db_manager;
 
 inline void GetMemInfo() {
   MEMORYSTATUSEX msex = { sizeof(MEMORYSTATUSEX) };
@@ -51,7 +51,7 @@ static json11::Json ExecuteCommand(json11::Json &req, std::string &raw) {
     res = command->ExecuteCommand(req, raw);
   } catch (SmsException &ex) {
     res = command->CreateErrorResponse(req, kErrorInternalStr, ex.What());
-  } catch (Sms_db_manager::SmsDatabaseException &ex) {
+  } catch (db_manager::SmsDatabaseException &ex) {
     res = command->CreateErrorResponse(req, kErrorInternalStr, ex.What());
   } catch (std::exception) {
     res = command->CreateErrorResponse(req, kErrorInternalStr, "unknown");

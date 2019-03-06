@@ -1,8 +1,8 @@
 /**
  * @file get_schools.cc
  * @brief get schools command implementation
- * @author duong.maixuan
- * @date 2018/07/15
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
 #include "command/school/get_schools.h"
@@ -14,7 +14,7 @@
 
 using namespace std;
 using namespace json11;
-using namespace sms_db_manager;
+using namespace db_manager;
 
 namespace fs = boost::filesystem;
 

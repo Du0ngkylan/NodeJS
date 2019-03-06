@@ -15,7 +15,7 @@ namespace sms_accessor {
 
 /**
  * @class SmsUpdateSchool
- * @brief update construction order command
+ * @brief update school order command
  */
 class SmsUpdateSchool : public SmsAccessorCommand {
  public:
@@ -45,50 +45,13 @@ class SmsUpdateSchool : public SmsAccessorCommand {
  private:
   /**
    * @fn
-   * CreateFileKouji
-   * @brief Create new File kouji.XML
-   * @param info model of construction
-   * @param construction json data input
+   * GetSchoolInfo
+   * @brief Get info of school form json
+   * @param info model of school
+   * @param school json data input
    */
-	 int SmsUpdateSchool::CreateFileKouji(
-      Sms_db_manager::model::SmsConstructionInfo &info,
-      const json11::Json &construction);
-
-  /**
-   * @fn
-   * GetConstructionInfo
-   * @brief Get info of construction form json
-   * @param info model of construction
-   * @param construction json data input
-   */
-	 void GetConstructionInfo(Sms_db_manager::model::SmsConstructionInfo &info,
-                           const json11::Json &construction);
-
-  /**
-   * @fn
-   * UpdateDataKoujiXml
-   * @brief Update content file kouji.XML
-   * @param construction json data input
-   * @param dst data for file kouji.XML after update
-   */
-	 void UpdateDataKoujiXml(const json11::Json &construction,
-                          boost::property_tree::wptree &dst);
-
-  /**
-   * @fn
-   * UpdateDataKoujiXml
-   * @brief Update part WaterRouteInformations of kouji.XML
-   * @param construction json data input
-   * @param dst data for file kouji.XML after update
-   */
-  void UpdateWaterRouteInformations(const json11::Json &construction,
-                                    boost::property_tree::wptree &dst);
-
-  std::wstring m_data_dir;
-  std::map<std::wstring, std::string> m_key_string;
-  std::map<std::wstring, std::string> m_key_number;
-  std::map<std::wstring, std::string> m_key_contractee;
-  std::map<std::wstring, std::string> m_key_contractor;
+	 void GetSchoolInfo(db_manager::model::SmsSchoolInfo &info,
+                      const json11::Json &school);
 };
 
 }  // namespace sms_accessor

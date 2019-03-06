@@ -146,7 +146,7 @@ namespace sms_accessor {
                                   const wchar_t* file, const int line) {
     src::severity_logger<logging::trivial::severity_level> lg;
 
-    if (log_level_ != SmsLogLevel::Sms_TRACE) return;
+    if (log_level_ != SmsLogLevel::SMS_TRACE) return;
 
     try {
       if (SmsAppUtil::GetDiskFreeSpaceSize(log_root_f) > MAX_FREE_SIZE_MB)
@@ -165,7 +165,7 @@ namespace sms_accessor {
    */
   void SmsLogUtil::WriteTraceLog(const std::wstring& message,
                                   const wchar_t* file, const int line) {
-      if (log_level_ != SmsLogLevel::Sms_TRACE) return;
+      if (log_level_ != SmsLogLevel::SMS_TRACE) return;
 
       auto str = SmsAppUtil::Utf16ToUtf8(message);
       src::severity_logger<logging::trivial::severity_level> lg;
@@ -186,7 +186,7 @@ namespace sms_accessor {
    */
   void SmsLogUtil::WriteDebugLog(const std::string &message,
                                   const wchar_t* file, const int line) {
-    if (log_level_ < SmsLogLevel::Sms_DEBUG) return;
+    if (log_level_ < SmsLogLevel::SMS_DEBUG) return;
 
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
@@ -206,7 +206,7 @@ namespace sms_accessor {
    */
   void SmsLogUtil::WriteDebugLog(const std::wstring& message,
                                   const wchar_t* file, const int line) {
-    if (log_level_ < SmsLogLevel::Sms_DEBUG) return;
+    if (log_level_ < SmsLogLevel::SMS_DEBUG) return;
 
     auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
@@ -227,7 +227,7 @@ namespace sms_accessor {
    */
   void SmsLogUtil::WriteInfoLog(const std::string &message,
                                  const wchar_t* file, const int line) {
-    if (log_level_ < SmsLogLevel::Sms_INFO) return;
+    if (log_level_ < SmsLogLevel::SMS_INFO) return;
 
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
@@ -247,7 +247,7 @@ namespace sms_accessor {
    */
   void SmsLogUtil::WriteInfoLog(const std::wstring& message,
                                  const wchar_t* file, const int line) {
-    if (log_level_ < SmsLogLevel::Sms_INFO) return;
+    if (log_level_ < SmsLogLevel::SMS_INFO) return;
 
     auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
@@ -268,7 +268,7 @@ namespace sms_accessor {
    */
   void SmsLogUtil::WriteWarningLog(const std::string &message,
                                     const wchar_t* file, const int line) {
-    if (log_level_ < SmsLogLevel::Sms_WARN) return;
+    if (log_level_ < SmsLogLevel::SMS_WARN) return;
 
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
@@ -288,7 +288,7 @@ namespace sms_accessor {
    */
   void SmsLogUtil::WriteWarningLog(const std::wstring& message,
                                     const wchar_t* file,const int line) {
-    if (log_level_ < SmsLogLevel::Sms_WARN) return;
+    if (log_level_ < SmsLogLevel::SMS_WARN) return;
 
     auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
@@ -310,7 +310,7 @@ namespace sms_accessor {
   void SmsLogUtil::WriteErrorLog(const std::string &message,
                                   const wchar_t* file, const int line) {
 
-    if (log_level_ < SmsLogLevel::Sms_ERROR) return;
+    if (log_level_ < SmsLogLevel::SMS_ERROR) return;
 
     src::severity_logger<logging::trivial::severity_level> lg;
     try {
@@ -330,7 +330,7 @@ namespace sms_accessor {
    */
   void SmsLogUtil::WriteErrorLog(const std::wstring& message,
                                   const wchar_t* file, const int line) {
-    if (log_level_ < SmsLogLevel::Sms_ERROR) return;
+    if (log_level_ < SmsLogLevel::SMS_ERROR) return;
 
     auto str = SmsAppUtil::Utf16ToUtf8(message);
     src::severity_logger<logging::trivial::severity_level> lg;
@@ -389,20 +389,20 @@ namespace sms_accessor {
       auto l = std::wstring(level);
 
       if (l == L"5") {
-        log_level_ = SmsLogLevel::Sms_TRACE;
+        log_level_ = SmsLogLevel::SMS_TRACE;
       } else if (l == L"4") {
-        log_level_ = SmsLogLevel::Sms_DEBUG;
+        log_level_ = SmsLogLevel::SMS_DEBUG;
       } else if (l == L"2") {
-        log_level_  = SmsLogLevel::Sms_WARN;
+        log_level_  = SmsLogLevel::SMS_WARN;
       } else if (l == L"1") {
-        log_level_  = SmsLogLevel::Sms_ERROR;
+        log_level_  = SmsLogLevel::SMS_ERROR;
       } else if (l == L"0") {
-        log_level_  = SmsLogLevel::Sms_FATAL;
+        log_level_  = SmsLogLevel::SMS_FATAL;
       } else {
-        log_level_ = SmsLogLevel::Sms_INFO;
+        log_level_ = SmsLogLevel::SMS_INFO;
       }
     } else {
-      log_level_ = Sms_INFO;
+      log_level_ = SMS_INFO;
     }
   }
 

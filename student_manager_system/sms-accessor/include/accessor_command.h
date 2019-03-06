@@ -398,7 +398,7 @@ class SmsAccessorCommand {
   * @param is_shared shared construction : true, otherwise : false
   * @param dbs target databases
   */
-  static void ReleaseDatabases(const bool is_shared, std::vector<Sms_db_manager::manager::SmsBaseDatabase *> &dbs);
+  static void ReleaseDatabases(const bool is_shared, std::vector<db_manager::manager::SmsBaseDatabase *> &dbs);
 
   /**
   * @fn

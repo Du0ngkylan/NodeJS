@@ -663,7 +663,7 @@ void SmsAccessorCommand::OutputProgress(Json::object &status) {
 * @param is_shared shared construction : true, otherwise : false
 * @param dbs target databases
 */
-void SmsAccessorCommand::ReleaseDatabases(const bool is_shared, std::vector<Sms_db_manager::manager::SmsBaseDatabase *> &dbs) {
+void SmsAccessorCommand::ReleaseDatabases(const bool is_shared, std::vector<db_manager::manager::SmsBaseDatabase *> &dbs) {
   // not close
   // if (is_shared) {
   //   for (auto &db : dbs) {

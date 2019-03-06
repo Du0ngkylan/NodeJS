@@ -16,7 +16,7 @@ namespace sms_accessor {
 
 /**
  * @class SmsUpdateSchoolOrder
- * @brief update construction order command
+ * @brief update school order command
  */
 class SmsUpdateSchoolOrder : public SmsAccessorCommand {
  public:
@@ -42,15 +42,6 @@ class SmsUpdateSchoolOrder : public SmsAccessorCommand {
    * @param raw raw string
    */
   json11::Json ExecuteCommand(json11::Json& request, std::string& raw);
-
- private:
-  void GetConstructionInfo(Sms_db_manager::model::SmsConstructionInfo &info,
-                           const json11::Json &construction);
-
-  int UpdateConstruction(const json11::Json &construction);
-
-
-  std::wstring m_data_dir;
 };
 
 }  // namespace sms_accessor

@@ -41,6 +41,8 @@ class SmsGetSchools : public SmsAccessorCommand {
    * @param (raw) raw string
    */
   json11::Json ExecuteCommand(json11::Json &request, std::string &raw);
+};
+
 }  // namespace sms_accessor
 
 #endif  // SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_GET_SCHOOLS_H_

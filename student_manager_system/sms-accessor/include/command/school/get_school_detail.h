@@ -14,24 +14,24 @@
 namespace sms_accessor {
 
 /**
- * @class SmsGetConstructionDetail
- * @brief get constructions detail command
+ * @class SmsGetSchoolDetail
+ * @brief get school detail command
  */
-class SmsGetConstructionDetail : public SmsAccessorCommand {
+class SmsGetSchoolDetail : public SmsAccessorCommand {
  public:
   /**
    * @fn
-   * SmsGetConstructionDetail
+   * SmsGetSchoolDetail
    * @brief constructor
    */
-  SmsGetConstructionDetail();
+  SmsGetSchoolDetail();
 
   /**
    * @fn
-   * ~SmsGetConstructionDetail
+   * ~SmsGetSchoolDetail
    * @brief destructor
    */
-  ~SmsGetConstructionDetail();
+  ~SmsGetSchoolDetail();
 
   /**
    * @fn
@@ -42,19 +42,15 @@ class SmsGetConstructionDetail : public SmsAccessorCommand {
    */
   json11::Json ExecuteCommand(json11::Json &request, std::string &raw);
 
+ private:
   /**
    * @fn
-   * CreateConstruction
-   * @param (info) construction info
-   * @param (db) construction database
-   * @param (get_folder_size) get folder size flag
-   * @brief create construction detail
-   * @return construction object
+   * CreateSchool
+   * @param (info) school info
+   * @brief create school detail
+   * @return school object
    */
-  static json11::Json CreateConstruction(
-      Sms_db_manager::model::SmsConstructionInfo &info,
-      Sms_db_manager::manager::SmsMasterDatabase &db,
-      bool get_folder_size);
+   json11::Json CreateSchool(db_manager::model::SmsSchoolInfo &info);
 };
 
 }  // namespace sms_accessor

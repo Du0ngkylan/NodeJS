@@ -127,14 +127,14 @@ void SmsAccessorCommandFactory::CreateCommands() {
   this->commands["exit"] = new SmsStubCommand();
 
   // commands school
-  this->commands["get-schools"] = new SmsGetschools();
-  this->commands["get-school-detail"] = new SmsGetschoolDetail();
-  this->commands["copy-school"] = new SmsCopyschool();
-  this->commands["update-school-order"] = new SmsUpdateschoolOrder();
-  this->commands["update-school"] = new SmsUpdateschool();
-  this->commands["delete-school"] = new SmsDeleteschool();
-  this->commands["sync-school"] = new SmsSyncschool();
-  this->commands["import-school"] = new SmsImportschool();
+  this->commands["get-schools"] = new SmsGetSchools();
+  this->commands["get-school-detail"] = new SmsGetSchoolDetail();
+  this->commands["copy-school"] = new SmsCopySchool();
+  this->commands["update-school-order"] = new SmsUpdateSchoolOrder();
+  this->commands["update-school"] = new SmsUpdateSchool();
+  this->commands["delete-school"] = new SmsDeleteSchool();
+  this->commands["sync-school"] = new SmsSyncSchool();
+  this->commands["import-school"] = new SmsImportSchool();
 
   // commands image
   this->commands["get-image-info"] = new SmsGetImageInfo();

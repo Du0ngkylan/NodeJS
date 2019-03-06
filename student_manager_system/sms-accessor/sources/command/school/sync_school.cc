@@ -10,7 +10,7 @@
 
 using namespace std;
 using namespace json11;
-using namespace sms_db_manager;
+using namespace db_manager;
 
 namespace sms_accessor {
 

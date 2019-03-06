@@ -1,29 +1,29 @@
 /**
  * @file stub_command.cc
  * @brief stub command implementation
- * @author yonaha
- * @date 2018/02/15
+ * @author DuongMX
+ * @date 2018/11/30
  */
 
 #include <thread>
 #include <chrono>
 #include "command/stub/stub_command.h"
 
-namespace goyo_bookrack_accessor {
+namespace sms_accessor {
 
   /**
   * @fn
-  * GoyoStubCommand
+  * SmsStubCommand
   * @brief constructor
   */
-  GoyoStubCommand::GoyoStubCommand() {}
+  SmsStubCommand::SmsStubCommand() {}
 
   /**
   * @fn
-  * ~GoyoStubCommand
+  * ~SmsStubCommand
   * @brief destructor
   */
-  GoyoStubCommand::~GoyoStubCommand() {}
+  SmsStubCommand::~SmsStubCommand() {}
 
   /**
   * @fn
@@ -32,7 +32,7 @@ namespace goyo_bookrack_accessor {
   * @param (request) request json 
   * @param (raw) raw string
   */
-  json11::Json GoyoStubCommand::ExecuteCommand(json11::Json &request, std::string &raw) {
+  json11::Json SmsStubCommand::ExecuteCommand(json11::Json &request, std::string &raw) {
     // it accept formatted json data in one line which is formatted like below.
     //   { "command": "........", "args": "......." }
     // args is any json data.
@@ -42,9 +42,7 @@ namespace goyo_bookrack_accessor {
     if ( request["command"] == "echo" ) {
       // simple callback command.
 
-      response = json11::Json::object {
-        { "ECHO", raw },
-      };
+      response = json11::Json::object {{ "ECHO", raw }};
 
     } else if ( request["command"] == "exit" ) {
 
