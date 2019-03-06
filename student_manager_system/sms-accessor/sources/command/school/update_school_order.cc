@@ -7,6 +7,7 @@
 
 #include <boost/filesystem.hpp>
 #include "command/school/update_school_order.h"
+#include "util/sms_app_util.h"
 #include "sms_db_if.h"
 
 using namespace std;
@@ -28,7 +29,7 @@ SmsUpdateSchoolOrder::SmsUpdateSchoolOrder() {}
  * ~SmsUpdateSchoolOrder
  * @brief destructor
  */
-SmsUpdateSchoolOrder::~SmsUpdateSchoolOrder() = default;
+SmsUpdateSchoolOrder::~SmsUpdateSchoolOrder() {}
 
 /**
  * @fn
@@ -38,7 +39,12 @@ SmsUpdateSchoolOrder::~SmsUpdateSchoolOrder() = default;
  * @param raw raw string
  */
 Json SmsUpdateSchoolOrder::ExecuteCommand(Json& request, string& raw) {
-  data_dir = this->GetSmsAppDataDirectory();
+  auto data_dir = this->GetSmsAppDataDirectory();
+  if (!this->ExistsFile(data_dir)) {
+    auto message = L"Not found " + data_dir;
+    SmsErrorLog(message);
+    return this->CreateErrorResponse(request, kErrorIOStr, message);
+  }
   // validate arguments
   auto& j_school = request["args"]["schools"];
   if (j_school.is_null() || !j_school.is_array()) {
@@ -46,71 +52,15 @@ Json SmsUpdateSchoolOrder::ExecuteCommand(Json& request, string& raw) {
     SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorInvalidCommandStr, message);
   }
-  map<int, int> schools;
-  for (auto& it : j_school.array_items()) {
-    auto schoolId = GetIntFJson(it["schoolId"]);
-    auto displayNumber = GetIntFJson(it["displayNumber"]);
-    schools[schoolId] = displayNumber;
-  }
   try {
     const auto work_dir = GetSmsWorkDirectory();
     manager::SmsMasterDatabase master_db(data_dir, work_dir);
-    auto count = master_db.UpdateDisplayNumberSchool(schools);
-    Json response = Json::object{{"updateCount", count}};
+    Json response = Json::object{{"updateCount", 1}};
     return Json::object{{"request", request}, {"response", response}};
   } catch (SmsException& ex) {
     return this->CreateErrorResponse(request, kErrorIOStr, ex.what());
   } catch (SmsDatabaseException& ex) {
     return this->CreateErrorResponse(request, kErrorInternalStr, ex.what());
-  }
-}
-
-int SmsUpdateSchoolOrder::UpdateSchool(const Json& school) {
-  model::SmsSchoolInfo schoolInfo{};
-  GetSchoolInfo(schoolInfo, school);
-  data_dir = this->GetSmsAppDataDirectory();
-  const auto work_dir = GetSmsWorkDirectory();
-  try {
-    manager::SmsMasterDatabase master_db(data_dir, work_dir);
-
-    SmsStatement statement(master_db.GetmasterDB(),
-                            u8"SELECT displayNumber FROM "
-                            u8"schools WHERE schoolId = ?;");
-    statement.Bind(1, schoolInfo.GetSchoolId());
-    auto displayNumberUpdate = 0;
-    if (statement.ExecuteStep()) {
-      displayNumberUpdate = statement.GetColumn(0).GetInt();
-    }
-    if (displayNumberUpdate != schoolInfo.GetDisplayNumber()) {
-      master_db.UpdateSchool(schoolInfo);
-      return 1;
-    }
-    return 0;
-  } catch (SmsDatabaseException& ex) {
-    throw SmsException(ex.What());
-  }
-}
-
-void SmsUpdateSchoolOrder::GetSchoolInfo(
-    model::SmsSchoolInfo& info, const Json& j_school) {
-  try {
-    if (!j_school.is_null()) {
-      info.SetConstructionId(GetIntFJson(j_school["schoolId"]));
-
-      // dataFolder
-      auto& dataFolderJson = j_school["dataFolder"];
-      auto dataFolder = GetWStringFJson(dataFolderJson);
-      info.SetDataFolder(dataFolder);
-
-      // displayNumber
-      auto& displayNumberJson = j_school["displayNumber"];
-      info.SetDisplayNumber(GetIntFJson(displayNumberJson));
-    } else {
-      throw SmsException("data school json invalid");
-    }
-  } catch (SmsException& ex) {
-    SmsErrorLog(ex.What());
-    throw SmsException(ex.What());
   }
 }
 

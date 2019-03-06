@@ -41,7 +41,7 @@ SmsDeleteSchool::~SmsDeleteSchool() {}
 Json SmsDeleteSchool::ExecuteCommand(Json &request, string &raw) {
   auto data_dir = this->GetSmsAppDataDirectory();
   if (!this->ExistsFile(data_dir)) {
-    auto message = L"not found SmsAppDataDirectory " + data_dir;
+    auto message = L"not found " + data_dir;
     SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorIOStr, message);
   }

@@ -9,8 +9,6 @@
 #define SMS_ACCESSOR_INCLUDE_COMMAND_SCHOOL_UPDATE_SCHOOL_ORDER_H_
 
 #include "../../accessor_command.h"
-#include "sms_db_if.h"
-
 
 namespace sms_accessor {
 

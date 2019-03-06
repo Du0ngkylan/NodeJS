@@ -43,7 +43,7 @@ SmsCopySchool::~SmsCopySchool() {}
 Json SmsCopySchool::ExecuteCommand(Json& request, string& raw) {
   auto data_dir = this->GetSmsAppDataDirectory();
   if (!this->ExistsFile(data_dir)) {
-    wstring message = L"Not found " + m_data_dir;
+    wstring message = L"Not found " + data_dir;
     SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorIOStr, message);
   }
@@ -51,9 +51,9 @@ Json SmsCopySchool::ExecuteCommand(Json& request, string& raw) {
   try {
     wstring work_dir = this->GetSmsWorkDirectory();
     manager::SmsMasterDatabase master_db(data_dir, work_dir);
-    SmsSchoolInfo info = master_db.GetSchoolInfoDetail(1);
-    if (info.GetConstructionId() == 0) {
-      string msg = "Not found constructionId : " + to_string(1);
+    model::SmsSchoolInfo info = master_db.GetSchoolInfoDetail(1);
+    if (info.GetSchoolId() == 0) {
+      string msg = "Not found schoolId : " + to_string(1);
       SmsErrorLog(msg);
       return this->CreateErrorResponse(request, kErrorIOStr, msg);
     }
@@ -65,10 +65,9 @@ Json SmsCopySchool::ExecuteCommand(Json& request, string& raw) {
     return this->CreateErrorResponse(request, kErrorIOStr, ex.what());
   } catch (SmsException& ex) {
     SmsErrorLog(ex.What());
-    return this->CreateErrorResponse(request, m_error_type, ex.What());
+    return this->CreateErrorResponse(request, kErrorIOStr, ex.What());
   } catch (SmsDatabaseException& ex) {
     SmsErrorLog(ex.What());
-    dest_construction_db.Rollback();
     return this->CreateErrorResponse(request, kErrorInternalStr, ex.What());
   }
 }

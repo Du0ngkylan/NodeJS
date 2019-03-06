@@ -37,9 +37,9 @@ SmsSyncSchool::~SmsSyncSchool() {}
  * @return result json
  */
 Json SmsSyncSchool::ExecuteCommand(Json &request, string &raw) {
-    auto data_dir = this->GetSmsAppDataDirectory();
+  auto data_dir = this->GetSmsAppDataDirectory();
   if (!this->ExistsFile(data_dir)) {
-    auto message = L"Not found SmsAppDataDirectory " + data_dir;
+    auto message = L"Not found " + data_dir;
     SmsErrorLog(message);
     return this->CreateErrorResponse(request, kErrorIOStr, message);
   }
@@ -55,25 +55,8 @@ Json SmsSyncSchool::ExecuteCommand(Json &request, string &raw) {
   }
 
   try {
-    if (school_id > 0) {
-      auto work_dir = this->GetSmsWorkDirectory();
-      manager::SmsMasterDatabase master_db(data_dir, work_dir);
-      auto &school_db = master_db.GetSchoolnDatabase(school_id);
-      auto &album_item_db = construction_db.GetAlbumItemDatabase();
-      SmsDebugLog("release db : " + album_item_db.GetDBPath());
-      album_item_db.ReleaseDatabaseFromDBPool();
-      if (album_id > 0) {
-        auto &bookrack_db = construction_db.GetBookrackDatabase();
-        auto &album_db = bookrack_db.GetAlbumDatabase(album_id);
-        SmsDebugLog("release db : " + album_db.GetDBPath());
-        album_db.ReleaseDatabaseFromDBPool();
-      }
-    } else {
-      // all related dbs must be deleted from the pool
-      // (do not choice db, clear all)
-      SmsDebugLog("release dbs");
-      SmsDatabase::ClearDBPool();
-    }
+    auto work_dir = this->GetSmsWorkDirectory();
+    manager::SmsMasterDatabase master_db(data_dir, work_dir);
     Json response = Json::object{{"status", "ok" }};
     return Json::object{{"request", request}, {"response", response}};
   } catch (SmsDatabaseException &ex) {

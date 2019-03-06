@@ -41,6 +41,15 @@ class SmsGetSchools : public SmsAccessorCommand {
    * @param (raw) raw string
    */
   json11::Json ExecuteCommand(json11::Json &request, std::string &raw);
+
+  /**
+   * @fn
+   * CreateSchool
+   * @param (info) school info 
+   * @brief create school
+   * @return school object
+   */
+  json11::Json CreateSchool(db_manager::model::SmsSchoolInfo &info);
 };
 
 }  // namespace sms_accessor

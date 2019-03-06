@@ -55,7 +55,7 @@ Json SmsGetSchools::ExecuteCommand(Json &request,
     wstring work_dir = this->GetSmsWorkDirectory();
     manager::SmsMasterDatabase master_db(data_dir, work_dir);
     vector<model::SmsSchoolInfo> out_schools;
-    master_db.GetschoolInfos(out_schools);
+    master_db.GetSchoolInfos(out_schools);
 
     Json::array schools = Json::array();
     for (auto &school_item : out_schools) {
@@ -81,28 +81,16 @@ Json SmsGetSchools::ExecuteCommand(Json &request,
  * @return school object
  */
 Json SmsGetSchools::CreateSchool(model::SmsSchoolInfo &info) {
-  try {
-    Json::object school = Json::object{
-      { "schoolId", info.GetschoolId() },
-      { "displayNumber", info.GetDisplayNumber() },
-      { "schoolNumber", info.GetschoolNumber() },
-      { "schoolName", constructor_name },
-      { "dataFolder", this->ConvertWstring(info.GetDataFolder()) },
-    };
-
-    // case kuraemon-connect
-    auto year = info.GetSchoolYear();
-    if (year) {
-      school["year"] = info.GetSchoolYear();
-    } else {
-      school["year"] = "";
-    }
-
-    return school;
-  } catch (SmsException &ex) {
-    throw ex;
-  }
+  Json::object school = Json::object{
+    { "schoolId", info.GetSchoolId()},
+    { "dataFolder", ConvertWstring(info.GetDataFolder())},
+    { "displayNumber", info.GetDisplayNumber()},
+    { "schoolName", info.GetSchoolName()},
+    { "schoolYear", info.GetSchoolYear()},
+    { "schoolNumber", info.GetSchoolNumber()},
+    { "classTotalCount", info.GetClassTotalCount()},
+    { "address", info.GetAddress() }};
+  return school;
 }
-
 
 }  // namespace sms_accessor
