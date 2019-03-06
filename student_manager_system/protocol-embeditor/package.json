@@ -1,0 +1,20 @@
+{
+  "name": "protocol-embeditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "__preinstall": "node test.js && node-gyp rebuild"
+  },
+  "author": "DuongMX",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "fs-extra": "*"
+  },
+  "optionalDependencies": {
+    "javascript-obfuscator": "*"
+  }
+}
