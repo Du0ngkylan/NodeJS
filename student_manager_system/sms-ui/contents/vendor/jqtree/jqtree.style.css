@@ -1,0 +1,110 @@
+/*  more info: https://github.com/artlung/Plain-jqTree-Theme */
+
+div.jqtree-element {
+}
+
+.jqtree-tree .jqtree-title  {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin: 0 0 0 0;
+}
+
+.jqtree-tree .jqtree-title a, .jqtree-tree .jqtree-title b {
+	color: #000;
+	text-decoration: none;
+	height: 20px;
+	line-height: 1.8;
+}
+
+
+ul.jqtree-tree {
+	padding: 0 0 0 0;
+}
+ul.jqtree_common {
+	margin: 0;
+	padding: 0 0 0 0;
+}
+
+ul li.jqtree_common {
+	padding: 0 0 0 20px;
+	margin: 0 0 0 5px;
+	min-height: 19px;
+	text-overflow: ellipsis;
+	list-style-type: none;
+	background-image: url(images/treeview-default-line.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	position: relative;
+}
+
+span.jqtree_common {
+}
+ul.jqtree_common li ul.jqtree_common li:last-child {
+	background-position: 0 -1766px;
+}
+ul.jqtree_common>li:last-child,  ul.jqtree-tree>li:last-child {
+	background-position: 0 -1766px;
+}
+
+ul.jqtree_common li ul.jqtree_common {
+}
+
+ul.jqtree_common li ul.jqtree_common li {
+}
+
+ul.jqtree_common li ul.jqtree_common li ul.jqtree_common {
+}
+
+ul.jqtree_common li ul.jqtree_common li ul.jqtree_common li {
+}
+.jqtree-tree *:focus {
+	outline: 1px dotted #ccc;
+}
+ul.jqtree_common .jqtree-toggler {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	background-image: url(images/minusplus.png);
+	background-repeat: no-repeat;
+	background-position: 50% 0;
+	text-indent: 100px;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.jqtree .jqtree_common.jqtree-title {
+}
+
+ul.jqtree_common .jqtree-toggler.jqtree-closed {
+	background-position: 50% 100%;
+}
+
+.jqtree-closed ul {
+	display: none;
+}
+span {
+    padding-right: 40px;
+    margin-right: 0px;
+}
+span.largeClassification{
+    background: url(../images/icon/largeClassification.png) no-repeat 0 50%;
+    background-size: 80%, 80%, 80%;
+}
+span.photoClassification{
+    background: url(../images/icon/photoClassification.png) no-repeat 0 50%;
+    background-size: 80%, 80%, 80%;
+}
+span.constructionType{
+    background: url(../images/icon/constructionType.png) no-repeat 0 50%;
+    background-size: 80%, 80%, 80%;
+}
+span.middleClassification{
+    background: url(../images/icon/middleClassification.png) no-repeat 0 50%;
+    background-size: 80%, 80%, 80%;
+}
+span.smallClassification{
+    background: url(../images/icon/smallClassification.png) no-repeat 0 50%;
+    background-size: 80%, 80%, 80%;
+}

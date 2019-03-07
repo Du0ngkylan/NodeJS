@@ -11,8 +11,6 @@ const {
 
 const goyoDialog = require('./goyo-dialog-utils');
 const logger = require('./goyo-log')('goyo-interactive-album-view');
-const bookrackAccessor = require('sms-accessor');
-const goyoAlbumOperation = require('./goyo-album-operation');
 const { holdWindowsStop } = require('./goyo-utils');
 
 
@@ -54,25 +52,6 @@ module.exports = {
       async (indices) => {
         // delete here
         logger.debug(`delete-begin indices:${indices}`);
-        for (let index of indices) {
-          let info = frameInformations[index];
-          frameInformations[index]={};
-          try {
-            await goyoAlbumOperation.insertEmptyFrames(
-              constructionId,
-              info.albumId,
-              1,
-              info.frameId)
-            await goyoAlbumOperation.deleteFrames(
-              constructionId,
-              info.albumId,
-              [info.frameId])
-          } catch (e) {
-            console.log('update err: ' + e.toString())
-          } finally {
-          }
-        }
-        logger.debug(`delete-end indices:${indices}`);
       },
     );
 

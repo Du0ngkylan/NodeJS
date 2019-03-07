@@ -8,17 +8,6 @@ module.exports = {
     return result;
   },
 
-  'get-photo-information-tree': async function(target, args) {
-    const getPhotoInformationTree = require('./get-photo-information-tree');
-    let constructionId = parseInt(target);
-    if (!constructionId) {
-      throw new Error(`Invalid target '${target}'.`);
-    }
-
-    let result = await getPhotoInformationTree.getPhotoInformationTree(constructionId);
-    return result;
-  },
-
   'get-bookrack-tree': async function(target, args) {
     const getBookrackTree = require('./get-bookrack-tree');
     let constructionId = parseInt(target);
@@ -148,17 +137,6 @@ module.exports = {
       throw new Error(`Invalid target '${target}'.`);
     }
     let result = await getBuildingMaster.getBuildingMaster(knackId);
-    return result;
-  },
-
-  'register-photo-information-tree': async function(target, args) {
-    const registerPhotoInforTree = require('./register-photo-information-tree');
-    let constructionId = parseInt(target);
-    if (!constructionId) {
-      throw new Error(`Invalid target '${target}'.`);
-    }
-    let jsonFile = args[0];
-    let result = await registerPhotoInforTree.registerPhotoInforTree(constructionId, jsonFile);
     return result;
   },
 

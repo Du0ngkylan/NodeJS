@@ -12,7 +12,6 @@ const goyoDialog = require('./goyo-dialog-utils');
 const goyoInteractive = require('./goyo-interactive-album-view');
 const goyoAppDefaults = require('./goyo-app-defaults');
 const photoMetadataUtils = require('./photo-metadata-utils');
-const goyoAlbumOperation = require('./goyo-album-operation');
 const logger = require('./goyo-log')('goyo-search-operation');
 const printOperation = require('./print-operation');
 const { AlbumWindowSet } = require('./goyo-window-controller');
@@ -102,26 +101,7 @@ module.exports = {
         logger.debug('startAlbumFrameView finished');
 
       } else if (searchInfo.displayType === 'CREATE_NEW_ALBUM' || searchInfo.displayType === 'PRINT_PREVIEW') {
-        
-        let searchResultAlbumFrames = await createSearchResultAlbumFrames(constructionId, searchResults, canceller);
-        if (canceller.cancel) {
-          await completeProgress();
-          return;
-        }
-        let newAlbumId = await createSearchResultAlbum(constructionId, targetAlbumIds[0]);
-
-        await goyoAlbumOperation.insertFrames(
-          constructionId, newAlbumId[0], searchResultAlbumFrames);
-
-        await completeProgress();
-
-        if (searchInfo.displayType === 'PRINT_PREVIEW') {
-          // This window allows only one instance at a time.
-          // return null if it has one instance already.
-          await printOperation.startPreview(
-            parent, constructionId, newAlbumId[0], 'photo_information');
-        }
-
+        let searchResultAlbumFrames;
       }
     } catch (e) {
       logger.error('searchConstructionPhotoInformation', e);
@@ -182,20 +162,7 @@ module.exports = {
           null, constructionId, searchResults);
 
       } else if (searchInfo.displayType === 'CREATE_NEW_ALBUM') {
-        let newAlbumId = await createSearchResultAlbum(constructionId, targetAlbumIds[0], 0);
-
-        let searchResultAlbumFrames = await createSearchResultAlbumFrames(constructionId, searchResults, canceller);
-        if (canceller.cancel) {
-          await completeProgress();
-          return;
-        }
-
-        await goyoAlbumOperation.insertFrames(
-          constructionId, newAlbumId[0], searchResultAlbumFrames);
-        
-        await completeProgress();
-
-        await AlbumWindowSet.open(constructionId, newAlbumId[0]);
+        let searchResultAlbumFrames;
       }
     } catch (e) {
       logger.error('searchPhotoSentence', e);
@@ -257,19 +224,7 @@ module.exports = {
 
       } else if (searchInfo.displayType === 'CREATE_NEW_ALBUM') {
 
-        let searchResultAlbumFrames = await createSearchResultAlbumFrames(constructionId, searchResults, canceller);
-        if (canceller.cancel) {
-          await completeProgress();
-          return;
-        }
-        let newAlbumId = await createSearchResultAlbum(constructionId, targetAlbumIds[0]);
-
-        await goyoAlbumOperation.insertFrames(
-          constructionId, newAlbumId[0], searchResultAlbumFrames);
-
-        await completeProgress();
-
-        await AlbumWindowSet.open(constructionId, newAlbumId);
+        let searchResultAlbumFrames;
       }
 
     } catch (e) {
@@ -371,40 +326,6 @@ module.exports = {
       if (canceller.cancel) {
         await completeProgress();
         return;
-      }
-
-      if (searchResults.length) {
-
-        for (let i = 0; i < searchResults.length; i++) {
-          let { albumFrame } = await bookrackAccessor.getAlbumFrame(target.constructionId, searchResults[i].albumId, searchResults[i].albumFrameId);
-          let illegals = await goyoAlbumOperation.checkFrame({ knackType, knackId }, albumFrame);
-          searchResults[i].frameId = searchResults[i].albumFrameId;
-          Object.defineProperty(searchResults[i], 'frameInfoText', { get: getText });
-          Object.defineProperty(searchResults[i], 'text', {
-            get: () => {
-              return illegals.length > 0 ? illegals[0].toString() + '\n' + searchResults[i].frameInfoText
-                : searchResults[i].frameInfoText;
-            }
-          });
-
-          if (canceller.cancel) {
-            await completeProgress();
-            return;
-          }
-        }
-        logger.debug(`searchResults: ${JSON.stringify(searchResults)}`);
-        await completeProgress();
-
-        await goyoInteractive.startAlbumFrameView(
-          null, target.constructionId, searchResults);
-
-      } else {
-
-        await completeProgress();
-        await goyoDialog.showSimpleMessageDialog(
-          parent, '情報', '編集・加工された画像は見つかりませんでした。',
-          'OK');
-        
       }
     } catch (e) {
       logger.error('searchEdittedImages', e);
@@ -771,24 +692,7 @@ async function createSearchResultAlbumFrames(constructionId, searchResults, canc
 }
 
 async function createSearchResultAlbum(constructionId, targetAlbumId, sentenceDisplayType = 1) {
-  let albumSettings = await goyoAlbumOperation.defaultAlbumSettings;
-
-  albumSettings.albumName = '検索結果';
-  albumSettings.initialPageNumber = 0;
-  albumSettings.sentence.displayType = sentenceDisplayType;
-
-  let bookrackItems =
-    await bookrackAccessor.getBookrackItems(constructionId);
-  let bookrackBaseItem = getBaseBoocktackItem(
-    targetAlbumId, bookrackItems.bookrackItems);
-
-  let newAlbumId = await goyoAlbumOperation.createAlbums(
-    constructionId, bookrackBaseItem.bookrackItemId,
-    null, 1,
-    albumSettings, null,
-    null, 'after');
-
-  return newAlbumId;
+  return 1;
 }
 
 /**

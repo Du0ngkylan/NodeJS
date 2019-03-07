@@ -17,15 +17,10 @@ const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('./goyo-dialog-utils');
 const goyoAppFolder = require('./goyo-appfolder');
 const goyoAppDefaults = require('./goyo-app-defaults');
-const goyoResources = require('goyo-resources');
 const goyoConstructionOperation = require('./goyo-construction-operation');
-const goyoAlbumOperation = require('./goyo-album-operation');
-const goyoAlbumLayout = require('./layout/goyo-album-layout');
 const { directoryWalk } = require('./goyo-utils');
 const logger = require('./goyo-log')('goyo-settings-operation');
 const { windowHandler } = require('./goyo-window-controller');
-const goyoUtils = require('./goyo-utils');
-const programSettings = require('./goyo-program-settings');
 const lockFactory= require('./lock-manager/goyo-lock-manager');
 
 const BOOKRACK_ITEM_TYPE_BOOKRACK = 0;
@@ -656,22 +651,11 @@ var settingsOperation = {
                 updateFrames.push(albumFrame);
             }
           }
-          if (updateFrames.length > 0) {
-            await goyoAlbumOperation.updateFrames(constructionId, albumId, updateFrames, undefined, (done,total) => {
-              progressWindow.setProgress(done / total);
-            });
-          }
         } catch(e) {
           throw e;
         } finally {
           await progressWindow.close();
         }
-      }
-
-      if(newSetting.layout.id != null){
-        await goyoAlbumOperation.updateAlbumSetting(constructionId, albumId, newSetting, newSetting.layout.albumTemplate);
-      } else {
-        await goyoAlbumOperation.updateAlbumSetting(constructionId, albumId, newSetting, null);
       }
 
       return newSetting;
@@ -705,46 +689,6 @@ var settingsOperation = {
     let constructionId = target.constructionId;
     let parentBookrackItemId = null;
     let siblingItemId = null;
-    if (target.albumIds && target.albumIds.length > 0) {
-      siblingItemId = target.albumIds[0]
-    } else {
-      parentBookrackItemId = target.bookrackId;
-    }
-
-    // get default albumSettings
-    let albumSettings = await goyoAlbumOperation.defaultAlbumSettings;
-
-    let newSetting = await goyoDialog.showAlbumSettingDialog(parent, 'DEFAULT', albumSettings);
-    if (!newSetting) { // Do nothing if users clicked 'cancel'.
-      return false;
-    }
-
-    // show progress window.
-    let progressWindow = goyoDialog.showProgressDialog(parent);
-    progressWindow.setProgress(0);
-
-    let count = (newSetting.initialAlbumNumber <= this.MAX_CREATE_ALBUM) ? newSetting.initialAlbumNumber : this.MAX_CREATE_ALBUM;
-
-    try {
-      await goyoAlbumOperation.createAlbums(
-        constructionId, parentBookrackItemId, siblingItemId,
-        count, newSetting, newSetting.layout, null, 'before',
-        (i, id) => {
-          progressWindow.setProgress(i / count);
-        });
-
-      await progressWindow.close();
-      // await goyoDialog.showSimpleMessageDialog(
-      //   parent, goyoAppDefaults.DIALOG_TITLE,
-      //   'アルバム作成が完了しました。', 'OK');
-    } catch(e) {
-      logger.error('createAlbum', e);
-      await progressWindow.close();
-      await goyoDialog.showErrorMessageDialog(
-        parent, goyoAppDefaults.DIALOG_TITLE,
-        'アルバム作成中にエラーが発生しました', 'OK');
-    } finally {
-    }
   },
 
   createAlbumFromFile : async function(parent, target) {
@@ -819,84 +763,9 @@ var settingsOperation = {
 
   _createAlbumFromFileList :async function(parent, target, inputFiles, albumName = '') {
     assert(inputFiles.constructor === Array);
-
     // get basic parameters
     let constructionId = target.constructionId;
     let parentBookrackItemId = target.bookrackId;
-    // get default albumSettings
-    let albumSettings = await goyoAlbumOperation.defaultAlbumSettings;
-    if(albumName !== '') {
-      albumSettings.albumName = albumName;
-    }
-    let lockManager = null;
-    let promise = null;
-    let error = null;
-    let locked = false;
-    let isLockAlbumItemdb = false;
-    let albumId = 0;
-    try {
-      lockManager = await lockFactory.makeLockManagerByConstructionId(constructionId);
-      isLockAlbumItemdb = await lockManager.lockAlbumItemDatabase(true)
-      .then(() => { return true })
-      .catch((e) => {
-        return false;
-      });
-      if (!isLockAlbumItemdb) {
-        await goyoDialog.showConstructionLockBusyDialog(parent);
-        return;
-      }
-      let newAlbumIds = await goyoAlbumOperation.createAlbums(constructionId, parentBookrackItemId, null, 1, albumSettings);
-      // import files
-      if (newAlbumIds.length > 0) {
-        // lock
-        albumId = newAlbumIds[0];
-        locked = await lockManager.lockAlbum(albumId, true);
-
-        let result = await goyoAlbumOperation.replaceAndInsertFramesWithProgress(
-          parent,
-          target.constructionId,
-          albumId,
-          inputFiles,
-          'Album',
-          undefined,
-          false
-        );
-
-        if (!result.showIllegals && result.newFrameIds.length > 0) {
-          promise = goyoDialog.showSimpleMessageDialog(
-            parent, goyoAppDefaults.DIALOG_TITLE,
-            `新しいアルバムに${result.newFrameIds.length}枚の写真が登録されました。`, 'OK');
-        }
-      }
-    } catch(e) {
-      logger.error('_createAlbumFromFileList', e);
-      error = e;
-    } finally {
-      if (lockManager != null) {
-        if (locked) {
-          // release album lock
-          lockManager.lockAlbum(albumId, false)
-            .then(() => {})
-            .catch((e)=>{logger.error('Failed to lockManager.lockAlbum(unlock)', e)});
-        }
-        if (isLockAlbumItemdb) {
-          // release construction lock
-          await lockManager.lockAlbumItemDatabase(false)
-          .then(()=>{})
-          .catch((e)=>{
-            logger.error('Failed to lockManager.lockAlbumItemDatabase(unlock)', e)
-          });
-        }
-      }
-      if (error != null) {
-        await goyoDialog.showErrorMessageDialog(
-          parent, goyoAppDefaults.DIALOG_TITLE,
-          'アルバム作成中にエラーが発生しました', 'OK');
-      }
-      if (promise != null) {
-        await promise;
-      }
-    }
   },
 
   _debugLog(message, obj) {

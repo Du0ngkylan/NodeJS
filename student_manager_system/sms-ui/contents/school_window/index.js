@@ -25,7 +25,6 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
     remote.require('./lib/goyo-window-controller');
   const goyoDialog = remote.require('./lib/goyo-dialog-utils');
   const goyoWebInfo = remote.require('./lib/goyo-web-information');
-  const albumOperation = remote.require('./lib/goyo-album-operation');
   const settingsOperation = remote.require('./lib/goyo-settings-operation');
   const programSettings = remote.require('./lib/goyo-program-settings');
   const printOperation = remote.require('./lib/print-operation');
@@ -497,27 +496,10 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
   }
 
   function ensureLoadingAlbumDetails(albumItems, force=false) {
-    for (let albumItem of albumItems) {
-      if (albumItem.albumDetailPromise == null || force) {
-        console.timeStamp(`getAlbumDetail - ${albumItem.bookrackItemId} begin`);
-        albumItem.albumDetailPromise =
-          albumOperation.getAlbumDetail(ctx.constructionId, albumItem.bookrackItemId)
-          .then(r => {
-            //let ad = r.albumDetail;
-            //ad = JSON.parse(JSON.stringify(ad));
-            //return ad;
-            albumItem.albumDetail = JSON.parse(r);
-            console.timeStamp(`getAlbumDetail - ${albumItem.bookrackItemId} end`);
-            return albumItem.albumDetail;
-          });
-          //.catch(e => { logger.error('loadAlbums', e);  return makeDummy(albumItem); });
-      }
-    }
-
     function makeDummy(albumItem) {
       return {
-        albumId: albumItem.bookrackItemId,
-        albumSettings: albumOperation.defaultAlbumSettings,
+        albumId: 1,
+        albumSettings: "",
         albumType: 0,
         spineCover: '',
         frameTotalCount: 0,
@@ -2457,13 +2439,6 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
       settingsOperation.on('addNewBookrackItem', applyNewBookrackItem);
       settingsOperation.on('changeKnack', applyAlbumKnackType);
       constructionOperation.on('update-construction', applyConstructionInfo);
-      albumOperation.on('update-frames', updateAlbumSetting);
-      albumOperation.on('create-album', applyNewAlbum);
-      albumOperation.on('delete-album', applyDeleteAlbum);
-      albumOperation.on('update-album-setting', updateAlbumSetting);
-      albumOperation.on('insert-frames', applyAlbumFrameCount);
-      albumOperation.on('delete-frames', applyAlbumFrameCount);
-      albumOperation.on('reorder-frames', applyAlbumFrameCount);
       AlbumWindowSet.on('opened', openAlbumListener);
       AlbumWindowSet.on('closed', closeAlbumListener);
 
@@ -2487,13 +2462,6 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
           'addNewBookrackItem', applyNewBookrackItem);
         settingsOperation.removeListener('changeKnack', applyAlbumKnackType);
         constructionOperation.removeListener('update-construction', applyConstructionInfo);
-        albumOperation.removeListener('update-frames', updateAlbumSetting);
-        albumOperation.removeListener('create-album', applyNewAlbum);
-        albumOperation.removeListener('delete-album', applyDeleteAlbum);
-        albumOperation.removeListener('update-album-setting', updateAlbumSetting);
-        albumOperation.removeListener('insert-frames', applyAlbumFrameCount);
-        albumOperation.removeListener('delete-frames', applyAlbumFrameCount);
-        albumOperation.removeListener('reorder-frames', applyAlbumFrameCount);
         AlbumWindowSet.removeListener('opened', openAlbumListener);
         AlbumWindowSet.removeListener('closed', closeAlbumListener);
       });
@@ -2594,21 +2562,7 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
               "smallClassification": photoInfo.smallClassification
             }
             albumDetail.albumDetail.albumSettings.bookCoverOption.photoInformationIcon = 1;
-            albumOperation.updateAlbumSetting(ctx.constructionId, targetAlbumId, albumDetail.albumDetail.albumSettings, albumDetail.albumDetail.layout.albumTemplate, true);
           }
-        } else {
-          let albumSettings = await albumOperation.defaultAlbumSettings;
-          albumSettings.bookCoverOption.photoInformationIcon = 1;
-          albumSettings.albumName = photoInfo.albumName;
-          albumSettings.photoInfoTemplate = {
-            "largeClassification": photoInfo.largeClassification,
-            "photoClassification": photoInfo.photoClassification,
-            "constructionType": photoInfo.constructionType,
-            "middleClassification": photoInfo.middleClassification,
-            "smallClassification": photoInfo.smallClassification
-          }
-          let newAlbumId = (await albumOperation.createAlbums(ctx.constructionId, ctx.bookrackId, null, 1, albumSettings))[0];
-          openAlbumFromAfterCreated(ctx.constructionId, newAlbumId);
         }
       };
 
@@ -2656,10 +2610,6 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
               return;
             }
             
-            if (targetAlbumId == 0) {
-              targetAlbumId = (await albumOperation.createAlbums(ctx.constructionId, ctx.bookrackId, null, 1, null))[0];
-              createNewAlbum = true;
-            }
             if (!await checkSharedAlbumLock(ctx.constructionId, targetAlbumId)) {
               targetAlbumId = 0;
               await goyoDialog.showAlbumLockBusyDialog(remote.getCurrentWindow());
@@ -2716,14 +2666,7 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
             progressWindow.setProgress(0);
 
             // insert new frame into the album.
-            var resultIds = await albumOperation.replaceAndInsertFrames(
-              ctx.constructionId,
-              targetAlbumId,
-              newFrames,
-              undefined,
-              canceller, (done, total) => {
-                progressWindow.setProgress((frames.length + done) / (frames.length + newFrames.length));
-              });
+            var resultIds = [];
             await progressWindow.close();
             progressWindow = null;
 
@@ -2837,32 +2780,13 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
           if (fileList && fileList.length && !document.movingItem) {
             try {
               if (!albumId) {
-                //Setting for new album
-                let albumSettings = await albumOperation.defaultAlbumSettings;
-                if (rootFolder.length == 1) {
-                  let stat = await fse.stat(rootFolder[0].path);
-                  // console.log(stat);
-                  if (stat.isDirectory()) {
-                    albumSettings.albumName = rootFolder[0].name;
-                  }
-                }
-                albumId = (await albumOperation.createAlbums(parseInt(ctx.constructionId), parseInt(ctx.bookrackId), null, 1, albumSettings))[0]; //make new album
+ 
               }
               if (!await checkSharedAlbumLock(ctx.constructionId, albumId)) {
                 albumId = 0;
                 await goyoDialog.showAlbumLockBusyDialog(remote.getCurrentWindow());
                 return;
               }
-
-              let result = await albumOperation.replaceAndInsertFramesWithProgress(
-                remote.getCurrentWindow(),
-                parseInt(constructionId),
-                albumId,
-                fileList,
-                'Album',
-                null,
-                false
-              );
 
               //if (!result.showIllegals && result.newFrameIds.length > 0) {
               //  await goyoDialog.showSimpleMessageDialog(

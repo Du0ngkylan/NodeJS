@@ -15,7 +15,6 @@ const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('./goyo-dialog-utils');
 const goyoAppFolder = require('./goyo-appfolder');
 const logger = require('./goyo-log')('goyo-construction-operation');
-const photoInformationTree = require("./photo-information-tree/photo-information-tree");
 const licenseManager = require('./license/goyo-license-manager');
 
 var constructionOperation = {
@@ -27,7 +26,6 @@ var constructionOperation = {
     folder: null,
     largeClassificationValue: null,
     pattern: null,
-    photoInformationTree: "",
     constructions: new Map(),
 
     set knackType(t) {
@@ -69,47 +67,8 @@ var constructionOperation = {
     },
   },
 
-  create: async function(parent) {
-    // !CAUTION!: this function may throw exceptions and don't catch them. please catch them by caller.
-
-    let dialogResult = await goyoDialog.showConstructionSelectionDialog(parent);
-    if (dialogResult === false) {
-      return null;
-    }
-
-    this._preUpdate(0);
-    if (this.information.type===9) {
-      this.information.construction.photoInformationTags = [
-        "工事種目",
-        "施工内容１",
-        "施工内容２",
-        "施工内容３",
-        "施工内容４",
-        "メモ１",
-        "メモ２",
-      ];
-    }
-    logger.debug('create:');
-    logger.debug(JSON.stringify(this.information.construction, null, 2));
-    let updateResult = await bookrackAccessor.updateConstruction(this.information.construction);
-    this.information.construction.constructionId = updateResult.constructionId;
-    let information = await bookrackAccessor.getConstructionDetail(updateResult.constructionId);
-    this.information.construction.displayNumber = information.construction.displayNumber;
-    logger.debug(`displayNumber=${information.construction.displayNumber}`);
-    
-    let { constructionSettings } = await bookrackAccessor.getConstructionSettings(this.information.construction.constructionId);
-    if (this.information.largeClassificationValue) {
-      constructionSettings.constructionPhoto.largeClassificationValue = this.information.largeClassificationValue;
-    }
-    constructionSettings.constructionPhoto.photoTreePattern = this.information.pattern;
-    await bookrackAccessor.updateConstructionSettings(this.information.construction.constructionId, constructionSettings);
-
-    photoInformationTree.updateCurrentTree(JSON.parse(this.information.photoInformationTree));
-    await photoInformationTree.commitAlbumInfo(updateResult.constructionId);
-
-    await this.updateSharedConstructionSettings(this.information.construction);
-    
-    return updateResult.constructionId;
+  create: async function(parent) {  
+    return 1;
   },
 
   _preUpdate(constructionId) {

@@ -7,7 +7,6 @@
   const goyoConstructionOperation =
     remote.require('./lib/goyo-construction-operation');
   const bookrackPreview = remote.require('./lib/goyo-bookrack-preview');
-  const albumOperation = remote.require('./lib/goyo-album-operation');
   const goyoDialog = remote.require('./lib/goyo-dialog-utils');
   const fs = remote.require('fs');
   const path = remote.require('path');
@@ -1228,21 +1227,7 @@
   }
 
   async function updateSystemBookrackFromPreview(constructionId, albums, total, progressWindow, done) {
-    try {
-      let bookrackItems = (await bookrackAccessor.getBookrackItems(constructionId)).bookrackItems;
-      for (let i = 0; i < albums.length; i++) {
-        let albumSetting = await albumOperation.defaultAlbumSettings;
-        albumSetting.albumName = albums[i].albumName;
-        await albumOperation.createAlbums(constructionId, bookrackItems[1].bookrackItemId, null, 1, albumSetting);
-        if (progressWindow) {
-          progressWindow.setProgress((done + 1) / total);
-        }
-        done += 1;
-      }
-      return done;
-    } catch (e) {
-      logger.error(e);
-    }
+
   }
 
   async function createBookrackFromPreview(constructionId, bookrackItems, parentId, total, progressWindow, done) {
@@ -1262,14 +1247,6 @@
           }
           if (tmpBookrackItems) {
             done = await createBookrackFromPreview(constructionId, tmpBookrackItems, result.bookrackItemId, total, progressWindow, done);
-          }
-        } else {
-          let albumSetting = await albumOperation.defaultAlbumSettings;
-          albumSetting.albumName = bookrackItems[i].bookrackItemName;
-          albumSetting.photoInfoTemplate = bookrackItems[i].photoInfo;
-          await albumOperation.createAlbums(constructionId, parentId, null, 1, albumSetting);
-          if (progressWindow) {
-            progressWindow.setProgress((done + 1) / total);
           }
         }
         done += 1;

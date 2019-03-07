@@ -11,7 +11,6 @@ const { BrowserWindow, app } = require('electron');
 const bookrackAccessor = require('sms-accessor');
 const { viewMode, BookrackViewWindowSet } = require('../../goyo-window-controller');
 const settingsOperation = require('../../goyo-settings-operation');
-const albumOperation = require('../../goyo-album-operation');
 const programSettings = require('../../goyo-program-settings');
 const goyoDialog = require('../../goyo-dialog-utils');
 const licenseManager = require('../../license/goyo-license-manager');
@@ -90,9 +89,6 @@ async function moveBookrackItemToOtherBookrack(targetBookrackItem, sourceItem, c
   if (sourceItem.bookrackItemType === 3) {
     sourceItem.bookrackItemFolder = sourceItem.bookrackItemFolder.match(/album\d+$/g)[0];
   }
-  sourceItem.displayNumber = Math.max(...displayNumber) + 1;
-  await bookrackAccessor.updateBookrackItem(constructionId, sourceItem);
-  albumOperation.emit('delete-album',constructionId, [sourceItem.bookrackItemId]);
   return true;
 }
 
@@ -279,19 +275,6 @@ async function moveAlbumToOtherConstruction(parent, otherConstructionId, target)
                 throw e;
               // } finally {
               //   await progressWindow.close();
-              }
-              try {
-                if (response.hasOwnProperty('success') && (response.success.length === albumFrames.albumFrames.length)) {
-                  // unlock new, old albums
-                  await lockManager.lockAlbum(sourceAlbumId, false);
-                  sourceAlbumId = 0;
-                  await otherLockManager.lockAlbum(newAlbumId, false);
-                  newAlbumId = 0;
-                  await albumOperation.deleteAlbumWithProgressCallback(parent, target.constructionId, albumDetail.albumId, null, null, progress, true);
-                  //await albumOperation.deleteAlbumWithProgressDialog(parent, target.constructionId, albumDetail.albumId, albumFrames.albumFrames, true);
-                }
-              } finally {
-                await progressWindow.close();
               }
               return result;
             }

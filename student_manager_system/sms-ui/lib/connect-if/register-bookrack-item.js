@@ -8,7 +8,6 @@ const fse = require('fs-extra');
 const bookrackAccessor = require('sms-accessor');
 const common = require('./connect-if-util');
 const logger = require('../goyo-log')('register-bookrack-item');
-const albumOperation = require('../goyo-album-operation');
 const goyoAlbumLayout = require('../layout/goyo-album-layout');
 const commandLock = require('./command-lock');
 
@@ -109,24 +108,6 @@ const accessor = {
         let albumTemplates = await goyoAlbumLayout.getLayoutInfos(type);
         for (const albumTemplate of albumTemplates) {
           if(albumTemplate.id === templateId) {
-            album.layout || (album.layout = {});
-            album.albumId = 0;
-            album.parentBookrackItemId = bookrackItem.parentBookrackItemId;
-            album.albumFrameTotalCount = 18;
-            album.albumType = 0;
-            album.displayNumber = 0;
-            let layoutInfo = await goyoAlbumLayout.getLayoutInfo(type, albumTemplate.id);
-            let templatePath = layoutInfo.path;
-            let albumTemplateTmp = await goyoTemporal.makeTemporal(templatePath);
-            album.layout.albumTemplate =  albumTemplateTmp;
-            album.albumSettings = this.getAlbumParameters(albumOperation.defaultAlbumSettings, bookrackItem);
-            
-            let { frontCover, backCover, spineCover }
-              = await albumOperation.prepareNewBookCoverFiles(0);
-            
-            album.frontCover = frontCover;
-            album.backCover = backCover;
-            album.spineCover = spineCover;
             break;
           }
         }

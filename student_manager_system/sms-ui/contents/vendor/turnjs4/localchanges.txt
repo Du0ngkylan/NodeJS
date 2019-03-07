@@ -1,0 +1,21 @@
+
+2019/01/15: lib/turn.js
+  Purpose:
+    Apply product version.
+  Changes:
+    Replace lib/turn.js by product version.
+    Apply then changes below again.
+
+2018/10/22: lib/turn.js:103
+  Purpose:
+    To reduce the clickable corner area.
+  Changes:
+    cornerSize: 100 → 45
+
+2018/02/13: lib/turn.js
+  Pupose:
+    For support thinkpad.
+  Changes:
+    rev.650
+
+
