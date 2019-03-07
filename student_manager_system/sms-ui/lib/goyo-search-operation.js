@@ -9,9 +9,7 @@
 // Goyo modules.
 const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('./goyo-dialog-utils');
-const goyoInteractive = require('./goyo-interactive-album-view');
 const goyoAppDefaults = require('./goyo-app-defaults');
-const photoMetadataUtils = require('./photo-metadata-utils');
 const logger = require('./goyo-log');
 
 const LIMIT_SEARCH_RESULT_COUNT = 1000;
@@ -47,291 +45,22 @@ module.exports = {
   searchConstructionPhotoInformation: async function (
     parent, constructionId, targetAlbumIds, knackType, actionPrint = false) {
     let progressWindow = null;
-    try {
-      let searchInfo = await goyoDialog.showPhotoInformationSearchDialog(
-        parent, knackType, actionPrint);
-      if (!searchInfo) return;
-
-      const canceller = { cancel: false, limitOver : false };
-      progressWindow = goyoDialog.showProgressDialog(parent, () => {
-        canceller.cancel = true;
-      });
-
-      let completeProgress = async ()=> {
-        if (!canceller.cancel) {
-          progressWindow.setProgress(1);
-        }
-        await progressWindow.close();
-        progressWindow = null;
-        if (!canceller.cancel && canceller.limitOver) {
-          await showLimitOverResultDialog(parent, searchResults.length);
-        }
-      };
-
-      let searchResults = await searchByConstructionInfo(constructionId, 
-        searchInfo, targetAlbumIds, canceller, progressWindow);
-
-      if (canceller.cancel) {
-        await completeProgress();
-        return;
-      }
-      
-      if (searchResults.length === 0) {
-        
-        // non result
-        await completeProgress();
-        await goyoDialog.showSimpleMessageDialog(
-          parent, goyoAppDefaults.DIALOG_TITLE,
-          '該当するものは見つかりませんでした。', 'OK');
-
-      } else if (searchInfo.displayType === 'DISPLAY_ONE_BY_ONE') {
-        // show result
-        for (let result of searchResults) {
-          // result.getText = getText;
-          result.frameId = result.albumFrameId;
-          Object.defineProperty(result, 'text', { get: getText });
-        }
-        await completeProgress();
-
-        logger.debug('startAlbumFrameView start');
-        await goyoInteractive.startAlbumFrameView(
-          null, constructionId, searchResults);
-        logger.debug('startAlbumFrameView finished');
-
-      } else if (searchInfo.displayType === 'CREATE_NEW_ALBUM' || searchInfo.displayType === 'PRINT_PREVIEW') {
-        let searchResultAlbumFrames;
-      }
-    } catch (e) {
-      logger.error('searchConstructionPhotoInformation', e);
-    } finally {
-      if (progressWindow != null) {
-        progressWindow.close();
-      }
-    }
   },
 
   searchPhotoSentence: async function (parent, constructionId, targetAlbumIds) {
     let progressWindow = null;
-    try {
-      let searchInfo = await goyoDialog.showStringSearchDialog(parent);
-      if (!searchInfo) return;
-
-      const canceller = { cancel: false, limitOver : false };
-      progressWindow = goyoDialog.showProgressDialog(parent, () => {
-        canceller.cancel = true;
-      });
-
-      let completeProgress = async ()=> {
-        if (!canceller.cancel) {
-          progressWindow.setProgress(1);
-        }
-        await progressWindow.close();
-        progressWindow = null;
-        if (!canceller.cancel && canceller.limitOver) {
-          await showLimitOverResultDialog(parent, searchResults.length);
-        }
-      };
-
-      let searchResults = await searchBySentence(constructionId, searchInfo, 
-        targetAlbumIds, canceller, progressWindow);
-
-      if (canceller.cancel) {
-        await completeProgress();
-        return;
-      }  
-
-      if (searchResults.length === 0) {
-
-        await completeProgress();
-        await goyoDialog.showSimpleMessageDialog(
-          parent, goyoAppDefaults.DIALOG_TITLE,
-          '該当するものは見つかりませんでした。', 'OK');
-
-      } else if (searchInfo.displayType === 'DISPLAY_ONE_BY_ONE') {
-        // await displayPhotoSequentially(searchResult);
-        for (let result of searchResults) {
-          // result.getText = getText;
-          result.frameId = result.albumFrameId;
-          Object.defineProperty(result, 'text', { get: getText });
-        }
-        await completeProgress();
-
-        await goyoInteractive.startAlbumFrameView(
-          null, constructionId, searchResults);
-
-      } else if (searchInfo.displayType === 'CREATE_NEW_ALBUM') {
-        let searchResultAlbumFrames;
-      }
-    } catch (e) {
-      logger.error('searchPhotoSentence', e);
-    } finally {
-      if (progressWindow != null) {
-        await progressWindow.close();
-      }
-    }
   },
 
   searchPhotoFileName: async function (parent, constructionId, targetAlbumIds) {
     let progressWindow = null;
-    try {  
-      let searchInfo = await goyoDialog.showFilenameSearchDialog(parent);
-      if (!searchInfo) return;
-
-      const canceller = { cancel: false, limitOver : false };
-      progressWindow = goyoDialog.showProgressDialog(parent, () => {
-        canceller.cancel = true;
-      });
-
-      let completeProgress = async ()=> {
-        if (!canceller.cancel) {
-          progressWindow.setProgress(1);
-        }
-        await progressWindow.close();
-        progressWindow = null;
-        if (!canceller.cancel && canceller.limitOver) {
-          await showLimitOverResultDialog(parent, searchResults.length);
-        }
-      };
-
-      let searchResults = await searchByFileInfo(constructionId, searchInfo, 
-        targetAlbumIds, canceller, progressWindow);
-
-      if (canceller.cancel) {
-        await completeProgress();
-        return;
-      }
-
-      if (searchResults.length === 0) {
-        await completeProgress();
-
-        await goyoDialog.showSimpleMessageDialog(
-          parent, goyoAppDefaults.DIALOG_TITLE,
-          '該当するものは見つかりませんでした。', 'OK');
-
-      } else if (searchInfo.displayType === 'DISPLAY_ONE_BY_ONE') {
-
-        for (let result of searchResults) {
-          // result.getText = getText;
-          result.frameId = result.albumFrameId;
-          Object.defineProperty(result, 'text', { get: getText });
-        }
-        await completeProgress();
-
-        await goyoInteractive.startAlbumFrameView(
-          null, constructionId, searchResults);
-
-      } else if (searchInfo.displayType === 'CREATE_NEW_ALBUM') {
-
-        let searchResultAlbumFrames;
-      }
-
-    } catch (e) {
-      logger.error('searchPhotoFileName', e);
-    } finally {
-      if (progressWindow != null) {
-        await progressWindow.close();
-      }
-    }
   },
 
   searchIdenticalPhoto: async function (parent, target) {
     let progressWindow = null;
-    try {
-      let searchInfo = await goyoDialog.showIdenticalImageSearchDialog(parent);
-      if (!searchInfo) return;
-
-      let constructionId = target.constructionId;
-      let targetAlbumIds = target.albumIds.length > 0 ? target.albumIds : [target.selectedAlbum];
-
-      let bookrackItems = await target.bookrackItems;
-      let albumsInBookrack = await getAlbumsFromBookrack(bookrackItems, []);
-
-      const canceller = { cancel: false, limitOver : false };
-      progressWindow = goyoDialog.showProgressDialog(parent, () => {
-        canceller.cancel = true;
-      });
-
-      let completeProgress = async ()=> {
-        if (!canceller.cancel) {
-          progressWindow.setProgress(1);
-        }
-        await progressWindow.close();
-        progressWindow = null;
-        if (!canceller.cancel && canceller.limitOver) {
-          await showLimitOverResultDialog(parent, searchResults.length);
-        }
-      };
-
-      let searchResults = await searchSameImages(constructionId, searchInfo, targetAlbumIds, canceller, progressWindow);
-
-      if (canceller.cancel) {
-        await completeProgress();
-        return;
-      }
-
-      searchResults.forEach(img => { img.frameId = img.albumFrameId; });
-
-      let arrIdenticalImages = getSameImgHash(searchResults)
-      await completeProgress();
-
-      if (arrIdenticalImages.length <= 0) {
-        goyoDialog.showSimpleMessageDialog(parent,
-          '情報',
-          '同一画像は見つかりませんでした。',
-          'OK');
-        return;
-      }
-      
-      let arrIndenticalPhoto = getArrIdenticalPhotoWithText(albumsInBookrack, arrIdenticalImages)
-      await goyoInteractive.startFrameDeletingView(parent,
-        target.constructionId, arrIndenticalPhoto);
-
-    } catch (e) {
-      logger.error('searchIdenticalPhoto', e);
-    } finally {
-      if (progressWindow != null) {
-        await progressWindow.close();
-      }
-    }
   },
 
   searchEdittedImages: async function (parent, target, knackType, knackId) {
     let progressWindow = null;
-    try {
-      let searchInfo = await goyoDialog.showEdittedImageSearchDialog(parent, knackType);
-      if (!searchInfo) return;
-
-      let constructionId = target.constructionId;
-      let targetAlbumIds = target.albumIds.length > 0 ? target.albumIds : [target.selectedAlbum];
-      const canceller = { cancel: false, limitOver : false };
-      progressWindow = goyoDialog.showProgressDialog(parent, () => {
-        canceller.cancel = true;
-      });
-
-      let completeProgress = async ()=> {
-        if (!canceller.cancel) {
-          progressWindow.setProgress(1);
-        }
-        await progressWindow.close();
-        progressWindow = null;
-        if (!canceller.cancel && canceller.limitOver) {
-          await showLimitOverResultDialog(parent, searchResults.length);
-        }
-      };
-
-      let searchResults = await searchNotCompliantImages(constructionId, searchInfo, targetAlbumIds, canceller, progressWindow);
-      
-      if (canceller.cancel) {
-        await completeProgress();
-        return;
-      }
-    } catch (e) {
-      logger.error('searchEdittedImages', e);
-    } finally {
-      if (progressWindow != null) {
-        await progressWindow.close();
-      }
-    }
   },
 };
 
@@ -345,24 +74,6 @@ function getText() {
 
 function metadataToText(imageFile, extraInfo) {
   let result = '';
-  let formatted =
-    photoMetadataUtils.getFormattedMetadataAll(imageFile, extraInfo);
-
-  let fileInfoText =
-    formatted.fileInfos.map(fi => `【${fi.label}】${fi.value}`).join('\n');
-  if (fileInfoText !== '') {
-    result += '<<一般的な情報>>\n' + fileInfoText;
-  }
-
-  let additionalInfoText =
-    formatted.additionalInfos.map(fi => `【${fi.label}】${fi.value}`)
-      .join('\n');
-  let exifInfoText =
-    formatted.exifInfos.map(fi => `【${fi.label}】${fi.value}`).join('\n');
-  if (exifInfoText !== '' || additionalInfoText !== '') {
-    result += '\n<<付加情報>>\n' + additionalInfoText + exifInfoText;
-  }
-
   return result;
 }
 
