@@ -1,0 +1,105 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-sizing: border-box;
+  background: none;
+  line-height: 1.1;
+}
+
+div {
+  user-select: none;
+  width: 100%;
+  overflow: hidden;
+}
+
+div.base {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/*********************************/
+/* horizontal alignment setting. */
+/*********************************/
+:host([halign="left"]) .text , :host([halign="left"]) .manual-ruler {
+  text-align: left;
+}
+:host([halign="center"]) .text , :host([halign="center"]) .manual-ruler {
+  text-align: center;
+}
+:host([halign="right"]) .text , :host([halign="right"]) .manual-ruler {
+  text-align: right;
+}
+
+/*******************************/
+/* vertical alignment setting. */
+/*******************************/
+:host([valign="top"]) .limitter {
+  top: 0;
+}
+:host([valign="bottom"]) .limitter, :host([valign="bottom"]) .limitter > div {
+  bottom: 0;
+}
+
+/*******************************/
+/* Text emphasising.           */
+/*******************************/
+:host([appeal=""]) div.text {
+  color: red;
+}
+
+/************************/
+/* normal text setting. */
+/************************/
+.limitter {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+.limitter > div > div {
+  width: 100%;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+:host([multiline="false"]) .limitter > div > div {
+  white-space: pre;
+}
+
+/*******************/
+/* Ruler setting.  */
+/*******************/
+.ruler {
+  white-space: pre-wrap;
+  word-break: break-all;
+  width: 100%;
+  overflow: visible;
+}
+:host([ruleline="true"]) .ruler {
+  border-bottom: solid 1px #c6c6c6;
+}
+.ruler ab {
+  position: relative;
+  text-decoration: none;
+}
+:host([ruleline="true"]) .ruler ab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 1px;
+  width: 600px;
+  background: #c6c6c6;
+}
+.ruler ab:first-child::after {
+  background: none !important;
+}
+:host-context([disable-ruleline=""]) .ruler ab::after {
+  background: none !important;
+}
+:host-context([disable-ruleline=""]) .ruler {
+  border-bottom: none !important;
+}
+
+

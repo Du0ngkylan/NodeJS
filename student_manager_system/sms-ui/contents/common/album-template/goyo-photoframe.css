@@ -1,0 +1,173 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-sizing: border-box;
+  background: none;
+  user-select: none;
+}
+
+.base {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+:host {
+  pointer-events: none;
+  contain: content;
+}
+
+goyo-photo {
+  width: 100%;
+  height: 100%;
+}
+
+/**************************************************************/
+/* bottom assets visibility setting.                          */
+/**************************************************************/
+div.jacic-check {
+  position: absolute;
+  width: 100%;
+  right: 0;
+  bottom: 0;
+}
+div.jacic-check img {
+  height: 18px;
+  width: auto;
+  margin-left: 3px;
+  margin-bottom: 3px;
+  display: none;
+}
+div.jacic-check[believability="NG"] img:nth-child(1) {
+  display: inherit;
+}
+div.jacic-check[believability="OK"] img:nth-child(2) {
+  display: inherit;
+}
+:host-context([jacic-believability="hide"]) div.jacic-check {
+  display: none;
+}
+:host-context([photo-icons="hide"]) div.jacic-check {
+  display: none;
+}
+
+div.icons {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  bottom: 3px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+div.icons > img {
+  width: auto;
+  height: 18px;
+  margin-right: 4px;
+  display: none;
+}
+div.icons > img[visible="true"] {
+  display: inherit;
+  pointer-events: auto;
+}
+:host-context([photo-icons="hide"]) div.icons > img {
+  display: none;
+}
+
+/**************************************************************/
+/* shooting date display mode setting.                        */
+/**************************************************************/
+div.shooting-dates {
+  font-family: Meiryo UI;
+  font-weight: bold;
+  font-size: 100%;
+  padding-right: 3px;
+  color: #FF8000;
+  width:100%;
+  text-align: right;
+}
+
+div.shooting-dates > span {
+  display: none;
+}
+:host-context([shooting-date-mode="1"]) span:nth-child(1) {
+  display: inline;
+}
+:host-context([shooting-date-mode="2"]) span:nth-child(2) {
+  display: inline;
+}
+:host-context([shooting-date-mode="3"]) span:nth-child(3) {
+  display: inline;
+}
+
+
+/**************************************************************/
+/* print border setting.                                      */
+/**************************************************************/
+div.printBorder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+:host-context([frame-border="show"]) div.printBorder {
+  border: 1px solid black;
+}
+:host([disable-frame-border]) div.printBorder {
+  border: none !important;
+}
+
+/**************************************************************/
+/* focus border setting.                                      */
+/**************************************************************/
+div.border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+[photo-info-border="normal"] div.border {
+  border: solid 1px #0000FF;
+}
+[photo-info-border="refered"] div.border {
+  border: solid 2px #FFFF00;
+}
+:host-context([focus-border="show"]):host([selected="main"]) div.border {
+  border: solid 2px #FF0000;
+}
+:host-context([focus-border="show"]):host([selected="sub"]) div.border {
+  border: solid 2px #FF80FF;
+}
+:host-context([focus-border="show"]):host([selected="appeal"]) div.border {
+  border: solid 2px #FF0000;
+}
+:host-context([photo-info-border="hide"]) div.border {
+  border: none !important;
+}
+[photo-info-border="emptyframe"] div.border {
+  border: solid 1px #cccccc;
+}
+
+
+/**************************************************************/
+/* conditional visibility setting.                            */
+/**************************************************************/
+:host-context([text-mode="X"]) div[displaytype="T"],
+:host-context([text-mode="F"]) div[displaytype="T"] {
+  visibility: hidden;
+}
+:host-context([text-mode="T"]) div[displaytype="X"],
+:host-context([text-mode="F"]) div[displaytype="X"] {
+  visibility: hidden;
+}
+:host-context([text-mode="X"]) div[displaytype="F"],
+:host-context([text-mode="T"]) div[displaytype="F"] {
+  visibility: hidden;
+}
+

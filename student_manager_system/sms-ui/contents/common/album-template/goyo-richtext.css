@@ -1,0 +1,94 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-sizing: border-box;
+  background: none;
+  line-height: 1.1;
+}
+
+div {
+  user-select: none;
+  width: 100%;
+  overflow: hidden;
+}
+
+div.base {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/*******************************/
+/* vertical alignment setting. */
+/*******************************/
+div.base {
+  display: flex;
+}
+:host([valign="top"]) div.base {
+  align-items: flex-start;
+}
+:host([valign="middle"]) div.base {
+  align-items: center;
+}
+:host([valign="bottom"]) div.base {
+  align-items: flex-end;
+}
+
+/*********************************/
+/* horizontal alignment setting. */
+/*********************************/
+:host([halign="left"]) .text{
+  text-align: left;
+}
+:host([halign="center"]) .text {
+  text-align: center;
+}
+:host([halign="right"]) .text {
+  text-align: right;
+}
+
+/*******************************/
+/* Text emphasising.           */
+/*******************************/
+:host([appeal=""]) div.text, :host([appeal=""]) div.text * {
+  color: red !important;
+}
+
+/**********************/
+/* Rich text setting. */
+/**********************/
+div.base {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+:host([multiline="false"]) div.base {
+  white-space: pre;
+}
+div.base ab.hide {
+  visibility: hidden;
+}
+div.base ab.wrap-point,
+div.base ab.newline {
+  position: relative;
+  text-decoration: none;
+}
+:host([ruleline="true"]) div.base ab.wrap-point::after,
+:host([ruleline="true"]) div.base ab.newline::after {
+  content: "";
+  position: absolute;
+  height: 1px;
+  background: #c6c6c6;
+}
+:host-context([disable-ruleline=""]) div.base ab.wrap-point::after,
+:host-context([disable-ruleline=""]) div.base ab.newline::after {
+  background: none !important;
+}
+
+:host([disable-font-size="true"]) div.text * {
+  font-size: 100% !important;
+}
+

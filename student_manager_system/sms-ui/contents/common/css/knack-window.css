@@ -1,0 +1,234 @@
+.title {
+  background-color: white;
+  border: 1px solid #7f8488;
+  letter-spacing: 1px;
+  position: absolute;
+  left: 27px;
+  top:18px;
+  font-size: 25px;
+  line-height: 30px;
+  width: 719px;
+  height: 34px;
+  padding-left:3px;
+  box-sizing: border-box;
+}
+.subtitle {
+  background-color: white;
+  border: 1px solid #7f8488;
+  letter-spacing: 1px;
+  position: absolute;
+  left: 27px;
+  top:70px;
+  font-size: 18px;
+  line-height: 22px;
+  width: 744px;
+  height: 25px;
+  padding-left:3px;
+  box-sizing: border-box;
+}
+.container {
+  background-color: white;
+  border: 1px solid #7f8488;
+  position: absolute;
+  left: 27px;
+  top: 127px;
+  width: 744px;
+  height: 386px;
+  padding: 10px 5px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.container > .knack-list {
+  font-size: 18px;
+  height: 380px;
+  padding-left: 1.6em;
+  text-indent: -1.6em;
+}
+
+input[type="radio"] {
+  height: 13px;
+}
+input[type="checkbox"] {
+  height: 13px;
+}
+
+
+.knack-outer {
+    margin-bottom: 16px;
+}
+
+body > .description {
+  -webkit-app-region: no-drag;
+  position: absolute;
+  bottom: 10px;
+  left: 138px;
+  font-size: 15px;
+  resize: none;
+  height: 55px;
+  line-height: 18px;
+  width:476px;
+  box-sizing: content-box;
+}
+
+body > .next {
+  -webkit-app-region: no-drag;
+  background: url(../images/knack_wizard/next_join.png) left top no-repeat;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  height: 64px;
+  width: 64px;
+  background-size: cover;
+  outline: none;
+  border-style: none;
+}
+
+body > .next:active {
+  background-position-y: -65px;
+}
+body > .next:disabled {
+  background-position-y: -129px;
+}
+
+body > .prev {
+  -webkit-app-region: no-drag;
+  background: url(../images/knack_wizard/prev_join.png) left top no-repeat;
+  position: absolute;
+  bottom: 10px;
+  right: 85px;
+  height: 64px;
+  width: 64px;
+  background-size: cover;
+  outline: none;
+  border-style: none;
+}
+
+body > .prev:active {
+  background-position-y: -65px;
+}
+body > .prev:disabled {
+  background-position-y: -129px;
+}
+body > .tecris {
+  background: url(../images/knack_wizard/tecris_join.png) left top no-repeat;
+  border-style: none;
+  position: absolute;
+  left: 27px;
+  bottom: 39px;
+  height: 32px;
+  visibility: hidden;
+  width: 100px;
+  outline: none;
+  background-size: cover;
+}
+body > .tecris:active {
+  background-position-y: -32px;
+}
+body > .corins {
+  background: url(../images/knack_wizard/corins_join.png) left top no-repeat;
+  border-style: none;
+  position: absolute;
+  left: 27px;
+  bottom: 39px;
+  height: 32px;
+  visibility: hidden;
+  width: 100px;
+  outline: none;
+  background-size: cover;
+}
+body > .corins:active {
+  background-position-y: -32px;
+}
+
+
+.footer {
+  position: absolute;
+  bottom:10px;
+  left:10px;
+  width:780px;
+  height:64px;
+}
+.footer > .next {
+  -webkit-app-region: no-drag;
+  background: url(../images/knack_wizard/next_join.png) left top no-repeat;
+  outline: none;
+  background-size: cover;
+  height: 64px;
+  margin-right: 0px;
+  width: 64px;
+  float: right;
+  border-style: none;
+}
+.footer > .next:active {
+  background-position-y: -65px
+}
+.footer > .next:disabled {
+  background-position-y: -129px
+}
+
+.footer > .previous {
+  -webkit-app-region: no-drag;
+  background: url(../images/knack_wizard/prev_join.png) left top no-repeat;
+  outline: none;
+  background-size: cover;
+  height: 64px;
+  margin-right: 11px;
+  width: 64px;
+  float: right;
+  border-style: none;
+}
+.footer > .previous:active {
+  background-position-y: -65px
+}
+.footer > .previous:disabled {
+  background-position-y: -129px
+}
+.footer > .textarea {
+  position: absolute;
+  border: 1px solid #7f8488;
+  -webkit-app-region: no-drag;
+  font-size: 15px;
+  resize: none;
+  line-height: 19px;
+  width:482px;
+  height: 61px;
+  left: 127px;
+  bottom: 0;
+  box-sizing: content-box;
+}
+
+.close {
+  -webkit-app-region: no-drag;
+  background: url(../images/knack_wizard/close_join.png) left top no-repeat;
+  position: absolute;
+  border-style: none;
+  top:10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background-size: cover;
+  outline: none;
+}
+.close:active {
+  background-position:0px -20px;
+  background-size: cover;
+  outline: none;
+}
+
+input, select
+{
+  height: 23px;
+  border: 1px solid #7a7a7a;
+  -webkit-app-region: no-drag;
+  font-family: "Meiryo UI";
+  font-size: 16px;
+  outline: none;
+  padding-left: 2px;
+}
+
+* {
+  font-family: Meiryo UI;
+  outline: none;
+  color:#333333;
+}

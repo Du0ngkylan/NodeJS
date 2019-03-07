@@ -1,0 +1,75 @@
+
+.button_focus {
+  padding: 0px;
+  border: solid 2px #0078d7;
+  position: relative;
+}
+
+.button_focus:before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  right: 1px;
+  left: 1px;
+  border: dotted 1px #888;
+}
+
+.select_focus {
+  position: absolute;
+  margin-top: 4px;
+  border: dotted 1px #888;
+}
+
+.tr_focus td {
+  position: relative;
+}
+
+.tr_focus td:before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  height: 22px;
+  border-width: 1px 0px 0px 0px;
+  border-style: dotted;
+  border-color: #062f2f;
+}
+
+.tr_focus td:first-child:before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  bottom: 0px;
+  right: 0px;
+  left: 2px;
+  height: 22px;
+  border-width: 1px 0px 0px 1px;
+  border-style: dotted;
+  border-color: #062f2f;
+}
+
+.tr_focus_before td, .tr_focus_before input{
+  color: white !important;
+  background-color: #0078d7 !important;
+}
+
+.boder_focus {
+  position: relative;
+}
+
+.boder_focus:before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+}
+
+.optionfocus {
+  outline: none;
+  border: dotted 1px #888;
+}

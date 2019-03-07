@@ -1,0 +1,33 @@
+.popup_menu {
+  background-color: #e1e9ef;
+  border: 1px solid #646464;
+  display: none;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  width: auto;
+  z-index: 999999; /* Display on the front */
+}
+.title, .tooltip {
+  background-color: #ffffe0;
+  font-family: ＭＳ ゴシック;
+  font-size: 13px;
+  padding: 2px 4px;
+}
+.popup_menu .title {
+  border-bottom: 1px solid #000000;
+  z-index: 999999;
+}
+.tooltip {
+  border: 1px solid #000000;
+  display: none;
+  position: fixed;
+  z-index: 1000000;
+}
+.popup_menu_row {
+  clear: both;
+}
+.popup_menu_row>img {
+  float: left;
+}

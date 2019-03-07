@@ -1,0 +1,167 @@
+<template>
+  <link rel="stylesheet" href="goyop:///contents/common/album-template/goyo-photo.css">
+  <div class="base" aspectdominate="width">
+    <div class="virtual">
+      <div class="empty"></div>
+      <img class="photo" alt="" draggable="false">
+      <div class="slotarea"><slot></slot></div>
+    </div>
+  </div>
+</template>
+<script>
+(function() {
+  'use strict';
+
+  let importDoc = document.currentScript.ownerDocument;
+  let template = importDoc.querySelector('template');
+
+  class GoyoPhoto extends HTMLElement {
+    constructor() {
+      super();
+      this.onloadOnce = null;
+      this._imageAspect = 0;
+      this._isLoading = false;
+
+      let shadow = this.attachShadow({mode: 'open'});
+      shadow.appendChild(template.content.cloneNode(true));
+
+      let image = this.shadowRoot.querySelector('img');
+      image.onload = () => { this.renderImage(); };
+      if (this.hasAttribute('src')) {
+        image.src = this.getAttribute('src');
+        this._isLoading = true;
+      }
+    }
+
+    connectedCallback() {
+      if (!this.hasAttribute('aspect')) {
+        let rect = this.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          this.setAttribute('aspect', rect.width / rect.height);
+        }
+      }
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      switch (name) {
+        case 'src':
+          this.shadowRoot.querySelector('img').src = newValue;
+          if (newValue!=='') {
+            this._isLoading = true;
+          } else {
+            this.shadowRoot.children[1].setAttribute('draw-mode', 'none');
+          }
+          break;
+        case 'rotate':
+        case 'flip':
+        case 'aspect':
+          if (!this._isLoading && this.getAttribute('src')) {
+            this._isLoading = true;
+            setImmediate(() => { this.renderImage(); });
+          }
+          break;
+          break;
+        case 'empty-bg':
+          this.shadowRoot.querySelector('.empty').style.backgroundColor = newValue;
+          break;
+        default:
+          break;
+      }
+    }
+
+    isLoading() {
+      return this._isLoading;
+    }
+
+    renderImage() {
+      this.shadowRoot.children[1].setAttribute('draw-mode', 'img');
+      this._isLoading = false;
+      if (this.onloadOnce) {
+        this.onloadOnce();
+        this.onloadOnce = null;
+      }
+
+      let image = this.shadowRoot.querySelector('img');
+      if (image.naturalWidth == 0 || image.naturalHeight == 0) {
+        return;
+      }
+
+      let { rotate, flip } = this._getRotation();
+      if (rotate === 90 || rotate === 270) {
+        this._imageAspect = image.naturalHeight / image.naturalWidth;
+      } else {
+        this._imageAspect = image.naturalWidth / image.naturalHeight;
+      }
+      let elementAspect = parseFloat(this.getAttribute('aspect'));
+
+      let virtual = this.shadowRoot.querySelector('.virtual');
+
+      let scaletype = this.getAttribute('scaletype');
+      if (scaletype === 'outfit') {
+        virtual.style.position = 'static';
+        if (this._imageAspect > elementAspect) {
+          // width = this._imageAspec * height
+          // width = this._imageAspec * (elementHeight)
+          // width = this._imageAspec * (elementWidth / elementAspect)
+          // width = this._imageAspec / elementAspect * elementWidth
+          let width = this._imageAspect / elementAspect;
+          virtual.style.width = `${width*100}%`;
+          virtual.style.height = '100%';
+        } else {
+          let height = elementAspect / this._imageAspect;
+          virtual.style.width = '100%';
+          virtual.style.height = `${height*100}%`;
+        }
+      } else if (scaletype === 'stretch') {
+        virtual.style.position = 'static';
+        virtual.style.width = '100%';
+        virtual.style.height = '100%';
+      } else {
+        virtual.style.position = 'absolute';
+        if (this._imageAspect > elementAspect) {
+          let height = elementAspect / this._imageAspect;
+          virtual.style.width = '100%';
+          virtual.style.height = `${height*100}%`;
+        } else {
+          let width = this._imageAspect / elementAspect;
+          virtual.style.width = `${width*100}%`;
+          virtual.style.height = '100%';
+        }
+      }
+
+      // rotation setting.
+      let flipScale = (flip) ? ' scale(-1,1)' : '';
+      if (rotate === 0 || rotate === 180) {
+        image.style.transform = `rotate(${rotate}deg)` + flipScale;
+      } else if (rotate === 90 || rotate === 270) {
+        let scaleW,scaleH;
+        if (scaletype === 'stretch') {
+          scaleW = elementAspect;
+          scaleH = 1/elementAspect;
+        } else {
+          scaleW = this._imageAspect;
+          scaleH = 1/this._imageAspect;
+        }
+        image.style.transform = `scale(${scaleW}, ${scaleH}) rotate(${rotate}deg)` + flipScale;
+      }
+    }
+
+    _getRotation() {
+      let rotate = this.getAttribute('rotate');
+      if (rotate !== '0' && rotate !== '90' && rotate !== '180' && rotate !== '270') {
+        rotate = 0;
+      } else {
+        rotate = Number(rotate);
+      }
+      let flip = (this.getAttribute('flip')==='true');
+
+      return { rotate, flip };
+    }
+
+    static get observedAttributes() {
+      return [ 'src', 'rotate', 'flip', 'aspect', 'empty-bg' ];
+    }
+  }
+  customElements.define('goyo-photo', GoyoPhoto);
+})();
+</script>

@@ -1,0 +1,97 @@
+/****************************************************************************************
+ * Dialog button style for GOYO20.  You can use these style like below.
+ *
+ *  <link type="text/css" media="screen" href="../common/css/goyo-button.css" rel="stylesheet" charset="UTF-8"/>
+ *    <button class="goyo-button" style="width:120px;height:45px;">
+ *      NORMAL BUTTON
+ *    </button>
+ *    <button class="goyo-button" disabled="disabled" style="width:120px;height:45px;">
+ *      DISABLED BUTTON
+ *    </button>
+ *    <button class="goyo-button goyo-button-selected" style="width:120px;height:45px;">
+ *      SELECTED BUTTON
+ *    </button>
+ *
+ * By default, "goyo-button" class not set button size. So, You have to set style.width and style.height.
+ * If you implement very normal dialog window, You can use 'goyo-button-size-small' class instead of
+ * setting style.width and style.height.
+ *
+ *    <button class="goyo-button goyo-button-size-small">
+ *      OK or CANCEL
+ *    </button>
+ *
+ * And, You can use <div> instead of <button>
+ *
+ *    <div class="goyo-button goyo-button-size-small">CANCEL</div>
+ *
+ ****************************************************************************************/
+
+
+/************************************/
+/* for design                       */
+/************************************/
+.goyo-button {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 1px;
+  color: black;
+  background-color: #e1e1e1;
+  border: solid 1px #adadad;
+  font-family: "Meiryo UI";
+  font-size: 12px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+.goyo-button.goyo-button-selected {
+  padding: 0px;
+  border: solid 2px #0078d7;
+}
+
+.goyo-button:hover {
+  padding: 1px;
+  background-color: #e5f1fb;
+  border: solid 1px #0078d7;
+}
+
+.goyo-button:active {
+  padding: 1px;
+  background-color: #cce4f7;
+  border: solid 1px #005499;
+}
+
+.goyo-button:disabled {
+  padding: 1px;
+  color: #888888;
+  background-color: #cccccc;
+  border: solid 1px #bfbfbf;
+}
+
+/************************************/
+/* for size                         */
+/************************************/
+.goyo-button-size-small {
+  /* used for dialog. ex) OK, キャンセル..  */
+  width: 86px;
+  height: 24px;
+}
+.goyo-button-size-small-height {
+  height: 24px;
+}
+
+.goyo-button-size-medium {
+  width: 112px;
+  height: 32px;
+}
+
+.goyo-button-size-large {
+  /* used for construction_window. ex) 工事の追加.  */
+  width: 120px;
+  height: 45px;
+}
+
+

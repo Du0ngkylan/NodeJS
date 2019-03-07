@@ -1,0 +1,64 @@
+<template>
+  <link rel="stylesheet" href="goyop:///contents/common/album-template/goyo-normaltext.css">
+  <div class="base">
+    <div class="limitter">
+      <div style="position: absolute; width: 100%;">
+        <div class="text"></div>
+      </div>
+      <div class="ruler"></div>
+    </div>
+  </div>
+  <style>
+    .wrap-point::after {
+      left: 0;
+      width: 10px;
+    }
+  </style>
+</template>
+
+<script>
+(function() {
+  'use strict';
+
+  let importDoc = document.currentScript.ownerDocument;
+  let template = importDoc.querySelector('template');
+
+  class GoyoNormalText extends HTMLElement {
+    constructor() {
+      super();
+
+      let shadow = this.attachShadow({mode: 'open'});
+      shadow.appendChild(template.content.cloneNode(true));
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      switch (name) {
+        case 'lines':
+          this.shadowRoot.querySelector('.ruler').innerHTML = '<ab></ab>\n'.repeat(parseInt(newValue));
+          break;
+        default:
+          break;
+      }
+    }
+
+    setText(text) {
+      this._text = text;
+      if (this.getAttribute('multiline')==='false') {
+        text = text.split('\n')[0] + '\n';
+      }
+      this.shadowRoot.querySelector('.text').textContent = text;
+    }
+
+    getText() {
+      return this._text;
+    }
+
+    static get observedAttributes() {
+      return [
+        'lines'
+      ];
+    }
+  }
+  customElements.define('goyo-normaltext', GoyoNormalText);
+})();
+</script>
