@@ -8,7 +8,7 @@ const path = require('path');
 const { BrowserWindow, app } = require('electron');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const { viewMode, BookrackViewWindowSet } = require('../../goyo-window-controller');
 const settingsOperation = require('../../goyo-settings-operation');
 const albumOperation = require('../../goyo-album-operation');

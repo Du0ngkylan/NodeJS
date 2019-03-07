@@ -58,7 +58,7 @@ module.exports = {
       : 'normal';
 
     return this.openWindow(
-      `goyop:///contents/construction_window/index.html#mode.${mode}`,
+      `goyop:///contents/main_window/index.html#mode.${mode}`,
       { width: 840, height: 600, show: false, resizable: false });
   },
 

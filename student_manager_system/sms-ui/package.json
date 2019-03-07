@@ -45,7 +45,7 @@
     "smanager": "electron . --smanager",
     "build": "npm run build:goyop && npm run build:goyolib",
     "build:goyop": "protocol-embeditor --obfuscate --libname=goyop --protocol=goyop --out ./lib --contentsdir ./contents --builddir _build/goyop --gyp_runtime=electron --gyp_target=2.0.7 --gyp_disturl=https://atom.io/download/atom-shell",
-    "build:goyolib": "native-embeditor --obfuscate --name=goyolib --out ./lib --contentsdir ./lib --packages sms-accessor,photo-metadata-accessor,goyo-migration,goyo-deliverable-data --builddir _build/goyolib --gyp_runtime=electron --gyp_target=2.0.7 --gyp_disturl=https://atom.io/download/atom-shell",
+    "build:goyolib": "native-embeditor --obfuscate --name=goyolib --out ./lib --contentsdir ./lib --packages sms-accessor,goyo-migration,goyo-deliverable-data --builddir _build/goyolib --gyp_runtime=electron --gyp_target=2.0.7 --gyp_disturl=https://atom.io/download/atom-shell",
     "package": "node ./scripts/packaging.js",
     "signInstallerBuild": "node ./scripts/signInstallerBuild.js",
     "makeregistry": "powershell.exe -ExecutionPolicy RemoteSigned -File .\\scripts\\make-registry-entry.ps1",
@@ -57,18 +57,9 @@
   "private": true,
   "dependencies": {
     "electron-dialogbox": "file:../vendor/electron-dialogbox",
-    "goyo-album-template-converter": "../goyo-album-template-converter",
     "goyo-archiver": "../goyo-archiver",
-    "goyo-bookrack-accessor": "../goyo-bookrack-accessor",
-    "goyo-deliverable-data": "../goyo-deliverable-data",
-    "goyo-excel": "../goyo-excel",
-    "goyo-migration": "../goyo-migration",
-    "goyo-native-ui": "../goyo-native-ui",
+    "sms-accessor": "../sms-accessor",
     "goyo-resources": "../goyo-resources",
-    "goyo-splash": "../goyo-splash",
-    "goyo-ui-env": "file:../goyo-ui-env",
-    "goyo-ui-share": "file:../goyo-ui-share",
-    "photo-metadata-accessor": "../photo-metadata-accessor",
     "adm-zip": "^0.4.11",
     "byline": "^5.0.0",
     "commander": "^2.15.1",
@@ -110,6 +101,7 @@
     "prompts": "^1.2.1",
     "rcedit": "^1.1.0",
     "rewire": "=4.0.1",
-    "wget-improved": "^3.0.1"
+    "wget-improved": "^3.0.1",
+    "ffi": "*"
   }
 }

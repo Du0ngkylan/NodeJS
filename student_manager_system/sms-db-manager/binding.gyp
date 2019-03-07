@@ -1,9 +1,9 @@
 {
   "targets": [
     {
-      "target_name": "sms_db_manager",
-      #"type": "static_library",
-      "type": "executable",
+      "target_name": "sms-db-manager",
+      "type": "static_library",
+      #"type": "executable",
       "sources": [ 
         "src/internal_db/sqlite3.c",
         "src/internal_db/Backup.cpp",

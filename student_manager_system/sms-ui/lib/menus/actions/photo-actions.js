@@ -12,7 +12,7 @@ const cp = require('child_process');
 const filetype = require('file-type');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const { viewMode, BookrackViewWindowSet } = require('../../goyo-window-controller');
 const goyoDialog = require('../../goyo-dialog-utils');
 const goyoAppDefaults = require('../../goyo-app-defaults');
@@ -24,7 +24,7 @@ const MENU_TYPE = require('../goyo-menu-type');
 const AlbumWindowSet = require('../../window-controller/album-windowset');
 const programSettings = require('../../goyo-program-settings');
 const lockFactory = require('../../lock-manager/goyo-lock-manager');
-const photoMetaDataAccessor = require('photo-metadata-accessor');
+// const photoMetaDataAccessor = require('photo-metadata-accessor');
 const goyoTemporal = require('../../goyo-temporal');
 const { isTiffAlbumFrame } = require('./action-common');
 const EDIT_SAVE_FRAME = '0';
@@ -1225,11 +1225,11 @@ async function createOriginalFile(path) {
 
 };
 async function getFileHashImage(imgUrl) {
-  let metaDataList = await photoMetaDataAccessor.getPhotoMetadata([imgUrl]);
-  if (metaDataList.errors.length != 0) {
-    return -1;
-  }
-  return metaDataList.results["0"]["FILE:HASH"].fieldValue;
+  let metaDataList; // = await photoMetaDataAccessor.getPhotoMetadata([imgUrl]);
+  // if (metaDataList.errors.length != 0) {
+  //   return -1;
+  // }
+  // return metaDataList.results["0"]["FILE:HASH"].fieldValue;
 };
 async function restoreOriginImgInTemp(currImgPath, imgPathIsRestoredInTemp) {
   if (fsExtra.existsSync(currImgPath) && fsExtra.existsSync(imgPathIsRestoredInTemp)) {

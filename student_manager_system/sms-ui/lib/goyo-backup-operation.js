@@ -5,7 +5,7 @@ const { dialog } = require('electron');
 
 // Goyo modules.
 const { windowHandler } = require('./goyo-window-controller');
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('./goyo-dialog-utils');
 
 

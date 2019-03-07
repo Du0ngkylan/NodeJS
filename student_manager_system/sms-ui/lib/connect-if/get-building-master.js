@@ -1,7 +1,7 @@
 'use strict';
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const logger = require('../goyo-log')('get-building-master');
 const path = require('path');
 const os = require('os');

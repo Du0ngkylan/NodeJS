@@ -4,7 +4,7 @@
 const assert = require('assert');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const logger = require('../goyo-log')('goyo-lock-manager');
 
 const WAIT_INTERVAL = 300;

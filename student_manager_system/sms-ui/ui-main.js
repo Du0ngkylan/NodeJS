@@ -120,9 +120,9 @@ async function initialize() {
   goyoFontManager.readAvailableFonts().catch(e => logger.error('readAvailableFonts', e));
   logger.info('goyo-font-manager initialized');
 
-  timestamp.log('initialize goyo-bookrack-accessor');
+  timestamp.log('initialize sms-accessor');
   // initialize bookrack-accessor.
-  smsAccessor = require('goyo-bookrack-accessor');
+  smsAccessor = require('sms-accessor');
   const { appEnv } = require('./lib/goyo-app-env');
   let accessorLogLevel = smsAccessor.getLogLevel(appEnv, 'bookrack_accessor');
   logger.info(`bookrack_accessor.logLevel=${accessorLogLevel}`);
@@ -130,7 +130,7 @@ async function initialize() {
   smsAccessor
     .on('abort', e => { logger.abort('smsAccessor aborted', e); require('./lib/goyo-window-controller').viewMode.closeCurrentModeWindow(); })
     .on('error', e => { logger.error('smsAccessor emitted error', e); } );
-  logger.info(`goyo-bookrack-accessor was initialized.`);
+  logger.info(`sms-accessor was initialized.`);
 
   timestamp.log('initialize goyo-program-settings');
   const programSettings = require('./lib/goyo-program-settings');
@@ -212,16 +212,17 @@ async function determineShowTarget(showTarget) {
       constructionId: Number(constructionId),
       bookrackId: Number(bookrackId),
     };
-  } else {
-    let { programSettings } = await smsAccessor.getProgramSettings();
-    if (programSettings.otherSettings.firstBookrack===1) {
-      const uiParam = require('./lib/goyo-ui-parameters')('construction_window');
-      if (uiParam.lastShowedConstructionId != null) {
-        result = { constructionId: uiParam.lastShowedConstructionId, bookrackId: null};
-        logger.debug(`lastShowedConstructionId: ${uiParam.lastShowedConstructionId}`);
-      }
-    }
-  }
+  } 
+  // else {
+  //   let { programSettings } = await smsAccessor.getProgramSettings();
+  //   if (programSettings.otherSettings.firstBookrack===1) {
+  //     const uiParam = require('./lib/goyo-ui-parameters')('construction_window');
+  //     if (uiParam.lastShowedConstructionId != null) {
+  //       result = { constructionId: uiParam.lastShowedConstructionId, bookrackId: null};
+  //       logger.debug(`lastShowedConstructionId: ${uiParam.lastShowedConstructionId}`);
+  //     }
+  //   }
+  // }
 
   // Check if the target construction can be shown.
   if (result != null) {
@@ -241,7 +242,7 @@ async function determineShowTarget(showTarget) {
 
 function startMain(showTarget, useGoyoDebugWindow, offsplash, updatefrom, args) {
   timestamp.start();
-  if (!offsplash) openSplash();
+  // if (!offsplash) openSplash();
 
   app.on('window-all-closed', function() { });
 
@@ -268,7 +269,7 @@ function startMain(showTarget, useGoyoDebugWindow, offsplash, updatefrom, args) 
       const goyoAppDefaults = require('./lib/goyo-app-defaults');
 
       if (isRestoreMode(args)) {
-        if (!offsplash) closeSplash();
+        // if (!offsplash) closeSplash();
         await goyoDialog.showErrorMessageDialog(null, 'エラー', 
           'BKSXファイルを直接開くことはできません。\n蔵衛門御用達を起動して、メニュー「本棚のバックアップを読み込み」から読みこんでください。', 'OK');
         return;
@@ -300,24 +301,24 @@ function startMain(showTarget, useGoyoDebugWindow, offsplash, updatefrom, args) 
 
       timestamp.log('license check');
       const licenseManager = require('./lib/license/goyo-license-manager');
-      let checkResult = await licenseManager.checkLicenseWithErrorDialog();
-      if (!offsplash) closeSplash();
-      if (!checkResult) {
-        if (!await licenseManager.registerLicense()) {
-          return;
-        }
-      }
-      if (licenseManager.licenseType === 'trial') {
-        let remainingTime = licenseManager.remainingTime;
+      // let checkResult = await licenseManager.checkLicenseWithErrorDialog();
+      // if (!offsplash) closeSplash();
+      // if (!checkResult) {
+      //   if (!await licenseManager.registerLicense()) {
+      //     return;
+      //   }
+      // }
+      // if (licenseManager.licenseType === 'trial') {
+      //   let remainingTime = licenseManager.remainingTime;
 
-        if (0 < remainingTime) {
-          let option = { remainingDays: Math.floor(remainingTime/(60*60*24)) };
-          await goyoDialog.showLicenseRestrictionDialog(null, 1, option);
-        } else {
-          await goyoDialog.showLicenseRestrictionDialog(null, 2);
-          return;
-        }
-      }
+      //   if (0 < remainingTime) {
+      //     let option = { remainingDays: Math.floor(remainingTime/(60*60*24)) };
+      //     await goyoDialog.showLicenseRestrictionDialog(null, 1, option);
+      //   } else {
+      //     await goyoDialog.showLicenseRestrictionDialog(null, 2);
+      //     return;
+      //   }
+      // }
 
       const goyoWebInfo = require('./lib/goyo-web-information');
       let webInfoInitPromise = goyoWebInfo.initialize();
@@ -357,7 +358,7 @@ function startMain(showTarget, useGoyoDebugWindow, offsplash, updatefrom, args) 
         }
 
         timestamp.log('goyo-web-information open');
-        await webInfoInitPromise;
+        // await webInfoInitPromise;
         await goyoWebInfo.openUnreadInfomationList();
       }
 
@@ -464,7 +465,7 @@ function showPcEnvironment(isEnvStartUp) {
 
       // initialize bookrack-accessor.
       if (appFolder) {
-        smsAccessor = require('goyo-bookrack-accessor');
+        smsAccessor = require('sms-accessor');
         const { appEnv } = require('./lib/goyo-app-env');
         let accessorLogLevel = smsAccessor.getLogLevel(appEnv, 'bookrack_accessor');
         logger.info(`bookrack_accessor.logLevel=${accessorLogLevel}`);
@@ -472,7 +473,7 @@ function showPcEnvironment(isEnvStartUp) {
         smsAccessor
           .on('abort', e => { logger.abort('smsAccessor aborted', e); require('./lib/goyo-window-controller').viewMode.closeCurrentModeWindow(); })
           .on('error', e => { logger.error('smsAccessor emitted error', e); } );
-        logger.info(`goyo-bookrack-accessor was initialized.`);
+        logger.info(`sms-accessor was initialized.`);
       }
 
       let license = null;
@@ -583,7 +584,7 @@ function showSharedManager() {
       
       // initialize bookrack-accessor.
       if (appFolder) {
-        smsAccessor = require('goyo-bookrack-accessor');
+        smsAccessor = require('sms-accessor');
         const { appEnv } = require('./lib/goyo-app-env');
         let accessorLogLevel = smsAccessor.getLogLevel(appEnv, 'bookrack_accessor');
         logger.info(`bookrack_accessor.logLevel=${accessorLogLevel}`);
@@ -591,7 +592,7 @@ function showSharedManager() {
         smsAccessor
           .on('abort', e => { logger.abort('smsAccessor aborted', e); require('./lib/goyo-window-controller').viewMode.closeCurrentModeWindow(); })
           .on('error', e => { logger.error('smsAccessor emitted error', e); } );
-        logger.info(`goyo-bookrack-accessor was initialized.`);
+        logger.info(`sms-accessor was initialized.`);
       }
       
       let win = null;
@@ -668,9 +669,9 @@ function closeSplash() {
 }
 
 function initializeHostInfo(smsAccessor, licenseManager) {
-  const APP_VERSION = require('./lib/goyo-app-defaults').VERSION;
-  const hostName = require("./lib/goyo-utils").getHostName();
-  const serialNumber = licenseManager.licenseKey;
+  const APP_VERSION = 123; //require('./lib/goyo-app-defaults').VERSION;
+  const hostName = "PC";//require("./lib/goyo-utils").getHostName();
+  const serialNumber = 123456; //licenseManager.licenseKey;
   smsAccessor.setSerialNumber(serialNumber);
   smsAccessor.setHostName(hostName);
   smsAccessor.setAppVersion(APP_VERSION);

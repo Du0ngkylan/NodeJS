@@ -1,5 +1,5 @@
 'use strict';
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const logger = require('../goyo-log')('get-photo-classifications');
 var accessor = {
   getPhotoClassifications: async function (knackId) {

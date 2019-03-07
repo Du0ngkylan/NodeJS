@@ -5,7 +5,7 @@ const fse = require('fs-extra');
 const path = require('path');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const albumOperation = require('../goyo-album-operation');
 const logger = require('../goyo-log')('register-album-photos');
 const commandLock = require('./command-lock');

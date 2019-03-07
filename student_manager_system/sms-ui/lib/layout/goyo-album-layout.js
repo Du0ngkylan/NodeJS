@@ -77,7 +77,7 @@ module.exports = {
 
     let layoutInfos = await this.getLayoutInfos(type);
 
-    const bookrackAccessor = require('goyo-bookrack-accessor');
+    const bookrackAccessor = require('sms-accessor');
     let { constructions } = await bookrackAccessor.getConstructions();
 
     for (let construction of constructions) {

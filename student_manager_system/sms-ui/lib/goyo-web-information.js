@@ -26,34 +26,34 @@ module.exports = {
     let version  = goyoAppDefaults.VERSION;
     let architecture = (process.arch==='x64') ? 'x64' : 'x86';
     try {
-      info = await webAPI.getInformationList(deviceId, version, architecture);
+      // info = await webAPI.getInformationList(deviceId, version, architecture);
       this._info = await this._getInfo(info);
       // Register protocol 'goyo'.
-      logger.debug('initialize information-protocol');
-      protocol.registerHttpProtocol(this._customSchema, async (request, callback) => {
-        logger.debug('registerHttpProtocol');
-        logger.debug(' url=' + request.url);
-        if (request.url.indexOf('startUpdate') > -1) {
-          if (isSkipCheckMessage) {
-            await menuActions.run('SPECIAL:UPDATE-APPLICATION-FROM-INFO-SKIP-MESSAGE', win);
-          } else {
-            await menuActions.run('SPECIAL:UPDATE-APPLICATION-FROM-INFO', win);
-          }
-        } else if (request.url.indexOf('openUrl') > -1) {
-          const query = request.url.split('?')[1];
-          if (query) {
-            const indexParam = query.split('&')
-              .map(param => param.split('='))
-              .find(param => param[0] === 'index');
-            const index = indexParam[1];
-            if (index && informationReading.openurl_list[index]) {
-              shell.openExternal(informationReading.openurl_list[index]);
-            }
-          }
-        } else if (request.url.indexOf('close') > -1) {
-          win.close();
-        }
-      });
+      // logger.debug('initialize information-protocol');
+      // protocol.registerHttpProtocol(this._customSchema, async (request, callback) => {
+      //   logger.debug('registerHttpProtocol');
+      //   logger.debug(' url=' + request.url);
+      //   if (request.url.indexOf('startUpdate') > -1) {
+      //     if (isSkipCheckMessage) {
+      //       await menuActions.run('SPECIAL:UPDATE-APPLICATION-FROM-INFO-SKIP-MESSAGE', win);
+      //     } else {
+      //       await menuActions.run('SPECIAL:UPDATE-APPLICATION-FROM-INFO', win);
+      //     }
+      //   } else if (request.url.indexOf('openUrl') > -1) {
+      //     const query = request.url.split('?')[1];
+      //     if (query) {
+      //       const indexParam = query.split('&')
+      //         .map(param => param.split('='))
+      //         .find(param => param[0] === 'index');
+      //       const index = indexParam[1];
+      //       if (index && informationReading.openurl_list[index]) {
+      //         shell.openExternal(informationReading.openurl_list[index]);
+      //       }
+      //     }
+      //   } else if (request.url.indexOf('close') > -1) {
+      //     win.close();
+      //   }
+      // });
     } catch(e) {
       logger.info('could not get goyotashi web information.');
     }

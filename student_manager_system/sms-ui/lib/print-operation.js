@@ -10,7 +10,7 @@ const {
 
 // Goyo modules.
 const windowHandler = require('./window-controller/window-handler');
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const GeneralWindowSet = require('./window-controller/general-windowset');
 const goyoAlbumOperation = require('./goyo-album-operation');
 const goyoAlbumLayout = require('./layout/goyo-album-layout');

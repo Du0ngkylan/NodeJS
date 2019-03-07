@@ -7,7 +7,7 @@
 // ...
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('./goyo-dialog-utils');
 const goyoInteractive = require('./goyo-interactive-album-view');
 const goyoAppDefaults = require('./goyo-app-defaults');

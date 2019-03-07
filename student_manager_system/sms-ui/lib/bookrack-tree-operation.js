@@ -7,7 +7,7 @@ const assert = require('assert');
 // 3rd-parth modules.
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const photoInfomationTree = require('./photo-information-tree/photo-information-tree');
 
 const BOOKRACK_ITEM_TYPE_BOOKRACK = 0;

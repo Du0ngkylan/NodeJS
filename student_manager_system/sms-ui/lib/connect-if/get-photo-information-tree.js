@@ -1,7 +1,7 @@
 'use strict';
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const logger = require('../goyo-log')('get-photo-information-tree');
 const common = require('./connect-if-util');
 const commandLock = require('./command-lock');

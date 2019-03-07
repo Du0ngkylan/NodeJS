@@ -9,7 +9,7 @@ const fs = require('fs');
 const { app, nativeImage } = require('electron');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const {
   viewMode,
   BookrackViewWindowSet

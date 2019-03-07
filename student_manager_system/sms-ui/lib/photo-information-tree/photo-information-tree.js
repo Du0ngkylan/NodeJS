@@ -1,7 +1,7 @@
 'use strict';
 
 // Node.js modules.
-const accessor = require('goyo-bookrack-accessor');
+const accessor = require('sms-accessor');
 const classificationList = [
   "施工状況写真",
   "着手前及び完成写真",

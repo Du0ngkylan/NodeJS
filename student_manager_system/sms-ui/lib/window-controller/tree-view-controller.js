@@ -12,7 +12,7 @@ const {
 // Goyo modules.
 const windowHandler = require('./window-handler');
 const GeneralWindowSet = require('./general-windowset');
-//const bookrackAccessor = require('goyo-bookrack-accessor');
+//const bookrackAccessor = require('sms-accessor');
 const programSettings = require('../goyo-program-settings');
 const lockFactory = require('../lock-manager/goyo-lock-manager');
 const logger = require('../goyo-log')('tree-view-controller');

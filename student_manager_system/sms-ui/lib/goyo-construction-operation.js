@@ -11,7 +11,7 @@ const dateformat = require('dateformat');
 var fse = require('fs-extra');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('./goyo-dialog-utils');
 const goyoAppFolder = require('./goyo-appfolder');
 const logger = require('./goyo-log')('goyo-construction-operation');

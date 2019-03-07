@@ -9,7 +9,7 @@ const path = require('path');
 const { shell, nativeImage, BrowserWindow } = require('electron');
 
 //goyo-modules
-const photoMetadataAcessor = require('photo-metadata-accessor');
+// const photoMetadataAcessor = require('photo-metadata-accessor');
 // 3rd-party modules.
 const fse = require('fs-extra');
 
@@ -248,7 +248,7 @@ async function imgOrienToAddExif(orientation,targetFile) {
   if(!orientationValue){
     return null
   }
-  await photoMetadataAcessor.setExifValue(orientationTag,orientationValue,targetFile)
+  // await photoMetadataAcessor.setExifValue(orientationTag,orientationValue,targetFile)
 }
 
 module.exports = {
@@ -262,8 +262,8 @@ module.exports = {
   isSpecifiedExtension,
   holdWindowsStop,
   waitEffect,
-  imgOrienToAddExif,
-  imgOrienToAddExifPermitError:photoMetadataAcessor.SET_EXIF_ERROR_MESSAGES
+  imgOrienToAddExif
+  // imgOrienToAddExifPermitError:photoMetadataAcessor.SET_EXIF_ERROR_MESSAGES
 };
 
 function getAllWindow(windows=null) {

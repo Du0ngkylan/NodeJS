@@ -8,7 +8,7 @@ const path = require('path');
 
 // Goyo modules.
 const common = require('./connect-if-util');
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const logger = require('../goyo-log')('get-construction-information');
 const commandLock = require('./command-lock');
 

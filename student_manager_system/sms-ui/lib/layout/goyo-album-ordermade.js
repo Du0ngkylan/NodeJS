@@ -14,8 +14,8 @@ const AdmZip = require('adm-zip');
 const goyoAppFolder = require('../goyo-appfolder');
 const goyoAppDefaults = require('../goyo-app-defaults');
 const albumTemplateApi = require('../goyo-web-api');
-const bookrackAccessor = require('goyo-bookrack-accessor');
-const converter = require('goyo-album-template-converter');
+// const bookrackAccessor = require('sms-accessor');
+// const converter = require('goyo-album-template-converter');
 const licenseManager = require('../license/goyo-license-manager');
 const logger = require('../goyo-log')('goyo-album-ordermade');
 
@@ -233,11 +233,11 @@ async function doConvert(srcPath, destPath, type) {
   try {
     if (! await fse.exists(srcPath)) { return; }
 
-    let source = JSON.parse(await fse.readFile(srcPath));
-    let converted = converter.convert(source, type);
+    // let source = JSON.parse(await fse.readFile(srcPath));
+    // let converted = converter.convert(source, type);
 
-    let convertedJson = JSON.stringify(converted, null, 2);
-    await fse.writeFile(destPath, convertedJson);
+    // let convertedJson = JSON.stringify(converted, null, 2);
+    // await fse.writeFile(destPath, convertedJson);
 
     return true;
   } catch(e) {

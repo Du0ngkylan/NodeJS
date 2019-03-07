@@ -92,7 +92,7 @@ async function main() {
 function doWorkarounds() {
   // This is workaround
   //   * for using node-adodb within asar package.
-  //   * for using accessor.exe in goyo-bookrack-accessor.
+  //   * for using accessor.exe in sms-accessor.
   (function () {
     let cp = require('child_process');
     let original = cp.spawn;

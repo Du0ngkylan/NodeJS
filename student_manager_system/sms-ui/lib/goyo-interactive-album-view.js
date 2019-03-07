@@ -11,7 +11,7 @@ const {
 
 const goyoDialog = require('./goyo-dialog-utils');
 const logger = require('./goyo-log')('goyo-interactive-album-view');
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const goyoAlbumOperation = require('./goyo-album-operation');
 const { holdWindowsStop } = require('./goyo-utils');
 

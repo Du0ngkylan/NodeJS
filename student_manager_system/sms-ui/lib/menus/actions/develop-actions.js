@@ -9,7 +9,7 @@ const path = require('path');
 const filetype = require('file-type');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const { BookrackViewWindowSet } = require('../../goyo-window-controller');
 const goyoDialog = require('../../goyo-dialog-utils');
 const goyoAlbumLayout = require('../../layout/goyo-album-layout');

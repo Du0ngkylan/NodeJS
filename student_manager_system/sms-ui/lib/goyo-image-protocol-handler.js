@@ -8,7 +8,7 @@ const fs = require('fs');
 const { app, protocol } = require('electron');
 
 // goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const logger = require('./goyo-log')('goyo-image-protocol-handler');
 
 const KEEP_TEMP_FILES = 16;

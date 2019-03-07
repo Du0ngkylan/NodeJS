@@ -1,7 +1,7 @@
 'use strict';
 
 // GOYO modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 
 async function _getSelectData(KeyName){
   let selectData = [];

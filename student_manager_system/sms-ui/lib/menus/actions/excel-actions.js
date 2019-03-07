@@ -6,9 +6,9 @@ const assert = require('assert');
 // Electron modules.
 
 // Goyo modules.
-const { viewMode, BookrackViewWindowSet } = require('../../goyo-window-controller');
-const bookrackAccessor = require('goyo-bookrack-accessor');
-const goyoExcel = require('goyo-excel');
+// const { viewMode, BookrackViewWindowSet } = require('../../goyo-window-controller');
+const bookrackAccessor = require('sms-accessor');
+// const goyoExcel = require('goyo-excel');
 const goyoKinsoku = require('../../goyo-kinsoku');
 const goyoAppFolder = require('../../goyo-appfolder');
 const goyoDialog = require('../../goyo-dialog-utils');
@@ -170,8 +170,8 @@ const actions = {
         let result = await bookrackAccessor.getConstructionDetail(target.constructionId);
         let dataFolder = result.construction.dataFolder;
         let appFolder = goyoAppFolder.getAppFolder();
-        goyoExcel.initialize(dataFolder, appFolder);
-        await goyoExcel.outputConstructionPhotoInfo(target.constructionId, targetAlbumIds);
+        // goyoExcel.initialize(dataFolder, appFolder);
+        // await goyoExcel.outputConstructionPhotoInfo(target.constructionId, targetAlbumIds);
       } catch (e) {
         logger.error('EXCEL:EXPORT-PHOTO-INFORMATIONS', e);
       } finally {
@@ -218,8 +218,8 @@ const actions = {
         let result = await bookrackAccessor.getConstructionDetail(target.constructionId);
         let dataFolder = result.construction.dataFolder;
         let appFolder = goyoAppFolder.getAppFolder();
-        goyoExcel.initialize(dataFolder, appFolder);
-        await goyoExcel.outputPhotoDocuments(target.constructionId, targetAlbumIds);
+        // goyoExcel.initialize(dataFolder, appFolder);
+        // await goyoExcel.outputPhotoDocuments(target.constructionId, targetAlbumIds);
       } catch (e) {
         logger.error('EXCEL:EXPORT-PHOTO-SENTENCES', e);
       } finally {
@@ -271,8 +271,8 @@ const actions = {
         let result = await bookrackAccessor.getConstructionDetail(target.constructionId);
         let dataFolder = result.construction.dataFolder;
         let appFolder = goyoAppFolder.getAppFolder();
-        goyoExcel.initialize(dataFolder, appFolder);
-        await goyoExcel.entryConstructionPhotoInfo(target.constructionId, targetAlbumIds);
+        // goyoExcel.initialize(dataFolder, appFolder);
+        // await goyoExcel.entryConstructionPhotoInfo(target.constructionId, targetAlbumIds);
       } catch (e) {
         logger.error('EXCEL:REGISTER-PHOTO-INFORMATION', e);
       } finally {
@@ -326,8 +326,8 @@ const actions = {
           let result = await bookrackAccessor.getConstructionDetail(target.constructionId);
           let dataFolder = result.construction.dataFolder;
           let appFolder = goyoAppFolder.getAppFolder();
-          goyoExcel.initialize(dataFolder, appFolder);
-          await goyoExcel.entryPhotoDocuments(target.constructionId, targetAlbumIds);
+          // goyoExcel.initialize(dataFolder, appFolder);
+          // await goyoExcel.entryPhotoDocuments(target.constructionId, targetAlbumIds);
         }
       } catch (e) {
         logger.error('EXCEL:REGISTER-PHOTO-SENTENCE', e);

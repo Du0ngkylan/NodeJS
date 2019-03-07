@@ -13,7 +13,7 @@ const { holdWindowsStop } = require('../../goyo-utils');
 
 const licenseManager = require('../../license/goyo-license-manager');
 const goyoAppDefaults = require('../../goyo-app-defaults');
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 
 // Internal functions.
 function findBookrackItem(bookrackItems, id) {

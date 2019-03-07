@@ -7,8 +7,8 @@ const fse = require('fs-extra');
 // 3rd-parth modules.
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
-const photoAccessor = require('photo-metadata-accessor');
+const bookrackAccessor = require('sms-accessor');
+// const photoAccessor = require('photo-metadata-accessor');
 const BTO = require('../bookrack-tree-operation');
 const makePhotoInfo = require('../construction-photo-information/make');
 const albumLib = require('../goyo-album-frame');
@@ -19,9 +19,9 @@ var accessor = {
   getPhotoData: async function (jsonData) {
     let metaData = [];
     //console.log("jsonData:"+JSON.stringify(jsonData, null, 2));
-    if (0 < jsonData.length) {
-      metaData = await photoAccessor.getPhotoMetadata(jsonData);
-    }
+    // if (0 < jsonData.length) {
+    //   metaData = await photoAccessor.getPhotoMetadata(jsonData);
+    // }
     return metaData;
   },
   saveAlbumIdFrame: async function (id, frame) {

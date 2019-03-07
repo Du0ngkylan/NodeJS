@@ -6,7 +6,7 @@ const assert = require('assert');
 // Electron modules.
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('../goyo-dialog-utils');
 const goyoAppDefaults = require('../goyo-app-defaults');
 const lockFactory = require('../lock-manager/goyo-lock-manager');

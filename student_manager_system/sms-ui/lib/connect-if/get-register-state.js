@@ -4,7 +4,7 @@
 const fse = require('fs-extra');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const logger = require('../goyo-log')('get-register-state');
 const commandLock = require('./command-lock');
 

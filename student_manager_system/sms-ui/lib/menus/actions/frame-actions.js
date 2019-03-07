@@ -14,8 +14,8 @@ const {
   viewMode,
   BookrackViewWindowSet
 } = require('../../goyo-window-controller');
-const bookrackAccessor = require('goyo-bookrack-accessor');
-const metaDataAccessor = require('photo-metadata-accessor');
+const bookrackAccessor = require('sms-accessor');
+// const metaDataAccessor = require('photo-metadata-accessor');
 const photoInformation = require('../../construction-photo-information/make');
 const goyoDialog = require('../../goyo-dialog-utils');
 const { holdWindowsStop } = require('../../goyo-utils');

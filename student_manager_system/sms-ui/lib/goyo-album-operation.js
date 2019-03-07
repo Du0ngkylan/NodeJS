@@ -15,10 +15,10 @@ const { app } = require('electron');
 const goyoDialog = require('./goyo-dialog-utils');
 const { plainImageMaker } = require('./goyo-utils');
 const goyoAppDefaults = require('./goyo-app-defaults');
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const goyoAlbumLayout = require('./layout/goyo-album-layout');
 const { TextFrameFormatter } = require('./layout/goyo-text-frame-formatter');
-const photoMetaDataAccessor = require('photo-metadata-accessor')
+// const photoMetaDataAccessor = require('photo-metadata-accessor')
 const goyoResources = require('goyo-resources');
 const logger = require('./goyo-log')('goyo-album-operation');
 const goyoTemporal = require('./goyo-temporal');
@@ -31,7 +31,7 @@ const { generatePhotoInformationMaker } = require('./photo-information-text');
 
 // 3rd-parth modules.
 const fse = require('fs-extra');
-const sizeOf = promisify(require('image-size'));
+// const sizeOf = promisify(require('image-size'));
 const dateformat = require('dateformat');
 
 
@@ -153,7 +153,7 @@ var albumOperation = {
       // initialize TPI file.
       let tpi = goyoResources.getTpiFrame(goyoResources.ALBUM_FRAME_TYPE_RESERVATION);
       let tmpTpi = await goyoTemporal.makeTemporal(tpi);
-      let { width, height } = await sizeOf(tmpTpi);
+      let [width, height ] = [1, 2];//await sizeOf(tmpTpi);
       let s = await fse.stat(tmpTpi);
       RESERVED_FRAME_PHOTO.imageFile = tmpTpi;
       RESERVED_FRAME_PHOTO.width = width;
@@ -614,92 +614,92 @@ var albumOperation = {
   },
 
   makeAlbumFrames: async function(fileList, mode='KuraemonKokuban', albumDetail=null, callback=(done,total)=>{}, knack=null) {
-    let metaDataList = await photoMetaDataAccessor.getPhotoMetadata(fileList, ()=> {
-      //callback();
-    });
-    let sortedMetadataList = sortByCurrentSetting(metaDataList.results, fileList);
-    let albumFrames = await Promise.all(sortedMetadataList.map(async (mdata) => {
-      let cpi;
-      let filePath;
-      if (mdata.hasOwnProperty('SourceFile')) {
-        filePath = mdata.SourceFile.fieldValue;
-      } else {
-        filePath = mdata['FILE:OriginalName'].fieldValue;
-      }
-      let cpi18;
-      let txt18;
-      if(await goyo18DataReader.isGoyo18DataExits(filePath)){
-        let goyo18Data = await goyo18DataReader.readData(filePath);
-        if(goyo18Data){
-          goyo18Data.xml? cpi18 = goyo18Data.xml:null;
-          goyo18Data.txt? txt18 = goyo18Data.txt:null;
-        }
-      }
-      switch(mode) {
-        case 'KuraemonKokuban':
-          cpi = makePhotoInfo.fromKuraemonKokuban([mdata]);
-          break;
-        case 'Album':
-          if (!albumDetail || !albumDetail.albumSettings) {
-            albumDetail = { albumSettings: goyoAppDefaults.createAlbumSettings };
-          }
-          if(cpi18){
-            cpi = cpi18;
-            break;
-          }
-          cpi = makePhotoInfo.fromAlbumDetail(albumDetail.albumSettings);
-          break;
-        case 'JacicXMP':
-          cpi = makePhotoInfo.fromJacicXMP(mdata);
-          break;
-        case 'Reference':
-          cpi = {"参考図情報": {
-            '写真ファイル名': null,
-            '参考図タイトル': '',
-            '付加情報予備': '',
-          }};
-          break;
-        default:
-          assert(false);
-      }
-      if (programSettings.importImage.title==1 && mode!=='Reference') {
-        if (!cpi['写真情報'].hasOwnProperty('写真タイトル') || cpi['写真情報']['写真タイトル']==='') {
-          // NOTE: This field will be replaced with value of 'photoFrames[0].fileArias' by bookrackAccessor.
-          //       In order to make file name unique in a album.
-          let ext = path.extname(mdata['FILE:OriginalName'].fieldValue);
-          cpi['写真情報']['写真タイトル'] = '{{fileArias}}';
-        }
-        if (!cpi['写真情報'].hasOwnProperty('撮影年月日') || cpi['写真情報']['撮影年月日']==='') {
-          let date;
-          if (mdata.hasOwnProperty('EXIF:DateTimeOriginal')) {
-            date = new Date(mdata['EXIF:DateTimeOriginal'].fieldValue);
-          } else if (mdata.hasOwnProperty('EXIF:CreateDate')) {
-            date = new Date(mdata['EXIF:CreateDate'].fieldValue);
-          } else {
-            date = new Date(mdata['FILE:FileDate'].fieldValue);
-          }
-          cpi['写真情報']['撮影年月日'] = dateformat(date, 'yyyy-mm-dd');
-        }
-      }
-      let textFrames = this.makeTextFrames(mdata);
-      txt18? textFrames = Object.assign({'comment':makeTextFrameField('comment',txt18)},textFrames):null;
+    // let metaDataList = await photoMetaDataAccessor.getPhotoMetadata(fileList, ()=> {
+    //   //callback();
+    // });
+    // let sortedMetadataList = sortByCurrentSetting(metaDataList.results, fileList);
+    // let albumFrames = await Promise.all(sortedMetadataList.map(async (mdata) => {
+    //   let cpi;
+    //   let filePath;
+    //   if (mdata.hasOwnProperty('SourceFile')) {
+    //     filePath = mdata.SourceFile.fieldValue;
+    //   } else {
+    //     filePath = mdata['FILE:OriginalName'].fieldValue;
+    //   }
+    //   let cpi18;
+    //   let txt18;
+    //   if(await goyo18DataReader.isGoyo18DataExits(filePath)){
+    //     let goyo18Data = await goyo18DataReader.readData(filePath);
+    //     if(goyo18Data){
+    //       goyo18Data.xml? cpi18 = goyo18Data.xml:null;
+    //       goyo18Data.txt? txt18 = goyo18Data.txt:null;
+    //     }
+    //   }
+    //   switch(mode) {
+    //     case 'KuraemonKokuban':
+    //       cpi = makePhotoInfo.fromKuraemonKokuban([mdata]);
+    //       break;
+    //     case 'Album':
+    //       if (!albumDetail || !albumDetail.albumSettings) {
+    //         albumDetail = { albumSettings: goyoAppDefaults.createAlbumSettings };
+    //       }
+    //       if(cpi18){
+    //         cpi = cpi18;
+    //         break;
+    //       }
+    //       cpi = makePhotoInfo.fromAlbumDetail(albumDetail.albumSettings);
+    //       break;
+    //     case 'JacicXMP':
+    //       cpi = makePhotoInfo.fromJacicXMP(mdata);
+    //       break;
+    //     case 'Reference':
+    //       cpi = {"参考図情報": {
+    //         '写真ファイル名': null,
+    //         '参考図タイトル': '',
+    //         '付加情報予備': '',
+    //       }};
+    //       break;
+    //     default:
+    //       assert(false);
+    //   }
+    //   if (programSettings.importImage.title==1 && mode!=='Reference') {
+    //     if (!cpi['写真情報'].hasOwnProperty('写真タイトル') || cpi['写真情報']['写真タイトル']==='') {
+    //       // NOTE: This field will be replaced with value of 'photoFrames[0].fileArias' by bookrackAccessor.
+    //       //       In order to make file name unique in a album.
+    //       let ext = path.extname(mdata['FILE:OriginalName'].fieldValue);
+    //       cpi['写真情報']['写真タイトル'] = '{{fileArias}}';
+    //     }
+    //     if (!cpi['写真情報'].hasOwnProperty('撮影年月日') || cpi['写真情報']['撮影年月日']==='') {
+    //       let date;
+    //       if (mdata.hasOwnProperty('EXIF:DateTimeOriginal')) {
+    //         date = new Date(mdata['EXIF:DateTimeOriginal'].fieldValue);
+    //       } else if (mdata.hasOwnProperty('EXIF:CreateDate')) {
+    //         date = new Date(mdata['EXIF:CreateDate'].fieldValue);
+    //       } else {
+    //         date = new Date(mdata['FILE:FileDate'].fieldValue);
+    //       }
+    //       cpi['写真情報']['撮影年月日'] = dateformat(date, 'yyyy-mm-dd');
+    //     }
+    //   }
+    //   let textFrames = this.makeTextFrames(mdata);
+    //   txt18? textFrames = Object.assign({'comment':makeTextFrameField('comment',txt18)},textFrames):null;
 
-      let albumFrame = {
-        albumFrameId: 0,
-        referenceSouceAlbumFrameId: 0,
-        referenceDiagramFilePath: '',
-        constructionPhotoInformation: cpi,
-        photoFrames: [this.makePhotoFrame(mdata)],
-        textFrames,
-      };
+    //   let albumFrame = {
+    //     albumFrameId: 0,
+    //     referenceSouceAlbumFrameId: 0,
+    //     referenceDiagramFilePath: '',
+    //     constructionPhotoInformation: cpi,
+    //     photoFrames: [this.makePhotoFrame(mdata)],
+    //     textFrames,
+    //   };
 
-      if (knack) {
-        albumFrame.illegalInfos = await this.checkFrame(knack, albumFrame);
-      }
-      //callback(completedCount++, sortedMetadataList.length);
-      return albumFrame;
-    }));
-
+    //   if (knack) {
+    //     albumFrame.illegalInfos = await this.checkFrame(knack, albumFrame);
+    //   }
+    //   //callback(completedCount++, sortedMetadataList.length);
+    //   return albumFrame;
+    // }));
+    let albumFrames = {};
     return albumFrames;
   },
 

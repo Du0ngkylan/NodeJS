@@ -41,7 +41,7 @@ const isNetworkConstruction = ()=> checkNetworkConstruction.isNetworkConstructio
   //const logger = remote.require('./lib/goyo-log')('bookrack_window');
   const uiParam = remote.require('./lib/goyo-ui-parameters');
   const { customSchema } = remote.require('./lib/goyo-image-protocol-handler');
-  var bookrackAccessor = remote.require('goyo-bookrack-accessor');
+  var bookrackAccessor = remote.require('sms-accessor');
   const getLicense = remote.require('./lib/license/goyo-license-manager');
   const lockFactory = remote.require('./lib/lock-manager/goyo-lock-manager');
   const licenseManager = remote.require('./lib/license/goyo-license-manager');

@@ -3,7 +3,7 @@
 // Electron modules.
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const programSettings = require('../goyo-program-settings');
 const menuSheet = require('./goyo-menu-sheet');
 const windowsMenu = require('./goyo-windows-menu');

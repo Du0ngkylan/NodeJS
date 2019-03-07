@@ -20,7 +20,7 @@ const {
   BookrackViewWindowSet
 } = require('../../goyo-window-controller');
 const backupOperation = require('../../goyo-backup-operation');
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('../../goyo-dialog-utils');
 const goyoAppFolder = require('../../goyo-appfolder');
 const goyoAppDefaults = require('../../goyo-app-defaults');

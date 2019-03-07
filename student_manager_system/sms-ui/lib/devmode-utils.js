@@ -1,4 +1,4 @@
-const goyoNativeUi = require('goyo-native-ui');
+// const goyoNativeUi = require('goyo-native-ui');
 
 class PrintSetting {
   constructor(devmode, devname) {
@@ -87,9 +87,9 @@ class PrintSetting {
   }
 
   _getPaperInfoIfNeeded() {
-    if (!this._printInfo) {
-      this._printInfo = goyoNativeUi.printing.getPrintDetail(this.devmode, this.devname);
-    }
+    // if (!this._printInfo) {
+    //   this._printInfo = goyoNativeUi.printing.getPrintDetail(this.devmode, this.devname);
+    // }
   }
 }
 
@@ -118,35 +118,35 @@ function checkDevBuffers(devmode, devname) {
 }
 
 function getDefaultPrintSetting() {
-  let result = goyoNativeUi.printing.getDefaultPrintSetting();
-  let defaultPrintSetting = new PrintSetting(result.devmode, result.devname);
-  defaultPrintSetting._getPaperInfoIfNeeded();
-  return defaultPrintSetting;
+  // let result = goyoNativeUi.printing.getDefaultPrintSetting();
+  // let defaultPrintSetting = new PrintSetting(result.devmode, result.devname);
+  // defaultPrintSetting._getPaperInfoIfNeeded();
+  // return defaultPrintSetting;
 }
 
 function showPrintDialog(parent, printSetting) {
   let newPrintSetting;
-  newResult = goyoNativeUi.printing.showPrintSetupDialog(parent, printSetting.devmode, printSetting.devname);
-  if (newResult) {
-    newPrintSetting = new PrintSetting(newResult.devmode, newResult.devname);
-    newPrintSetting._getPaperInfoIfNeeded();
-  }
+  // newResult = goyoNativeUi.printing.showPrintSetupDialog(parent, printSetting.devmode, printSetting.devname);
+  // if (newResult) {
+  //   newPrintSetting = new PrintSetting(newResult.devmode, newResult.devname);
+  //   newPrintSetting._getPaperInfoIfNeeded();
+  // }
   return newPrintSetting;
 }
 
 function showFontDialog(parent, logFont, effect, limitSize) {
   let result;
-  let newLogFont = goyoNativeUi.nativeUi.showDialog(parent, logFont, effect, limitSize);
-  if (newLogFont && newLogFont.hasOwnProperty('fontBinary')) {
-    result = goyoNativeUi.nativeUi.getFontParameter(newLogFont.fontBinary);
-    result.fontBinary = newLogFont.fontBinary;
-    result.fontColor = newLogFont.fontColor;
-  }
+  // let newLogFont = goyoNativeUi.nativeUi.showDialog(parent, logFont, effect, limitSize);
+  // if (newLogFont && newLogFont.hasOwnProperty('fontBinary')) {
+  //   result = goyoNativeUi.nativeUi.getFontParameter(newLogFont.fontBinary);
+  //   result.fontBinary = newLogFont.fontBinary;
+  //   result.fontColor = newLogFont.fontColor;
+  // }
   return result;
 }
 
 function showColorPickerDialog(parent, color) {
-  return goyoNativeUi.colorPicker.showDialog(parent, color);
+  // return goyoNativeUi.colorPicker.showDialog(parent, color);
 }
 
 function updateOrientation(orientation, printerSettings) {

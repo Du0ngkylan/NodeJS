@@ -5,7 +5,7 @@ const EventEmitter = require('events');
 const path = require('path');
 
 // Goyo modules.
-const bookrackAccessor = require('goyo-bookrack-accessor');
+const bookrackAccessor = require('sms-accessor');
 const goyoDialog = require('./goyo-dialog-utils');
 const goyoAppDefaults = require('./goyo-app-defaults');
 const goyoAppFolder = require('./goyo-appfolder');
@@ -39,7 +39,7 @@ const programSettings = {
   get clipart() { return currentSetting.clipart; },
 
   async initialize() {
-    currentSetting = (await bookrackAccessor.getProgramSettings()).programSettings;
+    // currentSetting = (await bookrackAccessor.getProgramSettings()).programSettings;
     deepFreeze(currentSetting);
   },
 
@@ -92,7 +92,7 @@ const programSettings = {
       if (oldSetting.displayImage.windowSettings.backColor !== newSetting.programSettings.displayImage.windowSettings.backColor) {
         this.emit('change-bkgrcolor', newSetting.programSettings.displayImage.windowSettings.backColor);
       }
-      currentSetting = (await bookrackAccessor.getProgramSettings()).programSettings;
+      // currentSetting = (await bookrackAccessor.getProgramSettings()).programSettings;
       deepFreeze(currentSetting);
       this.emit('update', currentSetting, oldSetting);
       //logger.debug(currentSetting);
@@ -115,7 +115,7 @@ const programSettings = {
       await bookrackAccessor.updateProgramSettings(newSetting.programSettings);
 
       let oldSetting = currentSetting;
-      currentSetting = (await bookrackAccessor.getProgramSettings()).programSettings;
+      // currentSetting = (await bookrackAccessor.getProgramSettings()).programSettings;
       deepFreeze(currentSetting);
       this.emit('update', currentSetting, oldSetting);
 

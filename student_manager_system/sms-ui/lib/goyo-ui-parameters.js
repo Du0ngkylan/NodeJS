@@ -84,7 +84,7 @@ function garbagecollection(constructionId=null) {
 }
 
 async function garbagecollection_for_construction() {
-  let bookrackAccessor = require('goyo-bookrack-accessor');
+  let bookrackAccessor = require('sms-accessor');
   let { constructions }  = await bookrackAccessor.getConstructions();
   let constructionIds = constructions.map(c => c.constructionId);
 
@@ -102,7 +102,7 @@ async function garbagecollection_for_construction() {
 }
 
 async function garbagecollection_for_bookrackitems(constructionId) {
-  let bookrackAccessor = require('goyo-bookrack-accessor');
+  let bookrackAccessor = require('sms-accessor');
   let { bookrackItems }  = await bookrackAccessor.getBookrackItems(constructionId);
   let bookrackItemIds = getItemIds(bookrackItems);
 

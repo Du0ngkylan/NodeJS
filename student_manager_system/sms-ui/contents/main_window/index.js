@@ -3,7 +3,7 @@
 
   const { remote } = require('electron');
   const { viewMode } = remote.require('./lib/goyo-window-controller');
-  const bookrackAccessor = remote.require('goyo-bookrack-accessor');
+  const bookrackAccessor = remote.require('sms-accessor');
   const goyoConstructionOperation =
     remote.require('./lib/goyo-construction-operation');
   const bookrackPreview = remote.require('./lib/goyo-bookrack-preview');
