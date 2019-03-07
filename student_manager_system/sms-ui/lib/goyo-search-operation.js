@@ -12,9 +12,7 @@ const goyoDialog = require('./goyo-dialog-utils');
 const goyoInteractive = require('./goyo-interactive-album-view');
 const goyoAppDefaults = require('./goyo-app-defaults');
 const photoMetadataUtils = require('./photo-metadata-utils');
-const logger = require('./goyo-log')('goyo-search-operation');
-const printOperation = require('./print-operation');
-const { AlbumWindowSet } = require('./goyo-window-controller');
+const logger = require('./goyo-log');
 
 const LIMIT_SEARCH_RESULT_COUNT = 1000;
 

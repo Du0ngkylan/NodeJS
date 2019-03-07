@@ -6,7 +6,6 @@ const assert = require('assert');
 // Electron modules.
 
 // Goyo modules.
-const { viewMode, BookrackViewWindowSet } = require('../../goyo-window-controller');
 const searchOperation = require('../../goyo-search-operation');
 const { holdWindowsStop } = require('../../goyo-utils');
 const logger = require('../../goyo-log')('search-actions');
