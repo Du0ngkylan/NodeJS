@@ -1,0 +1,36 @@
+{
+  "name": "goyo-ui",
+  "version": "0.2.1",
+  "description": "User interface of GOYOTASHI2019",
+  "main": "main.js",
+  "scripts": {
+    "wintest": "electron wintest.js window",
+    "dialogtest": "electron wintest.js dialog",
+    "test": "electron --inspect-brk .",
+    "start": "electron .",
+    "dstart": "electron . --show-debug-window",
+    "build": "npm run build:goyop && npm run build:goyolib",
+    "build:goyop": "protocol-embeditor --libname=goyop --protocol=goyop --out ./lib --contentsdir ./contents --builddir _build/goyop --gyp_runtime=electron --gyp_target=1.8.4 --gyp_disturl=https://atom.io/download/atom-shell",
+    "build:goyolib": "native-embeditor --obfuscate --name=goyolib --out ./lib --contentsdir ./lib --packages goyo-bookrack-accessor --builddir _build/goyolib --gyp_runtime=electron --gyp_target=1.8.4 --gyp_disturl=https://atom.io/download/atom-shell",
+    "package32": "node ./scripts/packaging.js ia32",
+    "package64": "node ./scripts/packaging.js x64"
+  },
+  "author": "SALTYSTER",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "byline": "^5.0.0",
+    "electron": "^1.8.4",
+    "electron-dialogbox": "^0.3.1",
+    "goyo-bookrack-accessor": "../goyo-bookrack-accessor",
+    "goyo-bookrack-converter": "../goyo-bookrack-converter",
+    "photo-metadata-accessor": "../photo-metadata-accessor",
+    "robotjs": "^0.5.1"
+  },
+  "devDependencies": {
+    "electron-packager": "^10.1.0",
+    "fs-extra": "^5.0.0",
+    "native-embeditor": "../native-embeditor",
+    "protocol-embeditor": "../protocol-embeditor"
+  }
+}
