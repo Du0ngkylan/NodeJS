@@ -1,0 +1,31 @@
+/* button関係の設定 */
+
+button{
+  width:160px;
+  height:40px;
+}
+
+
+.bookmovelist {
+    position: relative;
+    padding: 0.5em 1em;
+    border: solid 1px #DDDDDD;
+}
+
+.bookmovelist .box-title {
+    position: absolute;
+    display: inline-block;
+    top: -7px;
+    left: 10px;
+    padding: 0 9px;
+    line-height: 1;
+    font-size: 12px;
+	  background: #FFF;
+    color: #000000;
+    font-weight: bold;
+}
+
+.bookmovelist p {
+    margin: 0; 
+    padding: 0;
+}

@@ -1,0 +1,36 @@
+*, *:before, *:after {
+	background: transparent;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+#electron-popup {
+	display: inline-block;
+	text-overflow: hidden;
+	transition: all 100ms ease-in-out;
+	opacity: 0;
+	transform: scale3d(.4, .4, 1);
+	margin: 6px;
+	position: relative;
+	pointer-events: none;
+	-webkit-user-select: none;
+	text-align: center;
+	font-family: 'ＭＳ ゴシック';
+	font-size: 11px;
+	color: #000;
+	background-color: transparent;
+	border-radius: 5px;
+	padding: 8px 10px;
+}
+
+#electron-popup:after {
+	position: absolute;
+	display: block;
+	content: '';
+	background: inherit;
+}
+
+#electron-popup.position-top {
+	transform-origin: 50% 100%;
+}
