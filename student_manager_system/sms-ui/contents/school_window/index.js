@@ -301,8 +301,8 @@ function initGrid() {
     datatype: 'local',
     shrinkToFit: 1,
     colNames: [
-      'No.', '年度', '工事番号', '工事名称', '発注者', '工期開始日',
-      '工期終了日', '準拠する要領', 'データフォルダ'
+      'No.', 'Year', 'School Number', 'School Name', 'Orderer', 'School Start Date',
+      'School End Date', 'Compliance guidelines', 'Data folder'
     ],
     colModel: [
       {
