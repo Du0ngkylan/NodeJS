@@ -12,7 +12,6 @@ const { dialog, BrowserWindow } = require('electron');
 const eDialog = require('electron-dialogbox');
 
 // goyo modules.
-const goyoResources = require('goyo-resources');
 
 const KNACK_URLS = [
   '',
@@ -75,7 +74,7 @@ module.exports = {
       message: message,
       buttons: [buttonText],
       noLink: true,
-      icon: goyoResources.getMessageIcon('info'),
+      icon: 'info'
     };
 
     return new Promise((resolve, rejct) => {
@@ -90,7 +89,7 @@ module.exports = {
       message: message,
       buttons: [buttonText],
       noLink: true,
-      icon: goyoResources.getMessageIcon('error'),
+      icon: 'error',
     };
 
     return new Promise((resolve, rejct) => {
@@ -109,7 +108,7 @@ module.exports = {
       message: message,
       buttons: buttons,
       noLink: true,
-      icon: goyoResources.getMessageIcon('warning'),
+      icon: 'warning',
     };
     return new Promise((resolve, rejct) => {
       // Although I wanna use async mode,  it freezes all windows in few seconds. (is it bug of Electron?)
@@ -128,7 +127,7 @@ module.exports = {
       noLink: true,
       defaultId: (defaultIsOk) ? 0 : 1,
       cancelId : (defaultIsOk) ? 0 : 1,
-      icon: goyoResources.getMessageIcon('question'),
+      icon: 'question',
     };
 
     return new Promise((resolve, rejct) => {
@@ -145,7 +144,7 @@ module.exports = {
       buttons: [okText, cancelText],
       noLink: true,
       defaultId: (defaultIsOk) ? 0 : 1,
-      icon: goyoResources.getMessageIcon('warning'),
+      icon: 'warning',
     };
 
     return new Promise((resolve, rejct) => {

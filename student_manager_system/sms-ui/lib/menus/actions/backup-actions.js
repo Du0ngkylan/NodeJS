@@ -14,7 +14,7 @@ const {
 } = require('electron');
 
 // Goyo modules.
-const GoyoArchiver = require("goyo-archiver");
+
 const {
   viewMode,
   BookrackViewWindowSet
@@ -169,9 +169,6 @@ const actions = {
           throw new Error('not found albums.');
         }
         
-        let goyoArchiver = new GoyoArchiver();
-        goyoArchiver.initialize();
-
         let albumId = firstAlbum.bookrackItemId;
         let resultConstructionSettings = await bookrackAccessor.getConstructionSettings(constructionId);
         let resultPhotoInformationTree = await bookrackAccessor.getPhotoInformationTree(constructionId);
@@ -257,10 +254,6 @@ const actions = {
         const NAME_FOLDER_ARCHIVER = fileBackUp.substring(indexStr + 1);
 
         /* ------compression------ */
-        logger.debug(`begin compression`);
-        for (let fileJson of arrayInfoConstruction) {
-          goyoArchiver.addFilePath(goyoAppFolder.getAppFolder() + '\\' + fileJson, fileJson);
-        }
         for (let infoAddFile of arrayFileNameInDB) {
           if (infoAddFile.substring(DB_CONSTRUCTION_PATH.length + 1) == 'constructionDB.db' ||
             infoAddFile.substring(DB_CONSTRUCTION_PATH.length + 1) == 'kouji.XML' ||
@@ -269,49 +262,8 @@ const actions = {
             infoAddFile.substring(DB_CONSTRUCTION_PATH.length + 1) == 'NetProf.dat'
           ) {
             // not add file
-          } else {
-            let archiver_path_construction = infoAddFile.replace(DB_CONSTRUCTION_PATH, ARCHIVER_CONSTRUCTION_PATH).substring(defaultPathSave.length + 1);
-            goyoArchiver.addFilePath(infoAddFile, archiver_path_construction);
           }
         }
-        goyoArchiver.doCompression(fileBackUp,
-          /* success  */
-          async () => {
-            logger.debug(`end compression, created bksx file: ${NAME_FOLDER_ARCHIVER}`);
-            await progressWindow.close();
-            for (let ignoreFile of arrayInfoConstruction) {
-              if (fs.existsSync(goyoAppFolder.getAppFolder() + '\\' + ignoreFile)) {
-                fs.unlinkSync(goyoAppFolder.getAppFolder() + '\\' + ignoreFile);
-              }
-            }
-            setTimeout(() => {
-              goyoDialog.showSimpleMessageDialog(parent, '確認', '本棚のバックアップを作成しました。', 'OK');
-            }, 100);
-          },
-          /* progress  */
-          async (done, total, info) => {
-            progressWindow.setProgress(done / total);
-            if (canceller.cancel) {
-              goyoArchiver.setCancel(true);
-              await progressWindow.close();
-            }
-            progress(done, total, info);
-          },
-          /* cancel  */
-          async () => {
-            logger.debug(`canceled...`);
-            for (let ignoreFile of arrayInfoConstruction) {
-              if (fs.existsSync(goyoAppFolder.getAppFolder() + '\\' + ignoreFile)) {
-                fs.unlinkSync(goyoAppFolder.getAppFolder() + '\\' + ignoreFile);
-              }
-            }
-
-            if (fs.existsSync(fileBackUp)) {
-              del.sync(fileBackUp, { force: true });
-              logger.debug(`delete ${fileBackUp}`);
-            }    
-          }
-        );
       } catch (e) {
         logger.debug(`error: ${e}`);
         if (progressWindow != null)
@@ -338,12 +290,6 @@ const actions = {
           return;
         }
         let currentConstructionId = target.constructionId;
-        let goyoArchiver = new GoyoArchiver();
-        goyoArchiver.initialize();
-        let canceled = () => {
-          goyoArchiver.setCancel(true);
-          logger.debug(`canceled...`);
-        };
         let inputFiles = await goyoDialog.showOpenFileSelectionDialog(
           parent,
           goyoAppDefaults.DIALOG_RESTORE_FILE_TITLE, '',
@@ -374,53 +320,6 @@ const actions = {
             return this.filePaths;
           }
         }
-
-        goyoArchiver.doDecompression(
-          inputFiles[0],
-          pathArchiverFile,
-          (err) => {
-            progressWindow.close();
-            if (err) {
-              logger.debug(`error: ${err}`);
-              goyoDialog.showWarningMessageDialog(parent, 'エラー',
-              `${restoreFileName}の読み込みに失敗しました。`, 'OK');
-            } else {
-              let filePaths = restorePath.getPath()
-              let filePathRestore = {}
-              let pathSaveFile = []
-              filePathRestore['directory'] = pathArchiverFile;
-              let fullPath;
-
-              for (let filePath of filePaths) {
-                let length = 0;
-                fullPath = path.join(pathArchiverFile, filePath);
-                if (filePath.includes("/")) {
-                  length = filePath.split("/").length;
-                } else if (filePath.includes("\\")) {
-                  length = filePath.split("\\").length;
-                }
-                if (length >= 2) {
-                  // remove the folder prefix path (folder: constructionX)
-                  filePath = filePath.substring(filePath.indexOf("/") + 1);
-                  pathSaveFile.push(filePath);
-                  filePathRestore[filePath] = fullPath;
-                } else {
-                  filePathRestore[filePath] = fullPath;
-                }
-              }
-              restoreConstruction(parent, filePathRestore, pathSaveFile, currentConstructionId, restoreFileName);
-            }
-          },
-          async (done, total, info) => {
-            restorePath.pushPath(info)
-            progressWindow.setProgress(done / (total));
-            if (canceller.cancel) {
-              goyoArchiver.setCancel(true);
-              await progressWindow.close();
-            }
-          },
-          canceled
-        );
       } catch (e) {
         goyoDialog.showWarningMessageDialog(parent, 'エラー',
           `${restoreFileName}の読み込みに失敗しました。`, 'OK');

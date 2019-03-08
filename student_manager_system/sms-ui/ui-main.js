@@ -133,8 +133,8 @@ async function initialize() {
   logger.info(`sms-accessor was initialized.`);
 
   timestamp.log('initialize goyo-program-settings');
-  const programSettings = require('./lib/goyo-program-settings');
-  await programSettings.initialize();
+  // const programSettings = require('./lib/goyo-program-settings');
+  // await programSettings.initialize();
 
   timestamp.log('initialize goyo-temporal');
   await require('./lib/goyo-temporal').initialize(path.join(appFolder, 'tempfiles'));
@@ -152,8 +152,8 @@ async function initialize() {
   timestamp.log('initialize goyo-windows-menu');
   await require('./lib/menus/goyo-windows-menu').initialize(path.join(appFolder, 'menu-history.json'))
 
-  timestamp.log('initialize goyo-album-operation');
-  await require('./lib/goyo-album-operation').initialize();
+  // timestamp.log('initialize goyo-album-operation');
+  // await require('./lib/goyo-album-operation').initialize();
 
   timestamp.log('initialize goyo-ui-parameters');
   await require('./lib/goyo-ui-parameters').initialize(path.join(appFolder, 'ui-param.json'));
@@ -240,7 +240,7 @@ async function determineShowTarget(showTarget) {
   return null;
 }
 
-function startMain(showTarget, useGoyoDebugWindow, offsplash, updatefrom, args) {
+function startMain(showTarget, useGoyoDebugWindow = true, offsplash, updatefrom, args) {
   timestamp.start();
   // if (!offsplash) openSplash();
 
@@ -682,16 +682,16 @@ function initializeHostInfo(smsAccessor, licenseManager) {
 }
 
 async function makeSampleConstruction(appFolder,smsAccessor,logger){
-  const goyoResources = require('goyo-resources');
-  const goyoUtil = require('./lib/goyo-utils');
-  const sampleConstructionData = goyoResources.getSampleConstruction();
-  const makeSampleConstructionPath = await smsAccessor.getNewConstructionFolder(appFolder);
-  try {
-    await goyoUtil.goyoCopy(sampleConstructionData,makeSampleConstructionPath);
-    await smsAccessor.importConstruction(makeSampleConstructionPath,false,false,0,true);
-  } catch (error) {
-    logger.error('make sample construction',error);
-  }
+  // const goyoResources = require('goyo-resources');
+  // const goyoUtil = require('./lib/goyo-utils');
+  // const sampleConstructionData = goyoResources.getSampleConstruction();
+  // const makeSampleConstructionPath = await smsAccessor.getNewConstructionFolder(appFolder);
+  // try {
+  //   await goyoUtil.goyoCopy(sampleConstructionData,makeSampleConstructionPath);
+  //   await smsAccessor.importConstruction(makeSampleConstructionPath,false,false,0,true);
+  // } catch (error) {
+  //   logger.error('make sample construction',error);
+  // }
 }
 
 module.exports = {

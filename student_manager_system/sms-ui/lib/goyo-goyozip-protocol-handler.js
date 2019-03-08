@@ -4,7 +4,7 @@
 const { protocol } = require('electron');
 
 // 3rd-party modules.
-const yazl = require('yazl');
+// const yazl = require('yazl');
 
 // Goyo modules.
 const bookrackAccessor = require('sms-accessor');
@@ -35,18 +35,18 @@ module.exports = {
     });
   },
   async _getStream(constructionId, albumId, frameIds) {
-    let zipFile = new yazl.ZipFile();
-    let frames = await Promise.all(frameIds.map(frameId => {
-      return bookrackAccessor.getAlbumFrame(constructionId, albumId, frameId).then(r=>r.albumFrame);
-    }));
+    // let zipFile = new yazl.ZipFile();
+    // let frames = await Promise.all(frameIds.map(frameId => {
+    //   return bookrackAccessor.getAlbumFrame(constructionId, albumId, frameId).then(r=>r.albumFrame);
+    // }));
 
-    for (const frame of frames) {
-      if (frame.photoFrames.length > 0) {
-        zipFile.addFile(frame.photoFrames[0].imageFile, frame.photoFrames[0].fileArias);
-      }
-    }
-    zipFile.end();
-    return zipFile.outputStream;
+    // for (const frame of frames) {
+    //   if (frame.photoFrames.length > 0) {
+    //     zipFile.addFile(frame.photoFrames[0].imageFile, frame.photoFrames[0].fileArias);
+    //   }
+    // }
+    // zipFile.end();
+    // return zipFile.outputStream;
   },
   _getDetail(url) {
     let detail = {};

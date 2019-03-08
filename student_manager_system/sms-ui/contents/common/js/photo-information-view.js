@@ -8,12 +8,10 @@ const {
   MenuItem
 } = remote;
 const xlsx = require('xlsx');
-const xlsxPopulate = require('xlsx-populate');
 const goyoConstructionOperation = remote.require('./lib/goyo-construction-operation');
 const {viewMode, AlbumWindowSet, BookrackViewWindowSet} = remote.require('./lib/goyo-window-controller');
 const logger = remote.require('./lib/goyo-log')('photo-information-view');
 const lockFactory = remote.require('./lib/lock-manager/goyo-lock-manager');
-const goyoResources = remote.require('goyo-resources');
 
 const classificationList = [
   "施工状況写真",
@@ -1267,96 +1265,7 @@ $("#selectConstruction").on("click", function(){
   window.close();
 });
 $("#outputExcel").on("click", async function(){
-  // 選択されている要領によってベースとなるExcelを決める
-  const EXCEL_PATH = await goyoResources.getExcelTemplate(construction.knack.knackType, construction.knack.knackId);
-  const EXCEL_ADD_NAME = (()=>{
-    switch(construction.knack.knackType){
-      case 3:// 営繕
-        return "_建築マスタ.xlsx";
-      case 9:// 一般建築
-        return "_一般建築マスタ.xlsx";
-      case 6:// NEXCO
-        return "_分類マスタ（NEXCO）.xlsx";
-      default:
-        switch(construction.knack.knackId){
-          case 70:
-          case 71:
-          case 73:
-          case 9:
-          case 305:
-          case 306:
-          case 302:
-          case 303:
-            return "_分類マスタ.xlsx";
-          default:
-            return "_分類マスタ.xlsx";
-        }
-    }
-  })();
 
-  // ファイル選択ダイアログを表示してファイル出力先設定
-  let saveFileName = await goyoDialog.showSaveFileSelectionDialog(
-    remote.getCurrentWindow(),
-    goyoAppDefaults.DIALOG_SAVE_EXCEL_TITLE,
-    construction.constructionName+EXCEL_ADD_NAME,
-    goyoAppDefaults.inputExcelFilter
-  );
-  if(!saveFileName){
-    return;
-  }
-  try{
-    // ツリー情報を取得してエクセルを更新する
-    let treeData = JSON.parse(photoInformationTree.getCurrentTree(true));
-    let book = await xlsxPopulate.fromFileAsync( EXCEL_PATH );
-    var sheet = book.sheet(0);
-    let sheetPutDatas = [];
-    let row_i = 0;
-    let maxCol_i = 0;
-    let rowData = [];
-    let makeSheetData = ((currentTreeData, col_i ) =>{
-      if(typeof currentTreeData !== "undefined"){
-        for(let i=0; i<currentTreeData.length; i++){
-          rowData[col_i] = currentTreeData[i].name;
-          if( currentTreeData[i].children && currentTreeData[i].children.length>0 ){
-            makeSheetData(currentTreeData[i].children, col_i+1)
-          }else{
-            // 子がいないのでここまでのデータで出力
-            sheetPutDatas[row_i]=[];
-            for(let j=0; j<=col_i; j++){
-              sheetPutDatas[row_i][j]=rowData[j];
-            }
-            row_i++;
-            maxCol_i = Math.max(maxCol_i, col_i);
-          }
-        }
-      }
-    });
-    makeSheetData(treeData[0].children, 0);
-    if(sheetPutDatas.length>0){
-      // 先頭行の範囲で書き込まれるので、先頭行を最大列分、空文字で用意。
-      for(let i=0; i<=maxCol_i; i++){
-        if(!sheetPutDatas[0][i]){
-          sheetPutDatas[0][i] = "";
-        }
-      }
-      sheet.cell( "A3" ).value( sheetPutDatas );
-    }
-    await book.toFileAsync( saveFileName );
-    await goyoDialog.showSimpleMessageDialog(
-      remote.getCurrentWindow(),
-      '写真整理ツール',
-      '写真整理情報を保存しました。',
-      'OK'
-    );
-  }catch(e){
-    console.log(e);
-    await goyoDialog.showWarningMessageDialog(
-      remote.getCurrentWindow(),
-      '写真整理ツール',
-      '写真整理情報の保存に失敗しました。',
-      'OK'
-    );
-  }
 });
 
 $("#inputExcel").on("click", async function(){

@@ -57,9 +57,7 @@
   "private": true,
   "dependencies": {
     "electron-dialogbox": "file:../vendor/electron-dialogbox",
-    "goyo-archiver": "../goyo-archiver",
     "sms-accessor": "../sms-accessor",
-    "goyo-resources": "../goyo-resources",
     "adm-zip": "^0.4.11",
     "byline": "^5.0.0",
     "commander": "^2.15.1",
@@ -90,7 +88,6 @@
   "devDependencies": {
     "electron": "../vendor/electron",
     "signtool": "../vendor/signtool",
-    "native-embeditor": "../native-embeditor",
     "protocol-embeditor": "../protocol-embeditor",
     "asar": "=0.14.3",
     "electron-ava": "^0.1.0",
