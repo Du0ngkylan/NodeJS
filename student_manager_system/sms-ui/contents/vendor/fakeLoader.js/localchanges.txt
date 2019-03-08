@@ -1,7 +1,0 @@
-﻿
-2018/10/30: fakeLoader.min.js
-  Purpose:
-    Change to correspond to jquery 3.0.
-  Changes:
-    load(function → on('load',function
-
