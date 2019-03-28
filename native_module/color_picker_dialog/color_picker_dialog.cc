@@ -12,7 +12,7 @@
 using namespace v8;
 using namespace std;
 
-namespace goyo_native_ui {
+namespace native_ui {
 
 #define RECAST(type) reinterpret_cast<type>
 #define SCAST(type) static_cast<type>

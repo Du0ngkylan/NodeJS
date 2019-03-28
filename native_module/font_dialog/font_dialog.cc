@@ -12,7 +12,7 @@ using namespace v8;
 #define RECAST(type) reinterpret_cast<type>
 #define SCAST(type) static_cast<type>
 
-namespace goyo_native_ui {
+namespace native_ui {
 
 static CHOOSEFONT cf = {0};
 static LOGFONT lfont = {0};

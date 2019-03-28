@@ -4,13 +4,13 @@ const fs = require('fs');
 const path = require('path');
 
 fs.copyFileSync(
-  path.join(__dirname, 'build', 'Release', 'GoyoNativeUI.node'),
-  path.join(__dirname, 'GoyoNativeUI.node'));
+  path.join(__dirname, 'build', 'Release', 'NativeUI.node'),
+  path.join(__dirname, 'NativeUI.node'));
 
 fs.copyFileSync(
-  path.join(__dirname, 'build', 'Release', 'GoyoPrinting.node'),
-  path.join(__dirname, 'GoyoPrinting.node'));
+  path.join(__dirname, 'build', 'Release', 'Printing.node'),
+  path.join(__dirname, 'Printing.node'));
 
 fs.copyFileSync(
-  path.join(__dirname, 'build', 'Release', 'GoyoColorPicker.node'),
-  path.join(__dirname, 'GoyoColorPicker.node'));
+  path.join(__dirname, 'build', 'Release', 'ColorPicker.node'),
+  path.join(__dirname, 'ColorPicker.node'));

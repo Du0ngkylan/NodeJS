@@ -4,7 +4,7 @@
 #include <codecvt>
 #include "windows.h"
 
-namespace goyo_native_ui {
+namespace native_ui {
 
 using namespace v8;
 

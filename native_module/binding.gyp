@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "target_name": "GoyoNativeUI",
+      "target_name": "NativeUI",
       "sources": [
         "./font_dialog/font_dialog.cc",
       ],
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "target_name": "GoyoPrinting",
+      "target_name": "Printing",
       "sources": [
         "./printing/printing.cc",
       ],
@@ -26,7 +26,7 @@
       ]
     },
         {
-      "target_name": "GoyoColorPicker",
+      "target_name": "ColorPicker",
       "sources": [
         "./color_picker_dialog/color_picker_dialog.cc",
       ],

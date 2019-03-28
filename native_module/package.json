@@ -1,5 +1,5 @@
 {
-  "name": "goyo-native",
+  "name": "native-module",
   "version": "1.0.0",
   "description": "native module test",
   "main": "./index.js",
