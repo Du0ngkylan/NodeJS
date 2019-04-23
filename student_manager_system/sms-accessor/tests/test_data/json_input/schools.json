@@ -1,82 +1,19 @@
 {
-  "constructions": [
+  "schools": [
     {
-      "constructionId": 1,
-      "constructionName": "御用達サンプル工事",
-      "constructionNumber": "H24-12345",
-      "contractee": {
-        "contracteeCode": "00303003",
-        "contracteeName": "発注者A"
-      },
-      "contractor": {
-        "contractorCode": "00244444444",
-        "contractorName": "請負者a"
-      },
-      "dataFolder": "D:\\GBA\\kuraemon_goyotachi\\branches\\20180701_new_backend\\Test\\goyo-bookrack-accessor\\tests\\unit_test\\AppData\\construction11",
-      "displayNumber": 1,
-      "endDate": "20131021",
-      "isExternalFolder": false,
-      "isSharedFolder": false,
-      "knack": {
-        "knackId": 9,
-        "knackName": "一般土木",
-        "knackType": 8
-      },
-      "startDate": "20130401",
-      "year": 2013
+      "schoolId": 1,
+      "schoolName": "Back Khoa",
+      "schoolNumber": "12345",
     },
     {
-      "constructionId": 2,
-      "constructionName": "国交省工事001",
-      "constructionNumber": "1",
-      "contractee": {
-        "contracteeCode": "00101001",
-        "contracteeName": "",
-        "largeCategory": "国の機関",
-        "middleCategory": "内閣府",
-        "smallCategory": "大臣官房"
-      },
-      "contractor": {
-        "contractorCode": "00244444444",
-        "contractorName": "受注者z"
-      },
-      "dataFolder": "D:\\GBA\\kuraemon_goyotachi\\branches\\20180701_new_backend\\Test\\goyo-bookrack-accessor\\tests\\unit_test\\AppData\\construction22",
-      "displayNumber": 2,
-      "endDate": "20180220",
-      "isExternalFolder": false,
-      "isSharedFolder": false,
-      "knack": {
-        "knackId": 561,
-        "knackName": "国交省 工事 H28.3",
-        "knackType": 2
-      },
-      "startDate": "20180220",
-      "year": 2017
+      "schoolId": 2,
+      "schoolName": "Tu Nhien",
+      "schoolNumber": "1",
     },
     {
-      "constructionId": 3,
-      "constructionName": "XX市浄水場管理センター建築機械設備工事",
-      "constructionNumber": "",
-      "contractee": {
-        "contracteeCode": "3244438",
-        "contracteeName": "YYYYYY水道事業団"
-      },
-      "contractor": {
-        "contractorCode": "1323513",
-        "contractorName": "株式会社DDDDDDDDDDDDD"
-      },
-      "dataFolder": "D:\\GBA\\kuraemon_goyotachi\\branches\\20180701_new_backend\\Test\\goyo-bookrack-accessor\\tests\\unit_test\\AppData\\construction3",
-      "displayNumber": 3,
-      "endDate": "20161223",
-      "isExternalFolder": false,
-      "isSharedFolder": false,
-      "knack": {
-        "knackId": 76,
-        "knackName": "一般建築",
-        "knackType": 9
-      },
-      "startDate": "20161223",
-      "year": 2016
+      "schoolId": 3,
+      "schoolName": "Nhan Van",
+      "schoolNumber": "123",
     }
   ]
 }
