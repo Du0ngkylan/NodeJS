@@ -221,4 +221,4 @@ NODE_MODULE(NODE_GYP_MODULE_NAME, Init)
 
 #undef SCAST
 #undef RECAST
-}  // namespace goyo_native_ui
+}

@@ -7,7 +7,7 @@ const path = require('path');
 
 function test() {
   var process = spawn(
-    path.join(__dirname, '\\build\\Release\\goyo-db-manager-test.exe'));
+    path.join(__dirname, '\\build\\Release\\sms-db-manager-test.exe'));
 
   process.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
