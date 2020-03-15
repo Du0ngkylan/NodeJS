@@ -298,4 +298,4 @@ void Init(const Local<Object> exports) {
 
 NODE_MODULE(NODE_GYP_MODULE_NAME, Init)
 
-}  // namespace goyo_native_ui
+}

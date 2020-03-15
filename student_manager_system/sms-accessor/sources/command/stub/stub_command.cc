@@ -49,28 +49,6 @@ namespace sms_accessor {
       // The program will exit if it returns null'json11::Json()'.
       return json11::Json();
 
-    } else if ( request["command"] == "get-bookracks" ) {
-
-      response = json11::Json::array({
-          json11::Json::object {{"bookrackId", "data"},  {"name", "御用達サンプル工事１"}},
-          json11::Json::object {{"bookrackId", "data1"}, {"name", "御用達サンプル工事２"}},
-          json11::Json::object {{"bookrackId", "data2"}, {"name", "御用達サンプル工事３"}},
-          json11::Json::object {{"bookrackId", "data3"}, {"name", "テスト工事"}},
-          });
-
-    } else if ( request["command"] == "get-albums" ) {
-      if ( request["args"]["bookrackId"] == "data" ) {
-        response = json11::Json::array({
-            json11::Json::object {{"albumId", "0"}, {"name", "御用達サンプル工事１"}},
-            json11::Json::object {{"albumId", "1"}, {"name", "道路付属施設工サンプル"}},
-            json11::Json::object {{"albumId", "2"}, {"name", "標識工サンプル"}},
-            json11::Json::object {{"albumId", "3"}, {"name", "付帯道路工サンプル"}},
-            json11::Json::object {{"albumId", "4"}, {"name", "防護柵工サンプル"}},
-            });
-      } else {
-        error = json11::Json::object { {"type", kErrorInvalidCommandStr }, {"message", " BookrackId is not specified"}, };
-      }
-
     } else if ( request["command"] == "test-progress" ) {
 
       int i=0;
@@ -86,17 +64,6 @@ namespace sms_accessor {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         i++;
       }
-      while (i < 40) {
-        std::cout << "{ \"progress\": { \"done\": " << i << ", \"total\": 50, \"working\": \"third task\" }}" << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        i++;
-      }
-      while (i <= 50) {
-        std::cout << "{ \"progress\": { \"done\": " << i << ", \"total\": 50, \"working\": \"forth task\" }}" << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        i++;
-      }
-
       response = json11::Json::object { { "status", 1 }, };
 
     } else {
