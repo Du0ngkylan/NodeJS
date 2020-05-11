@@ -1,0 +1,19 @@
+{
+  "schools": [
+    {
+      "schoolId": 1,
+      "schoolName": "Back Khoa",
+      "schoolNumber": "12345",
+    },
+    {
+      "schoolId": 2,
+      "schoolName": "Tu Nhien",
+      "schoolNumber": "1",
+    },
+    {
+      "schoolId": 3,
+      "schoolName": "Nhan Van",
+      "schoolNumber": "123",
+    }
+  ]
+}
