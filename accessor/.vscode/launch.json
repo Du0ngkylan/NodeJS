@@ -8,8 +8,8 @@
     //   "type": "node",
     //   "request": "launch",
     //   "name": "Debug Print Process",
-    //     "runtimeExecutable": "${workspaceFolder}/goyo-ui/node_modules/.bin/electron.cmd",
-    //     "args" : ["./goyo-ui"]
+    //     "runtimeExecutable": "${workspaceFolder}/app-ui/node_modules/.bin/electron.cmd",
+    //     "args" : ["./app-ui"]
     // }
     {
       "type": "node",
